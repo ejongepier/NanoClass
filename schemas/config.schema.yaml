@@ -1,0 +1,292 @@
+$schema:                              "http://json-schema.org/draft-07/schema#"
+
+description:                          snakemake configuration file
+
+type:                                 object
+
+properties:
+
+    samples:
+        type:                         string
+        default:                      "samples.csv"
+
+    container:
+        type:                         string
+        default:                      "containers/minion-16S-20200829.simg"
+
+    methods:
+        type:                         array
+        default:                      ["blastn","centrifuge","idtaxa","kraken","mapseq","megablast","minimap","mothur","qiime","rdp","spingo"]
+
+    porechop:
+        type:                         object
+        properties:
+            threads:
+                type:                 number
+                default:              1
+            memory:
+                type:                 number
+                default:              4000
+            checkreads:
+                type:                 number
+                default:              25000
+            outputformat:
+                type:                 string
+                default:              "fastq.gz"
+
+    nanofilt:
+        type:                         object
+        properties:
+            memory:
+                type:                 number
+                default:              4000
+            minlen:
+                type:                 number
+                default:              1
+            maxlen:
+                type:                 number
+                default:              1000000000
+
+    subsample:
+        type:                         object
+        properties:
+            samplesize:
+                type:                 number
+                default:              10000
+
+    stats:
+        type:                         object
+        properties:
+            memory:
+                type:                 number
+                default:              4000
+            threads:
+                type:                 number
+                default:              1
+
+    plot:
+        type:                         object
+        properties:
+            memory:
+                type:                 number
+                default:              4000
+            downsample:
+                type:                 number
+                default:              0
+            container:
+                type:                 string
+                default:              "containers/conda-R4.0.sif"
+
+    blastn:
+        type:                         object
+        properties:
+            url:
+                type:                 string
+                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+            dbmemory:
+                type:                 number
+                default:              3000
+            threads:
+                type:                 number
+                default:              1
+            memory:
+                type:                 number
+                default:              4000
+            chunksize:
+                type:                 number
+                default:              100
+
+    centrifuge:
+        type:                         object
+        properties:
+            dbthreads:
+                type:                 number
+                default:              1
+            dbmemory:
+                type:                 number
+                default:              4000
+            sequrl:
+                type:                 string
+                default:              "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/SILVA_132_SSURef_Nr99_tax_silva.fasta.gz"
+            taxmapurl:
+                type:                 string
+                default:              "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/SILVA_132_SSURef_Nr99_tax_silva.fasta.gz"
+            threads:
+                type:                 number
+                default:              1
+            memory:
+                type:                 number
+                default:              1000
+
+    idtaxa:
+        type:                         object
+        properties:
+            container:
+                type:                 string
+                default:              "containers/conda-R4.0.sif"
+            url:
+                type:                 string
+                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+            dbmemory:
+                type:                 number
+                default:              3000
+            threads:
+                type:                 number
+                default:              1
+            memory:
+                type:                 number
+                default:              1000
+
+    kraken:
+        type:                         object
+        properties:
+            dbthreads:
+                type:                 number
+                default:              1
+            dbmemory:
+                type:                 number
+                default:              1000
+            dbtype:
+                type:                 string
+                default:              "silva"
+            kmerlen:
+                type:                 number
+                default:              21
+            minimizerlen:
+                type:                 number
+                default:              17
+            minimizerspaces:
+                type:                 number
+                default:              4
+            threads:
+                type:                 number
+                default:              1
+            memory:
+                type:                 number
+                default:              1000
+
+    mapseq:
+        type:                         object
+        properties:
+            url:
+                type:                 string
+                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+            dbmemory:
+                type:                 number
+                default:              3000
+            memory:
+                type:                 number
+                default:              1000
+            threads:
+                type:                 number
+                default:              1
+
+    megablast:
+        type:                         object
+        properties:
+            url:
+                type:                 string
+                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+            dbmemory:
+                type:                 number
+                default:              3000
+            memory:
+                type:                 number
+                default:              1000
+            threads:
+                type:                 number
+                default:              1
+            chunksize:
+                type:                 number
+                default:              100
+
+    minimap:
+        type:                         object
+        properties:
+            url:
+                type:                 string
+                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+            dbmemory:
+                type:                 number
+                default:              3000
+            memory:
+                type:                 number
+                default:              1000
+            threads:
+                type:                 number
+                default:              1
+
+
+    mothur:
+        type:                         object
+        properties:
+            dbmemory:
+                type:                 number
+                default:              5000
+            dburl:
+                type:                 string
+                default:              "https://mothur.s3.us-east-2.amazonaws.com/wiki/silva.nr_v132.tgz"
+            container:
+                type:                 string
+                default:              "docker://biocontainers/mothur:v1.41.21-1-deb_cv1"
+            threads:
+                type:                 number
+                default:              1
+            memory:
+                type:                 number
+                default:              1000
+
+
+    qiime:
+        type:                         object
+        properties:
+            container:
+                type:                 string
+                default:              "docker://qiime2/core:2020.8"
+            url:
+                type:                 string
+                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip" 
+            dbmemory:
+                type:                 number
+                default:              3000
+            threads:
+                type:                 number
+                default:              16
+            memory:
+                type:                 number
+                default:              10000
+
+    rdp:
+        type:                         object
+        properties:
+            container:
+                type:                 string
+                default:              "containers/conda-R4.0.sif"
+            dburl:
+                type:                 string
+                default:              "https://zenodo.org/record/1172783/files/silva_nr_v132_train_set.fa.gz"
+            dbmemory:
+                type:                 number
+                default:              75000
+            threads:
+                type:                 number
+                default:              8
+            memory:
+                type:                 number
+                default:              5000
+
+    spingo:
+        type:                         object
+        properties:
+            dbthreads:
+                type:                 number
+                default:              16
+            dbmemory:
+                type:                 number
+                default:              50000
+            threads:
+                type:                 number
+                default:              16
+            memory:
+                type:                 number
+                default:              50000

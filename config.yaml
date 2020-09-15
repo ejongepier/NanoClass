@@ -1,0 +1,103 @@
+container:                         "containers/minion-16S-20200831.simg"
+samples:                           "samples.csv"
+methods:                           ["blastn", "centrifuge","kraken","idtaxa","mapseq","megablast", "minimap","mothur","qiime","rdp","spingo"]
+
+porechop:
+    threads:                       4
+    memory:                        4000
+    checkreads:                    20000
+
+nanofilt:
+    memory:                        2000
+    minlen:                        1400
+    maxlen:                        1600
+
+subsample:
+    samplesize:                    100
+
+stats:
+    threads:                       2
+    memory:                        8000
+
+plot:
+    memory:                        32000
+    container:                     "containers/conda-R4.0.sif"
+
+blastn:
+    dbmemory:                      3000
+    url:                           "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+    threads:                       1
+    memory:                        500
+    chunksize:                     20
+
+centrifuge:
+    dbthreads:                     16
+    dbmemory:                      500
+    sequrl:                        "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/SILVA_132_SSURef_Nr99_tax_silva.fasta.gz"
+    taxmapurl:                     "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/taxonomy/taxmap_embl_ssu_ref_nr99_132.txt.gz"
+    threads:                       16
+    memory:                        16000
+
+idtaxa:
+    container:                     "containers/conda-R4.0.sif"
+    dbmemory:                      3000
+    url:                           "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+    threads:                       8
+    memory:                        10000
+
+kraken:
+    dbthreads:                     32
+    dbmemory:                      40000
+    dbtype:                        "silva"
+    kmerlen:                       21
+    minimizerlen:                  17
+    minimizerspaces:               4
+    threads:                       16
+    memory:                        500
+
+mapseq:
+    dbmemory:                      3000
+    url:                           "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+    threads:                       8
+    memory:                        1000
+
+megablast:
+    dbmemory:                      3000
+    url:                           "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+    threads:                       1
+    memory:                        500
+    chunksize:                     20
+
+minimap:
+    dbmemory:                      3000
+    url:                           "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+    threads:                       16
+    memory:                        50000
+
+mothur:
+    container:                     "docker://biocontainers/mothur:v1.41.21-1-deb_cv1"
+    dbmemory:                      1000
+    dburl:                         "https://mothur.s3.us-east-2.amazonaws.com/wiki/silva.nr_v132.tgz"
+    threads:                       8
+    memory:                        20000
+
+qiime:
+    container:                     "docker://qiime2/core:2020.8"
+    url:                           "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+    dbmemory:                      3000
+    threads:                       16
+    memory:                        10000
+
+rdp:
+    container:                     "containers/conda-R4.0.sif"
+    dburl:                         "https://zenodo.org/record/1172783/files/silva_nr_v132_train_set.fa.gz"
+    dbmemory:                      75000
+    threads:                       8
+    memory:                        5000
+
+spingo:
+    dbthreads:                     16
+    dbmemory:                      50000
+    threads:                       16
+    memory:                        50000
+
