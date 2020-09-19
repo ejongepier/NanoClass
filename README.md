@@ -27,9 +27,9 @@ You can either clone NanoClass, like so:
 
     git clone https://github.com/ejongepier/NanoClass
 
-Or download and unpack the ZIP:
+Or download and unpack the ZIP from https://github.com/ejongepier/NanoClass, e.g.:
 
-    wget -O NanoClass.zip https://github.com/ejongepier/init-ubuntu/archive/master.zip
+    wget -O NanoClass.zip https://github.com/ejongepier/NanoClass/archive/master.zip
     unzip NanoClass.zip
 
 NanoClass is immediately ready for use.
@@ -72,7 +72,7 @@ After successful execution, you can create an interactive HTML report with:
 - [x] Write tomat: a tool that converts the various type's of outputs to taxonomy and "OTU/ASV"-style tables.
 - [x] Implement taxonomic barplot to compare across tools and samples.
 - [x] Write toconsensus: a tool that assigns consensus and majority classifications, based on the combined results of the individual tools.
-- [x] Implement accuracy plots for all samples, methods and taxonomic levels
+- [x] Implement precision plots for all samples, methods and taxonomic levels
 - [x] Implement runtim plots per method and sample.
 - [x] Assess small subsample representativeness.
 - [x] Implement archiving of analyses for pubication of data + pipeline on e.g. Zenodo

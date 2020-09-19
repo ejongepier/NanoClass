@@ -1,34 +1,6 @@
-rule megablast_download_db:
-    output:
-        ref_tax = "db/megablast/ref-taxonomy.txt",
-        ref_seqs = "db/megablast/ref-seqs.fna"
-    threads: 1
-    resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["megablast"]["dbmemory"]
-    params:
-        url = config["megablast"]["url"]
-    singularity:
-        config["container"]
-    log:
-        "logs/megablast_download_db.log"
-    benchmark:
-        "benchmarks/megablast_download_db.txt"
-    shell:
-        """
-        wget -O db/megablast/db.zip {params.url}
-        unzip -p -j db/megablast/db.zip \
-            */taxonomy/16S_only/99/majority_taxonomy_7_levels.txt \
-            > {output.ref_tax}
-        unzip -p -j db/megablast/db.zip \
-            */rep_set/rep_set_16S_only/99/silva_132_99_16S.fna \
-            > {output.ref_seqs}
-        rm db/megablast/db.zip
-        """
-
-
 rule megablast_build_db:
     input:
-        rules.megablast_download_db.output.ref_seqs
+        "db/common/ref-seqs.fna"
     output:
         touch("db/megablast/DB_BUILD")
     threads: 1
@@ -65,7 +37,7 @@ rule megablast_chunk:
 rule megablast_classify:
     input:
         rules.megablast_build_db.output,
-        db = "db/megablast/ref-seqs.fna",
+        db = "db/common/ref-seqs.fna",
         fasta = "classifications/{run}/megablast/{sample}/{chunk}"
     output:
         all = "classifications/{run}/megablast/{sample}/{chunk}.megablast.tmp",
@@ -121,7 +93,7 @@ rule megablast_aggregate:
 rule megablast_tomat:
     input:
         out = "classifications/{run}/megablast/{sample}.megablast.out",
-        db = "db/megablast/ref-taxonomy.txt"
+        db = "db/common/ref-taxonomy.txt"
     output:
         taxlist = "classifications/{run}/megablast/{sample}.megablast.taxlist", 
         taxmat = "classifications/{run}/megablast/{sample}.megablast.taxmat",

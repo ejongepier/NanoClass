@@ -1,93 +1,41 @@
-rule centrifuge_download_taxonomy:
+rule centrifuge_get_db:
+    input:
+        seq = "db/common/ref-seqs.fna",
+        tax = "db/common/ref-taxonomy.txt"
     output:
         name_table = "db/centrifuge/taxonomy/names.dmp",
         tax_tree = "db/centrifuge/taxonomy/nodes.dmp",
+        tax_map = "db/centrifuge/ref-tax.map",
+        ref_seqs = "db/centrifuge/ref-seqs.fna",
+        ref_tax = "db/centrifuge/ref-taxonomy.txt"
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["dbmemory"]
+    params:
+        url = config["centrifuge"]["taxmapurl"]
     singularity:
         config["container"]
     log:
-        "logs/centrifuge_download_taxonomy.log"
+        "logs/centrifuge_get_db.log"
     benchmark:
-        "benchmarks/centrifuge_download_taxonomy.txt"
+        "benchmarks/centrifuge_get_db.txt"
     shell:
         """
         centrifuge-download -o db/centrifuge/taxonomy taxonomy 2> {log}
-        """
-
-
-rule centrifuge_download_db:
-    output:
-        ref_seqs = "db/centrifuge/data/SILVA_132_SSURef_Nr99_tax_silva.rna.fasta",
-        taxmap = "db/centrifuge/data/taxmap_embl_ssu_ref_nr99_132.txt"
-    threads:
-        1
-    resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["dbmemory"]
-    params:
-        seq_url = config["centrifuge"]["sequrl"],
-        taxmap_url = config["centrifuge"]["taxmapurl"]
-    singularity:
-        config["container"]
-    log:
-        "logs/centrifuge_download_db.log"
-    benchmark:
-        "benchmarks/centrifuge_download_db.txt"
-    shell:
-        """
-        wget {params.seq_url} -O - | gzip -d -c - > {output.ref_seqs} 2> {log}
-        wget {params.taxmap_url} -O - | gzip -d -c - > {output.taxmap} 2>> {log} 
-        """
-
-
-rule centrifuge_rna_to_dna:
-    input:
-        "db/centrifuge/data/SILVA_132_SSURef_Nr99_tax_silva.rna.fasta"
-    output:
-        "db/centrifuge/data/SILVA_132_SSURef_Nr99_tax_silva.fasta"
-    threads: 1
-    resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["dbmemory"]
-    params:
-        old_base = "U",
-        new_base = "T",
-#    singularity:
-#        config["container"]
-    log:
-        "logs/centrifuge_rna_to_dna.log"
-    benchmark:
-        "benchmarks/centrifuge_rna_to_dna.txt"
-    wrapper:
-        "0.65.0/bio/pyfastaq/replace_bases"
-
-
-rule centrifuge_convert:
-    input:
-        taxmap = rules.centrifuge_download_db.output.taxmap,
-    output:
-        map = "db/centrifuge/seqid2taxid.map",
-    threads: 1
-    resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["dbmemory"]
-    singularity:
-        config["container"]
-    log:
-        "logs/centrifuge_convert.log"
-    benchmark:
-        "benchmarks/centrifuge_convert.txt"
-    shell:
-        """
-        awk '{{print $1\".\"$2\".\"$3\"\t\"$(NF)}}' {input.taxmap} > {output.map} 2> {log}
+        wget {params.url} -O - | gzip -d -c - | \
+            awk '{{print $1\".\"$2\".\"$3\"\t\"$(NF)}}' \
+            > {output.tax_map} 2> {log}
+        scripts/todb.py -s {input.seq} -t {input.tax} -m centrifuge \
+            -S {output.ref_seqs} -T {output.ref_tax}
         """
 
 
 rule centrifuge_build_db:
     input:
-        name_table = rules.centrifuge_download_taxonomy.output.name_table,
-        tax_tree = rules.centrifuge_download_taxonomy.output.tax_tree, 
-        map = rules.centrifuge_convert.output.map,
-        ref_seqs = "db/centrifuge/data/SILVA_132_SSURef_Nr99_tax_silva.fasta"
+        name_table = "db/centrifuge/taxonomy/names.dmp",
+        tax_tree = "db/centrifuge/taxonomy/nodes.dmp",
+        tax_map = "db/centrifuge/ref-tax.map",
+        ref_seqs = "db/centrifuge/ref-seqs.fna"
     output:
         touch("db/centrifuge/CENTRIFUGE_DB_BUILD")
     threads:
@@ -95,7 +43,7 @@ rule centrifuge_build_db:
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["dbmemory"]
     params:
-        prefix = "db/centrifuge/silva_16s"
+        prefix = "db/centrifuge/ref-db"
     singularity:
         config["container"]
     log:
@@ -106,7 +54,7 @@ rule centrifuge_build_db:
         """
         centrifuge-build \
           --threads {threads} \
-          --conversion-table {input.map} \
+          --conversion-table {input.tax_map} \
           --taxonomy-tree {input.tax_tree} \
           --name-table {input.name_table} \
           {input.ref_seqs} \
@@ -118,7 +66,7 @@ rule centrifuge_classify:
     input:
         rules.centrifuge_build_db.output,
         fastq = "data/{run}/nanofilt/{sample}.subsampled.fastq.gz",
-        ref_seqs = "db/centrifuge/data/SILVA_132_SSURef_Nr99_tax_silva.fasta"
+        ref_seqs = "db/centrifuge/ref-seqs.fna"
     output:
         report = temp("classifications/{run}/centrifuge/{sample}.report.tsv"),
         classification = "classifications/{run}/centrifuge/{sample}.centrifuge.out",
@@ -127,7 +75,7 @@ rule centrifuge_classify:
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["memory"]
     params:
-        index_prefix = "db/centrifuge/silva_16s"
+        index_prefix = "db/centrifuge/ref-db"
     singularity:
         config["container"]
     log:
@@ -148,7 +96,7 @@ rule centrifuge_classify:
 rule centrifuge_tomat:
     input:
         out = "classifications/{run}/centrifuge/{sample}.centrifuge.out",
-        ref_seqs = "db/centrifuge/data/SILVA_132_SSURef_Nr99_tax_silva.fasta"
+        ref_seqs = "db/centrifuge/ref-seqs.fna"
     output:
         taxlist = "classifications/{run}/centrifuge/{sample}.centrifuge.taxlist",
         taxmat = "classifications/{run}/centrifuge/{sample}.centrifuge.taxmat",

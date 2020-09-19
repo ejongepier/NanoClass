@@ -11,12 +11,12 @@ for (i in 1:length(args)){
   run = strsplit(args[i], "/")[[1]][2]
   sample = strsplit(lab, "[.]")[[1]][1]
   method = strsplit(lab, "[.]")[[1]][2]
-  # Read data and compute total prop accuracy
+  # Read data and compute total prop precision
   tbl <- read.table(args[i], header = T, sep = '\t', 
                     comment = "", row.names = 1)
   dt <- as.data.frame(colSums(tbl, na.rm=T)/
                       colSums(!is.na(tbl)))
-  names(dt) <- "accuracy"
+  names(dt) <- "precision"
   # Add meta data columns
   dt$level <- row.names(dt)
   dt$rank <- factor(dt$level, ordered=T, 
@@ -32,14 +32,14 @@ for (i in 1:length(args)){
 df <- do.call(rbind, dl)
 
 theme_set(theme_bw())
-p = ggplot(df, aes(x = rank, y = accuracy, 
+p = ggplot(df, aes(x = rank, y = precision, 
            group = method, col = method)) + 
     geom_line() + geom_point() +
-    labs(x = "", y = "Accuracy") + ylim(0,1) +
+    labs(x = "", y = "Precision") + ylim(0,1) +
     theme(axis.text.x = element_text(
         angle = 90, vjust = 0.5, hjust=1))
 p = p + facet_grid(paste0("Run: ",run) ~ 
                    paste0("Sample: ",sample))
-ggsave("plots/accuracy.pdf", plot=p, device="pdf") 
+ggsave("plots/precision.pdf", plot=p, device="pdf") 
 
 

@@ -1,27 +1,27 @@
-rule rdp_download_db:
+rule rdp_build_db:
+    input:
+        seq = "db/common/ref-seqs.fna",
+        tax = "db/common/ref-taxonomy.txt"
     output:
-        "db/rdp/train_set.fa.gz"
+        seq = "db/rdp/ref-seqs.fna.gz",
+        tax = "db/rdp/ref-taxonomy.txt"
     threads: 1
-    resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["rdp"]["dbmemory"]
+    log:
+        "logs/rdp_db.log"
+    benchmark:
+        "benchmarks/rdp_db.txt"
     singularity:
         config["container"]
-    params:
-        url = config["rdp"]["dburl"]
-    log:
-        "logs/rdp_downl_db.log"
-    benchmark:
-        "benchmarks/rdp_downl_db.txt"
     shell:
         """
-        export PATH=/opt/conda/envs/R-4.0-conda-only/bin/:$PATH
-        wget {params.url} -O {output} 2> {log}
+        scripts/todb.py -s {input.seq} -t {input.tax} -m rdp -S tmp.seq -T {output.tax}
+        gzip -c tmp.seq > {output.seq} && rm tmp.seq 
         """
 
 
 rule rdp_classify:
     input:
-        db = rules.rdp_download_db.output,
+        db = "db/rdp/ref-seqs.fna.gz",
         query = rules.prep_fasta_query.output
     output:
         "classifications/{run}/rdp/{sample}.rdp.taxlist"

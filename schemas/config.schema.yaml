@@ -18,6 +18,10 @@ properties:
         type:                         array
         default:                      ["blastn","centrifuge","idtaxa","kraken","mapseq","megablast","minimap","mothur","qiime","rdp","spingo"]
 
+    dburl:
+        type:                         string
+        default:                      "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+ 
     porechop:
         type:                         object
         properties:
@@ -80,9 +84,6 @@ properties:
     blastn:
         type:                         object
         properties:
-            url:
-                type:                 string
-                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
             dbmemory:
                 type:                 number
                 default:              3000
@@ -105,12 +106,9 @@ properties:
             dbmemory:
                 type:                 number
                 default:              4000
-            sequrl:
-                type:                 string
-                default:              "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/SILVA_132_SSURef_Nr99_tax_silva.fasta.gz"
             taxmapurl:
                 type:                 string
-                default:              "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/SILVA_132_SSURef_Nr99_tax_silva.fasta.gz"
+                default:              "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/taxonomy/taxmap_embl_ssu_ref_nr99_132.txt.gz"
             threads:
                 type:                 number
                 default:              1
@@ -124,9 +122,6 @@ properties:
             container:
                 type:                 string
                 default:              "containers/conda-R4.0.sif"
-            url:
-                type:                 string
-                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
             dbmemory:
                 type:                 number
                 default:              3000
@@ -168,9 +163,6 @@ properties:
     mapseq:
         type:                         object
         properties:
-            url:
-                type:                 string
-                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
             dbmemory:
                 type:                 number
                 default:              3000
@@ -184,9 +176,6 @@ properties:
     megablast:
         type:                         object
         properties:
-            url:
-                type:                 string
-                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
             dbmemory:
                 type:                 number
                 default:              3000
@@ -203,9 +192,6 @@ properties:
     minimap:
         type:                         object
         properties:
-            url:
-                type:                 string
-                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
             dbmemory:
                 type:                 number
                 default:              3000
@@ -223,9 +209,6 @@ properties:
             dbmemory:
                 type:                 number
                 default:              5000
-            dburl:
-                type:                 string
-                default:              "https://mothur.s3.us-east-2.amazonaws.com/wiki/silva.nr_v132.tgz"
             container:
                 type:                 string
                 default:              "docker://biocontainers/mothur:v1.41.21-1-deb_cv1"
@@ -243,9 +226,6 @@ properties:
             container:
                 type:                 string
                 default:              "docker://qiime2/core:2020.8"
-            url:
-                type:                 string
-                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip" 
             dbmemory:
                 type:                 number
                 default:              3000
@@ -262,9 +242,6 @@ properties:
             container:
                 type:                 string
                 default:              "containers/conda-R4.0.sif"
-            dburl:
-                type:                 string
-                default:              "https://zenodo.org/record/1172783/files/silva_nr_v132_train_set.fa.gz"
             dbmemory:
                 type:                 number
                 default:              75000

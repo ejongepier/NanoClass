@@ -1,34 +1,7 @@
-rule idtaxa_download_db:
-    output:
-        ref_tax = "db/idtaxa/ref-taxonomy.txt",
-        ref_seqs = "db/idtaxa/ref-seqs.fna"
-    threads: 1
-    resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["idtaxa"]["dbmemory"]
-    params:
-        url = config["idtaxa"]["url"]
-    singularity:
-        config["container"]
-    log:
-        "logs/idtaxa_download_db.log"
-    benchmark:
-        "benchmarks/idtaxa_download_db.txt"
-    shell:
-        """
-        wget -O db/idtaxa/db.zip {params.url}
-        unzip -p -j db/idtaxa/db.zip \
-            */taxonomy/16S_only/99/majority_taxonomy_7_levels.txt \
-            > {output.ref_tax}
-        unzip -p -j db/idtaxa/db.zip \
-            */rep_set/rep_set_16S_only/99/silva_132_99_16S.fna \
-            > {output.ref_seqs}
-        rm db/idtaxa/db.zip
-        """
-
-rule idtaxa_learn_taxa:
+rule idtaxa_build_db:
     input:
-        ref_seqs = rules.idtaxa_download_db.output.ref_seqs,
-        ref_tax = rules.idtaxa_download_db.output.ref_tax
+        ref_seqs = "db/common/ref-seqs.fna",
+        ref_tax = "db/common/ref-taxonomy.txt"
     output:
         "db/idtaxa/ref-db.Rdata"
     threads: 1

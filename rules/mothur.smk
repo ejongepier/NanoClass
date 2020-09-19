@@ -1,34 +1,29 @@
-rule mothur_db:
+rule mothur_build_db:
+    input:
+        aln = "db/common/ref-seqs.aln",
+        tax = "db/common/ref-taxonomy.txt"
     output:
-        aln = "db/mothur/silva.nr_v132.align",
-        tax = "db/mothur/silva.nr_v132.tax"
+        aln = "db/mothur/ref-seqs.aln",
+        tax = "db/mothur/ref-taxonomy.txt"
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["mothur"]["dbmemory"]
-    params:
-        url = config["mothur"]["dburl"]
     log:
-        "logs/mothur_db.log"
+        "logs/mothur_build_db.log"
     benchmark:
-        "benchmarks/mothur_db.txt"
+        "benchmarks/mothur_build_db.txt"
     singularity:
         config["container"]
     shell:
         """
-        tar=$(basename {output.aln} .align)".tgz"
-        aln=$(basename {output.aln})
-        tax=$(basename {output.tax})
-        dir=$(dirname {output.aln})
-        wget -O $dir/$tar {params.url}
-        tar -C $dir -xvf $dir/$tar $aln
-        tar -C $dir -xvf $dir/$tar $tax
+        scripts/todb.py -s {input.aln} -t {input.tax} -m mothur \
+            -S {output.aln} -T {output.tax}
         """
-
 
 rule mothur_classify:
     input:
         query = rules.prep_fasta_query.output,
-        aln = rules.mothur_db.output.aln
+        aln = "db/mothur/ref-seqs.aln"
     output:
         dir = temp(directory("classifications/{run}/mothur/{sample}/")),
         out = "classifications/{run}/mothur/{sample}.mothur.out"
@@ -58,7 +53,7 @@ rule mothur_classify:
 
 rule mothur_tomat:
     input:
-        tax = "db/mothur/silva.nr_v132.tax",
+        tax = "db/mothur/ref-taxonomy.txt",
         out = "classifications/{run}/mothur/{sample}.mothur.out"
     output:
         taxlist = "classifications/{run}/mothur/{sample}.mothur.taxlist",

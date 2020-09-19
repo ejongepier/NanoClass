@@ -1,38 +1,34 @@
 rule spingo_build_db:
     input:
-        "db/centrifuge/data/SILVA_132_SSURef_Nr99_tax_silva.fasta"
+        seq = "db/common/ref-seqs.fna",
+        tax = "db/common/ref-taxonomy.txt"
     output:
-        "db/spingo/ref-seqs.fasta"
+        seq = "db/spingo/ref-seqs.fna",
+        tax = "db/spingo/ref-taxonomy.txt"
     threads:
         config["spingo"]["dbthreads"]
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["spingo"]["dbmemory"]
-    singularity:
-        config["container"]
     log:
         "logs/spingo_db.log"
     benchmark:
         "benchmarks/spingo_db.txt"
+    singularity:
+        config["container"]
     shell:
         """
-        cat {input} | \
-        sed 's/ /]\t/' | \
-        awk -F '\\t|;' -v OFS='\\t' '{{
-            if ($1 ~ />/) \
-                print $1, $8, $7, $6, $5, $4, $3, $2; \
-            else \
-                print $1
-            }}' > {output}
-        spindex -k 8 -p {threads} -d {output}
+        scripts/todb.py -s {input.seq} -t {input.tax} -m spingo \
+            -S {output.seq} -T {output.tax}
+        spindex -k 8 -p {threads} -d {output.seq}
         """
 
 
 rule spingo_classify:
     input:
-        db = "db/spingo/ref-seqs.fasta",
+        db = "db/spingo/ref-seqs.fna",
         fasta = rules.prep_fasta_query.output
     output:
-        "classifications/{run}/spingo/{sample}.spingo.out"
+        "classifications/{run}/spingo/{sample}.spingo.taxlist"
     threads:
         config["spingo"]["threads"]
     resources:
@@ -47,10 +43,17 @@ rule spingo_classify:
         """
         spingo -d {input.db} -k 8 -a \
           -p {threads} -i {input.fasta} \
-          > {output} 2> {log}
+          > tmp.out 2> {log}
+        sed 's/ /\\t/' tmp.out | \
+        awk -F '\\t' -v OFS='\\t' '{{
+            if (NR == 1)
+                print "#readid","Domain","Phylum","Class","Order","Family","Genus";
+            else
+                print $1, $4, $6, $8, $10, $12, $14
+        }}' > {output} 2> {log} && rm tmp.out
         """
 
-
+'''
 rule spingo_taxlist:
     input:
         "classifications/{run}/spingo/{sample}.spingo.out"
@@ -73,7 +76,7 @@ rule spingo_taxlist:
                 print $1, $4, $6, $8, $10, $12, $14
         }}' > {output}
         """
-
+'''
 
 
 rule spingo_tomat:

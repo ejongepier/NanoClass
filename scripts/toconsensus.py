@@ -51,9 +51,9 @@ class ToConsensus(object):
                 nlists = len(ftaxlists)
                 consensusreaddict = self.comp_consensus_tax(samplereaddict, nlists)
                 for ftaxlist in ftaxlists:
-                    accuracydict = self.comp_accuracy_per_list(consensusreaddict, ftaxlist)
+                    precisiondict = self.comp_precision_per_list(consensusreaddict, ftaxlist)
                     path = self.get_output_path(ftaxlist)
-                    self.write_accuracy_tax(accuracydict, path)
+                    self.write_precision_tax(precisiondict, path)
                 #self.write_consensus_tax(
         return
 
@@ -62,7 +62,7 @@ class ToConsensus(object):
         dir = '/'.join(ftaxlist.split('/')[:3])
         method = ftaxlist.split('/')[2]
         sample = ftaxlist.split('/')[3].split('.')[0]
-        outpath = dir + '/' + sample + '.' + method + '.accuracy'
+        outpath = dir + '/' + sample + '.' + method + '.precision'
         return outpath
 
 
@@ -137,7 +137,7 @@ class ToConsensus(object):
         return consensusreaddict
 
 
-    def comp_accuracy_per_list(self, consensusreaddict, ftaxlist):
+    def comp_precision_per_list(self, consensusreaddict, ftaxlist):
         '''
         Example output: {readid = {Domain:bool}, {Phylum:bool}, ...}
         For each read and each taxomic level, a boolian whether
@@ -145,16 +145,16 @@ class ToConsensus(object):
         not.
         '''
         readdict = self.get_read_dict_per_list(ftaxlist)
-        accuracydict = collections.defaultdict(dict)
+        precisiondict = collections.defaultdict(dict)
         for readid in readdict:
             for level in readdict[readid]:
                 if readdict[readid][level] == 'NA' or consensusreaddict[readid][level] == 'NA':
-                    accuracydict[readid][level] =  'NA'
+                    precisiondict[readid][level] =  'NA'
                 elif readdict[readid][level] == consensusreaddict[readid][level]:
-                    accuracydict[readid][level] = '1'
+                    precisiondict[readid][level] = '1'
                 else:
-                    accuracydict[readid][level] = '0'
-        return accuracydict
+                    precisiondict[readid][level] = '0'
+        return precisiondict
 
 
     def write_consensus_tax(self):
@@ -174,18 +174,18 @@ class ToConsensus(object):
         return
 
 
-    def write_accuracy_tax(self, accuracydict, path):
+    def write_precision_tax(self, precisiondict, path):
         '''
         Example out: "readid \t Domain \t Phylum ..."
-        Write accuracy (0/1) to file, incl. header line.
+        Write precision (0/1) to file, incl. header line.
         '''
         levels = ['Domain','Phylum','Class','Order','Family','Genus']
         with open(path, 'w') as f:
             f.write('#readid' + '\t' + '\t'.join(levels) + '\n')
-            for readid in accuracydict:
+            for readid in precisiondict:
                 tax = []
                 for level in levels:
-                    tax.append(accuracydict[readid][level])
+                    tax.append(precisiondict[readid][level])
                 f.write(readid + '\t' + '\t'.join(tax) + '\n')
         return
 

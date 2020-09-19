@@ -191,3 +191,4 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     make install
     cd "$HOME" || exit 1
 
+    pip3 install biopython

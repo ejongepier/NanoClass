@@ -1,1 +1,0 @@
-The accuracy per tool for each sample. For each taxonomic level, accuracy is defined as the proportion of NanoPore reads for which the classification was in aggreement with the majority consensus classification of all tools combined. 

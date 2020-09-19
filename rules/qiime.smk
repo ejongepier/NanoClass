@@ -1,31 +1,3 @@
-rule qiime_download_db:
-    output:
-        ref_tax = "db/qiime/ref-taxonomy.txt",
-        ref_seqs = "db/qiime/ref-seqs.fna"
-    threads: 1
-    resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["qiime"]["dbmemory"]
-    params:
-        url = config["qiime"]["url"]
-    singularity:
-        config["container"]
-    log:
-        "logs/qiime_download_db.log"
-    benchmark:
-        "benchmarks/qiime_download_db.txt"
-    shell:
-        """
-        mkdir -p db/qiime/
-        wget -O db/qiime/db.zip {params.url}
-        unzip -p -j db/qiime/db.zip \
-            */taxonomy/16S_only/99/majority_taxonomy_7_levels.txt \
-            > {output.ref_tax}
-        unzip -p -j db/qiime/db.zip \
-            */rep_set/rep_set_16S_only/99/silva_132_99_16S.fna \
-            > {output.ref_seqs}
-        rm db/qiime/db.zip
-        """
-
 rule qiime_import_query:
     input:
         fasta = rules.prep_fasta_query.output
@@ -50,7 +22,7 @@ rule qiime_import_query:
 
 rule qiime_import_refseq:
     input:
-        "db/qiime/ref-seqs.fna"
+        "db/common/ref-seqs.fna"
     output:
         "db/qiime/ref-seqs.qza"
     threads: 1
@@ -71,7 +43,7 @@ rule qiime_import_refseq:
 
 rule qiime_import_taxonomy:
     input:
-        "db/qiime/ref-taxonomy.txt"
+        "db/common/ref-taxonomy.txt"
     output:
         "db/qiime/ref-taxonomy.qza"
     threads: 1

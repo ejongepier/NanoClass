@@ -208,7 +208,11 @@ class ToMat(object):
                     'Genus' + '\n')
             for taxid in self.get_taxmat_dict():
                 tax = self.get_taxmat_dict()[taxid]
-                f.write(taxid + '\t' + '\t'.join(tax) + '\n')
+                taxlab = re.sub(r'[_NA]*_NA$', '', taxid)
+                taxstr = '\t'.join(tax)
+                taxstr = re.sub(r'[\tNA]*\tNA$', '', taxstr)
+                taxstr = re.sub(r'_', ' ', taxstr)
+                f.write(taxlab + '\t' + taxstr + '\n')
 
 
     def get_otumat_dict(self):
@@ -241,7 +245,8 @@ class ToMat(object):
             f.write('#taxid' + '\t' + self.method + '_' + self.sample + '\n')
             for taxid in self.get_otumat_dict():
                 count = self.get_otumat_dict()[taxid]
-                f.write(taxid + '\t' + str(count) + '\n')
+                taxlab = re.sub(r'[_NA]*_NA$', '', taxid)
+                f.write(taxlab + '\t' + str(count) + '\n')
 
 
 def main(taxlist, bblastlike, centrifugelike, krakenlike, dbtaxonomy, dbfasta, dbmap):

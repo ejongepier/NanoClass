@@ -1,34 +1,6 @@
-rule blastn_download_db:
-    output:
-        ref_tax = "db/blastn/ref-taxonomy.txt",
-        ref_seqs = "db/blastn/ref-seqs.fna"
-    threads: 1
-    resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["blastn"]["dbmemory"]
-    params:
-        url = config["blastn"]["url"]
-    singularity:
-        config["container"]
-    log:
-        "logs/blastn_download_db.log"
-    benchmark:
-        "benchmarks/blastn_download_db.txt"
-    shell:
-        """
-        wget -O db/blastn/db.zip {params.url}
-        unzip -p -j db/blastn/db.zip \
-            */taxonomy/16S_only/99/majority_taxonomy_7_levels.txt \
-            > {output.ref_tax}
-        unzip -p -j db/blastn/db.zip \
-            */rep_set/rep_set_16S_only/99/silva_132_99_16S.fna \
-            > {output.ref_seqs}
-        rm db/blastn/db.zip
-        """
-
-
 rule blastn_build_db:
     input:
-        rules.blastn_download_db.output.ref_seqs
+        "db/common/ref-seqs.fna"
     output:
         touch("db/blastn/DB_BUILD")
     threads: 1
@@ -65,7 +37,7 @@ rule blastn_chunk:
 rule blastn_classify:
     input:
         rules.blastn_build_db.output,
-        db = "db/blastn/ref-seqs.fna",
+        db = "db/common/ref-seqs.fna",
         fasta = "classifications/{run}/blastn/{sample}/{chunk}"
     output:
         all = "classifications/{run}/blastn/{sample}/{chunk}.blastn.tmp",
@@ -120,7 +92,7 @@ rule blastn_aggregate:
 rule blastn_tomat:
     input:
         out = "classifications/{run}/blastn/{sample}.blastn.out",
-        db = "db/blastn/ref-taxonomy.txt"
+        db = "db/common/ref-taxonomy.txt"
     output:
         taxlist = "classifications/{run}/blastn/{sample}.blastn.taxlist",
         taxmat = "classifications/{run}/blastn/{sample}.blastn.taxmat",

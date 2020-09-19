@@ -1,34 +1,6 @@
-rule minimap_download_db:
-    output:
-        ref_tax = "db/minimap/ref-taxonomy.txt",
-        ref_seqs = "db/minimap/ref-seqs.fna"
-    threads: 1
-    resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["minimap"]["dbmemory"]
-    params:
-        url = config["minimap"]["url"]
-    singularity:
-        config["container"]
-    log:
-        "logs/minimap_download_db.log"
-    benchmark:
-        "benchmarks/minimap_download_db.txt"
-    shell:
-        """
-        wget -O db/minimap/db.zip {params.url}
-        unzip -p -j db/minimap/db.zip \
-            */taxonomy/16S_only/99/majority_taxonomy_7_levels.txt \
-            > {output.ref_tax}
-        unzip -p -j db/minimap/db.zip \
-            */rep_set/rep_set_16S_only/99/silva_132_99_16S.fna \
-            > {output.ref_seqs}
-        rm db/minimap/db.zip
-        """
-
-
 rule minimap_classify:
     input:
-        target = rules.minimap_download_db.output.ref_seqs,
+        target = "db/common/ref-seqs.fna",
         query = "data/{run}/nanofilt/{sample}.subsampled.fastq.gz"
     output:
         "classifications/{run}/minimap/{sample}.minimap.bam"
@@ -75,7 +47,7 @@ rule minimap_bam2out:
 rule minimap_tomat:
     input:
         out = "classifications/{run}/minimap/{sample}.minimap.out",
-        db = "db/minimap/ref-taxonomy.txt"
+        db = "db/common/ref-taxonomy.txt"
     output:
         taxlist = "classifications/{run}/minimap/{sample}.minimap.taxlist",
         taxmat = "classifications/{run}/minimap/{sample}.minimap.taxmat",
