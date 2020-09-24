@@ -1,9 +1,10 @@
-#to create containers (sif) from conda enviornments, first link or copy ../envs/*.yml here, make sure there is a name: <env name> line in the yml and build:
-sudo singularity build conda-R4.0.sif Singularity-R4.0
+#to create containers from conda enviornments, first link or copy ../envs/*.yml here, make sure there is a name: <env name> line in the yml and build:
+sudo singularity build R4.0.simg Singularity-R4.0
 
 #to create container (simg) from singularity recipe, just:
-sudo singularity build minion-16S-20200831.simg Singularity-main
-
-#to create container from docker site:
-#sudo singularity build conda-qiime_2.sif docker://qiime2/core:2020.8
-#sudo singularity build conda-mothur_2.sif docker://biocontainers/mothur:v1.41.21-1-deb_cv1
+sudo singularity build spingo.simg Singularity-spingo
+sudo singularity build centrifuge.simg Singularity-centrifuge
+sudo singularity build mapseq.simg Singularity-mapseq
+sudo singularity build kraken.simg Singularity-kraken
+sudo singularity build preprocess.simg Singularity-preprocess
+sudo singularity build common.simg Singularity-common

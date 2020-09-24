@@ -8,8 +8,10 @@ rule prep_porechop:
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["porechop"]["memory"]
     priority: 50
-    singularity:
-        config["container"]
+    conda:
+        config["porechop"]["environment"]
+    #singularity:
+    #    config["porechop"]["container"]
     params:
         check_reads = config["porechop"]["checkreads"]
     log:
@@ -22,8 +24,7 @@ rule prep_porechop:
           --output {output} \
           --threads {threads} \
           --check_reads {params.check_reads} \
-          --discard_middle \
-          --format "fastq.gz" 2> {log}
+          --discard_middle > {log}
         """
 
 rule prep_nanofilt:
@@ -42,13 +43,15 @@ rule prep_nanofilt:
         "logs/prep_nanofilt_{run}_{sample}.log"
     benchmark:
         "benchmarks/prep_nanofilt_{run}_{sample}.txt"
-    singularity:
-        config["container"]
+    conda:
+        config["nanofilt"]["environment"]
+    #singularity:
+    #    config["nanofilt"]["container"]
     shell:
         """
         gzip -d -c {input} | \
-        NanoFilt --length {params.min_len} --maxlength {params.max_len} | \
-        gzip > {output} 2> {log}
+          NanoFilt --length {params.min_len} --maxlength {params.max_len} | \
+          gzip > {output} 2> {log}
         """
 
 rule prep_subsample:
@@ -59,17 +62,15 @@ rule prep_subsample:
     threads: 1
     priority: 50
     params:
-        config["subsample"]["samplesize"]
+        n = config["subsample"]["samplesize"],
+        seed = 12345
     log:
         "logs/prep_subsample_{run}_{sample}.log"
     benchmark:
         "benchmarks/prep_subsample_{run}_{sample}.txt"
-    singularity:
-        config["container"]
-    shell:
-        """
-        seqtk sample {input} {params} | gzip -c > {output}
-        """
+    wrapper:
+        "0.66.0/bio/seqtk/subsample/se"
+
 
 rule prep_fasta_query:
     input:
@@ -78,29 +79,31 @@ rule prep_fasta_query:
         "data/{run}/nanofilt/{sample}.subsampled.fasta"
     threads: 1
     priority: 50
-    singularity:
-        config["container"]
     shell:
-        """
-        zcat {input} | sed -n '1~4s/^@/>/p;2~4p' > {output}
-        """
+        "zcat {input} | sed -n '1~4s/^@/>/p;2~4p' > {output}"
+
 
 rule prep_nanofilt_plot:
     input:
         "data/{run}/nanofilt/{sample}.filtered.fastq.gz"
     output:
-        report("plots/{run}/nanofilt/{sample}.filtered.pdf", caption="../report/fig-nanofilt.rst", category="Read-processing")
+        report("plots/{run}/nanofilt/{sample}.filtered.pdf", 
+               caption="../report/fig-nanofilt.rst", 
+               category="Read-processing"
+              )
     log:
         "logs/prep_nanofilt_plot_{run}_{sample}.log"
     benchmark:
         "benchmarks/prep_nanofilt_plot_{run}_{sample}.txt"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["plot"]["memory"]
+        mem_mb = lambda wildcards, attempt: attempt * config["nanoplot"]["memory"]
     params:
-        downsample = config["plot"]["downsample"]
-    singularity:
-        config["container"]
+        downsample = config["nanoplot"]["downsample"]
+    conda:
+        config["nanoplot"]["environment"]
+    #singularity:
+    #    config["nanoplot"]["container"]
     shell:
         """
         pistis --fastq {input} --output {output} \
@@ -118,14 +121,17 @@ rule prep_nanofilt_stats:
     benchmark:
         "benchmarks/prep_nanofilt_stats_{run}_{sample}.log"
     threads:
-        config["stats"]["threads"]
+        config["nanostats"]["threads"]
     resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["stats"]["memory"]
-    singularity:
-        config["container"]
+        mem_mb = lambda wildcards, attempt: attempt * config["nanostats"]["memory"]
+    conda:
+        config["nanostats"]["environment"]
+    #singularity:
+    #    config["nanostats"]["container"]
     shell:
         """
-        NanoStat --fastq {input} --name {output} --threads {threads} 2> {log}
+        NanoStat --fastq {input} --name {output} \
+          --threads {threads} 2> {log}
         """
 
 

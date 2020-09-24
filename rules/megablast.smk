@@ -8,8 +8,10 @@ rule megablast_build_db:
         "logs/megablast_build_db.log"
     benchmark:
         "benchmarks/megablast_build_db.txt"
-    singularity:
-        config["container"]
+    conda:
+        config["megablast"]["environment"]
+    #singularity:
+    #    config["megablast"]["container"]
     shell:
         """
         makeblastdb -in {input} -parse_seqids \
@@ -42,12 +44,13 @@ rule megablast_classify:
     output:
         all = "classifications/{run}/megablast/{sample}/{chunk}.megablast.tmp",
         bestb = "classifications/{run}/megablast/{sample}/{chunk}.megablast.out"
-    threads:
-        config["megablast"]["threads"]
+    threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["megablast"]["memory"]
-    singularity:
-        config["container"]
+    conda:
+        config["megablast"]["environment"]
+    #singularity:
+    #    config["megablast"]["container"]
     log:
         "logs/megablast_classify_{run}_{sample}_{chunk}.log"
     benchmark:
@@ -79,14 +82,12 @@ rule megablast_aggregate:
         "logs/megablast_aggregate_{run}_{sample}.log"
     benchmark:
         "benchmarks/megablast_aggregate_{run}_{sample}.txt"
-    singularity:
-        config["container"]
     shell:
         """
         cat {input.out} > {output.out}
         cat {input.benchm} | grep -P "^[0-9]" | \
           awk '{{sum+=$1}} END {{print "s"; print sum}}' \
-          > {output.benchm}
+          > {output.benchm} 2> {log}
         """
 
 
@@ -99,13 +100,9 @@ rule megablast_tomat:
         taxmat = "classifications/{run}/megablast/{sample}.megablast.taxmat",
         otumat = "classifications/{run}/megablast/{sample}.megablast.otumat"
     threads: 1
-    singularity:
-        config["container"]
     log:
         "logs/megablast_tomat_{run}_{sample}.log"
     benchmark:
         "benchmarks/megablast_tomat_{run}_{sample}.txt"
     shell:
-        """
-        scripts/tomat.py -b {input.out} -t {input.db}
-        """
+        "scripts/tomat.py -b {input.out} -t {input.db} 2> {log}"

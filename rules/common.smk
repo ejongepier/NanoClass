@@ -5,28 +5,27 @@ rule common_download_db:
         ref_aln = "db/common/ref-seqs.aln"
     threads: 1
     resources:
-        mem_mb = lambda wildcards, attempt: attempt * config["blastn"]["dbmemory"]
+        mem_mb = lambda wildcards, attempt: attempt * config["common"]["dbmemory"]
     params:
-        url = config["dburl"]
-    singularity:
-        config["container"]
+        url = config["common"]["dburl"],
+        ssu = config["common"]["ssu"]
     log:
         "logs/common_download_db.log"
     benchmark:
         "benchmarks/common_download_db.txt"
     shell:
         """
-        wget -O db/common/db.zip {params.url}
-        unzip -p -j db/common/db.zip \
-            */taxonomy/16S_only/97/majority_taxonomy_7_levels.txt \
-            > {output.ref_tax}
-        unzip -p -j db/common/db.zip \
-            */rep_set/rep_set_16S_only/97/silva_*_97_16S.fna \
-            > {output.ref_seqs}
-        unzip -p -j db/common/db.zip \
-            */rep_set_aligned/97/97_alignment.fna.zip | gzip -d \
-            > {output.ref_aln}
-        rm db/common/db.zip
+        wget -q -O db/common/db.zip {params.url}
+        unzip -q -p -j db/common/db.zip \
+            */taxonomy/{params.ssu}_only/99/majority_taxonomy_7_levels.txt \
+            > {output.ref_tax} 2> {log}
+        unzip -q -p -j db/common/db.zip \
+            */rep_set/rep_set_{params.ssu}_only/99/silva_*_99_{params.ssu}.fna \
+            > {output.ref_seqs} 2>> {log}
+        unzip -q -p -j db/common/db.zip \
+            */rep_set_aligned/99/99_alignment.fna.zip | gzip -d \
+            > {output.ref_aln} 2>> {log}
+        rm db/common/db.zip 2>> {log}
         """
 
 rule common_plot_tax:
@@ -45,13 +44,14 @@ rule common_plot_tax:
         "logs/common_plot_tax.log"
     benchmark:
         "benchmarks/common_plot_tax.txt"
-    singularity:
-        config["plot"]["container"]
+    conda:
+        config["common"]["environment"]
+    #singularity:
+    #    config["common"]["container1"]
     shell:
         """
         mkdir -p ./plots
-        export PATH=/opt/conda/envs/R-4.0-conda-only/bin/:$PATH
-        Rscript scripts/barplot.R {input}
+        Rscript scripts/barplot.R {input} 2> {log}
         """
 
 rule common_get_precision:
@@ -68,12 +68,9 @@ rule common_get_precision:
         "logs/common_get_precision.log"
     benchmark:
         "benchmarks/common_get_precision.txt"
-    singularity:
-        config["plot"]["container"]
     shell:
-        """
-        scripts/toconsensus.py -l {input}
-        """
+        "scripts/toconsensus.py -l {input} 2> {log}"
+
 
 rule common_plot_precision:
     input:
@@ -87,13 +84,14 @@ rule common_plot_precision:
         "logs/common_plot_precision.log"
     benchmark:
         "benchmarks/common_plot_precision.txt"
-    singularity:
-        config["plot"]["container"]
+    conda:
+        config["common"]["environment"]
+    #singularity:
+    #    config["common"]["container1"]
     shell:
         """
         mkdir -p ./plots
-        export PATH=/opt/conda/envs/R-4.0-conda-only/bin/:$PATH
-        Rscript scripts/lineplot.R {input}
+        Rscript scripts/lineplot.R {input} 2> {log}
         """
 
 
@@ -110,12 +108,13 @@ rule common_plot_runtime:
         "logs/common_plot_runtime.log"
     benchmark:
         "benchmarks/common_plot_runtime.txt"
-    singularity:
-        config["plot"]["container"]
+    conda:
+        config["common"]["environment"]
+    #singularity:
+    #    config["common"]["container1"]
     shell:
         """
         mkdir -p ./plots
-        export PATH=/opt/conda/envs/R-4.0-conda-only/bin/:$PATH
-        Rscript scripts/timeplot.R {input}
+        Rscript scripts/timeplot.R {input} 2> {log}
         """
 

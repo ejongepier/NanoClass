@@ -13,13 +13,15 @@ rule spingo_build_db:
         "logs/spingo_db.log"
     benchmark:
         "benchmarks/spingo_db.txt"
-    singularity:
-        config["container"]
+    conda:
+        config["spingo"]["environment"]
+    #singularity:
+    #    config["spingo"]["container"]
     shell:
         """
         scripts/todb.py -s {input.seq} -t {input.tax} -m spingo \
-            -S {output.seq} -T {output.tax}
-        spindex -k 8 -p {threads} -d {output.seq}
+            -S {output.seq} -T {output.tax} 2> {log}
+        spindex -k 8 -p {threads} -d {output.seq} 2>> {log}
         """
 
 
@@ -33,8 +35,10 @@ rule spingo_classify:
         config["spingo"]["threads"]
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["spingo"]["memory"]
-    singularity:
-        config["container"]
+    conda:
+        config["spingo"]["environment"]
+    #singularity:
+    #    config["spingo"]["container"]
     log:
         "logs/spingo_classify_{run}_{sample}.log"
     benchmark:
@@ -53,31 +57,6 @@ rule spingo_classify:
         }}' > {output} 2> {log} && rm tmp.out
         """
 
-'''
-rule spingo_taxlist:
-    input:
-        "classifications/{run}/spingo/{sample}.spingo.out"
-    output:
-        "classifications/{run}/spingo/{sample}.spingo.taxlist"
-    threads: 1
-    singularity:
-        config["container"]
-    log:
-        "logs/spingo_taxlist_{run}_{sample}.log"
-    benchmark:
-        "benchmarks/spingo_taxlist_{run}_{sample}.txt"
-    shell:
-        """
-        sed 's/ /\\t/' {input} | \
-        awk -F '\\t' -v OFS='\\t' '{{
-            if (NR == 1) 
-                print "#readid","Domain","Phylum","Class","Order","Family","Genus";
-            else
-                print $1, $4, $6, $8, $10, $12, $14
-        }}' > {output}
-        """
-'''
-
 
 rule spingo_tomat:
     input:
@@ -86,13 +65,9 @@ rule spingo_tomat:
         taxmat = "classifications/{run}/spingo/{sample}.spingo.taxmat",
         otumat = "classifications/{run}/spingo/{sample}.spingo.otumat"
     threads: 1
-    singularity:
-        config["container"]
     log:
         "logs/spingo_tomat_{run}_{sample}.log"
     benchmark:
         "benchmarks/spingo_tomat_{run}_{sample}.txt"
     shell:
-        """
-        scripts/tomat.py -l {input.list}
-        """
+        "scripts/tomat.py -l {input.list} 2> {log}"

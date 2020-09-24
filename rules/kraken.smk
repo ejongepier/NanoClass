@@ -13,12 +13,11 @@ rule kraken_build_db:
         mem_mb = lambda wildcards, attempt: attempt * config["kraken"]["dbmemory"]
     params:
         db = "db/kraken",
-        db_type = config["kraken"]["dbtype"],
-        kmer_len = config["kraken"]["kmerlen"],
-        minimizer_len = config["kraken"]["minimizerlen"],
-        minimizer_spaces = config["kraken"]["minimizerspaces"]
-    singularity:
-        config["container"]
+        db_type = config["kraken"]["dbtype"]
+    conda:
+        config["kraken"]["environment"]
+    #singularity:
+    #    config["kraken"]["container"]
     log:
         "logs/kraken_build_db.log"
     benchmark:
@@ -26,9 +25,7 @@ rule kraken_build_db:
     shell:
         """
         kraken2-build --db {params.db} --special {params.db_type} \
-          --threads {threads} --kmer-len {params.kmer_len} \
-          --minimizer-len {params.minimizer_len} \
-          --minimizer-spaces {params.minimizer_spaces} 2> {log}
+          --threads {threads} > {log} 2> {log}
         """
 
 rule kraken_classify:
@@ -44,8 +41,10 @@ rule kraken_classify:
         mem_mb = lambda wildcards, attempt: attempt * config["kraken"]["memory"]
     params:
         db_dir = "db/kraken"
-    singularity:
-        config["container"]
+    conda:
+        config["kraken"]["environment"]
+    #singularity:
+    #    config["kraken"]["container"]
     log:
         "logs/kraken_classify_{run}_{sample}.log"
     benchmark:
@@ -71,14 +70,13 @@ rule kraken_tomat:
         taxmat = "classifications/{run}/kraken/{sample}.kraken.taxmat",
         otumat = "classifications/{run}/kraken/{sample}.kraken.otumat"
     threads: 1
-    singularity:
-        config["container"]
     log:
         "logs/kraken_tomat_{run}_{sample}.log"
     benchmark:
         "benchmarks/kraken_tomat_{run}_{sample}.txt"
     shell:
         """
-        scripts/tomat.py -k {input.kraken_out} -f {input.silva_seqs} -m {input.kraken_map}
+        scripts/tomat.py -k {input.kraken_out} -f {input.silva_seqs} \
+          -m {input.kraken_map} 2> {log}
         """
 

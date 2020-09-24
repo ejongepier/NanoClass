@@ -3,10 +3,13 @@ Bootstrap: docker
 From: continuumio/miniconda3
 
 %files
-    R4.0-conda-only.yml
+    R4.0.yml
+
+%environment
+    export PATH=/opt/conda/envs/R4.0/bin/:$PATH    
 
 %post
-    /opt/conda/bin/conda env create -f R4.0-conda-only.yml
+    /opt/conda/bin/conda env create -f R4.0.yml
 
 %runscript
-    exec /opt/conda/envs/$(head -n 1 R4.0-conda-only.yml | cut -f 2 -d ' ')/bin/"$@"
+    exec /opt/conda/envs/$(head -n 1 R4.0.yml | cut -f 2 -d ' ')/bin/"$@"

@@ -1,4 +1,4 @@
-name: R-4.0-conda-only
+name: R4.0
 channels:
   - defaults
   - conda-forge
@@ -321,4 +321,5 @@ dependencies:
   - zipp=3.1.0=py_0
   - zlib=1.2.11=h7b6447c_3
   - zstd=1.4.5=h9ceee32_0
-prefix: /home/pier/miniconda3/envs/R-4.0-conda-only
+  - pip:
+    - biopython==1.78

@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 from snakemake.utils import min_version, validate
 
-min_version("5.1.0")
+min_version("5.23.0")
 report: "report/workflow.rst"
 
 # ======================================================
@@ -61,13 +61,10 @@ rule all:
 #        print('Please copy your basecalled fastq files into the "data/{samples.run}/basecalled/" directory.'.format(samples=samples))
 #        print('Make sure it is named "{samples.sample}.passed.fastq" (or "{samples.sample}.passed.fastq.gz" if zipped)"'.format(samples=samples))
 
-#def plot-precision():
-#    if len(config[method]) > 2:
-#        return
 
 onsuccess:
     print("NanoClass finished!")
-    print("Tho generate a report run: snakemake --report report/NanoClass.zip")
+    print("To generate a report run: snakemake --report report/NanoClass.zip")
 
 
 onerror:

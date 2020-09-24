@@ -10,37 +10,38 @@ properties:
         type:                         string
         default:                      "samples.csv"
 
-    container:
-        type:                         string
-        default:                      "containers/minion-16S-20200829.simg"
-
     methods:
         type:                         array
         default:                      ["blastn","centrifuge","idtaxa","kraken","mapseq","megablast","minimap","mothur","qiime","rdp","spingo"]
 
-    dburl:
-        type:                         string
-        default:                      "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
- 
     porechop:
         type:                         object
         properties:
+            environment:
+                type:                 string
+                default:              "../envs/preprocess.yml"
+            container:
+                type:                 string
+                default:              "docker://genomicpariscentre/porechop:0.2.4"
             threads:
                 type:                 number
-                default:              1
+                default:              4
             memory:
                 type:                 number
                 default:              4000
             checkreads:
                 type:                 number
                 default:              25000
-            outputformat:
-                type:                 string
-                default:              "fastq.gz"
 
     nanofilt:
         type:                         object
         properties:
+            environment:
+                type:                 string
+                default:              "../envs/preprocess.yml"
+            container:
+                type:                 string
+                default:              "docker://robertherczeg/nanofilt"
             memory:
                 type:                 number
                 default:              4000
@@ -58,38 +59,69 @@ properties:
                 type:                 number
                 default:              10000
 
-    stats:
+    nanostats:
         type:                         object
         properties:
+            environment:
+                type:                 string
+                default:              "../envs/preprocess.yml"
+            container:
+                type:                 string
+                default:              "containers/preprocess.simg"
             memory:
                 type:                 number
                 default:              4000
             threads:
                 type:                 number
-                default:              1
+                default:              2
 
-    plot:
+    nanoplot:
         type:                         object
         properties:
+            environment:
+                type:                 string
+                default:              "../envs/preprocess.yml"
+            container:
+                type:                 string
+                default:              "containers/preprocess.simg"
             memory:
                 type:                 number
                 default:              4000
             downsample:
                 type:                 number
                 default:              0
-            container:
+
+    common:
+        type:                         object
+        properties:
+            environment:
                 type:                 string
-                default:              "containers/conda-R4.0.sif"
+                default:              "../envs/R4.0.yml"
+            container1:
+                type:                 string
+                default:              "containers/R4.0.simg"
+            container2:
+                type:                 string
+                default:              "containers/common.simg"
+            dburl:
+                type:                 string
+                default:              "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
+            ssu:
+                type:                 string
+                default:              "16S"
+            dbmemory:
+                type:                 number
+                default:              4000
 
     blastn:
         type:                         object
         properties:
-            dbmemory:
-                type:                 number
-                default:              3000
-            threads:
-                type:                 number
-                default:              1
+            environment:
+                type:                 string
+                default:              "../envs/blast.yml"
+            container:
+                type:                 string
+                default:              "docker://ncbi/blast:2.10.1"
             memory:
                 type:                 number
                 default:              4000
@@ -100,15 +132,21 @@ properties:
     centrifuge:
         type:                         object
         properties:
-            dbthreads:
-                type:                 number
-                default:              1
-            dbmemory:
-                type:                 number
-                default:              4000
+            environment:
+                type:                 string
+                default:              "../envs/centrifuge.yml"
+            container:
+                type:                 string
+                default:              "containers/centrifuge.simg"
             taxmapurl:
                 type:                 string
                 default:              "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/taxonomy/taxmap_embl_ssu_ref_nr99_132.txt.gz"
+            dbthreads:
+                type:                 number
+                default:              4
+            dbmemory:
+                type:                 number
+                default:              4000
             threads:
                 type:                 number
                 default:              1
@@ -119,9 +157,12 @@ properties:
     idtaxa:
         type:                         object
         properties:
+            environment:
+                type:                 string
+                default:              "../envs/R4.0.yml"
             container:
                 type:                 string
-                default:              "containers/conda-R4.0.sif"
+                default:              "containers/R4.0.simg"
             dbmemory:
                 type:                 number
                 default:              3000
@@ -135,24 +176,21 @@ properties:
     kraken:
         type:                         object
         properties:
-            dbthreads:
-                type:                 number
-                default:              1
-            dbmemory:
-                type:                 number
-                default:              1000
+            environment:
+                type:                 string
+                default:              "../envs/kraken2.yml"
+            container:
+                type:                 string
+                default:              "containers/kraken.simg"
             dbtype:
                 type:                 string
                 default:              "silva"
-            kmerlen:
+            dbthreads:
                 type:                 number
-                default:              21
-            minimizerlen:
+                default:              8
+            dbmemory:
                 type:                 number
-                default:              17
-            minimizerspaces:
-                type:                 number
-                default:              4
+                default:              1000
             threads:
                 type:                 number
                 default:              1
@@ -163,9 +201,9 @@ properties:
     mapseq:
         type:                         object
         properties:
-            dbmemory:
-                type:                 number
-                default:              3000
+            container:
+                type:                 string
+                default:              "containers/mapseq.simg"
             memory:
                 type:                 number
                 default:              1000
@@ -176,22 +214,28 @@ properties:
     megablast:
         type:                         object
         properties:
-            dbmemory:
-                type:                 number
-                default:              3000
-            memory:
-                type:                 number
-                default:              1000
+            environment:
+                type:                 string
+                default:              "../envs/blast.yml"
+            container:                     
+                type:                 string                     
+                default:              "docker://ncbi/blast:2.10.1"
             threads:
                 type:                 number
                 default:              1
             chunksize:
                 type:                 number
-                default:              100
+                default:              1000
 
     minimap:
         type:                         object
         properties:
+            environment:
+                type:                 string
+                default:              "../envs/minimap2.yml"
+            container:
+                type:                 string
+                default:              "docker://evolbioinfo/minimap2:v2.17"
             dbmemory:
                 type:                 number
                 default:              3000
@@ -206,15 +250,18 @@ properties:
     mothur:
         type:                         object
         properties:
-            dbmemory:
-                type:                 number
-                default:              5000
+            environment:
+                type:                 string
+                default:              "../envs/mothur.yml"
             container:
                 type:                 string
                 default:              "docker://biocontainers/mothur:v1.41.21-1-deb_cv1"
+            dbmemory:
+                type:                 number
+                default:              5000
             threads:
                 type:                 number
-                default:              1
+                default:              8
             memory:
                 type:                 number
                 default:              1000
@@ -223,6 +270,9 @@ properties:
     qiime:
         type:                         object
         properties:
+            environment:
+                type:                 string
+                default:              "../envs/qiime2.yml"
             container:
                 type:                 string
                 default:              "docker://qiime2/core:2020.8"
@@ -239,9 +289,12 @@ properties:
     rdp:
         type:                         object
         properties:
+            environment:
+                type:                 string
+                default:              "../envs/R4.0.yml"
             container:
                 type:                 string
-                default:              "containers/conda-R4.0.sif"
+                default:              "containers/R4.0.simg"
             dbmemory:
                 type:                 number
                 default:              75000
@@ -255,6 +308,12 @@ properties:
     spingo:
         type:                         object
         properties:
+            environment:
+                type:                 string
+                default:              "../envs/spingo.yml"
+            container:
+                type:                 string
+                default:              "containers/spingo.simg"
             dbthreads:
                 type:                 number
                 default:              16

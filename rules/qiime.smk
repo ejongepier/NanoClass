@@ -5,8 +5,10 @@ rule qiime_import_query:
         "classifications/{run}/qiime/{sample}.seqs.qza"
     threads:
         1
-    singularity:
-        config["qiime"]["container"]
+    conda:
+        config["qiime"]["environment"]
+    #singularity:
+    #    config["qiime"]["container"]
     log:
         "logs/qiime_import_query_{run}_{sample}.log"
     benchmark:
@@ -26,8 +28,10 @@ rule qiime_import_refseq:
     output:
         "db/qiime/ref-seqs.qza"
     threads: 1
-    singularity:
-        config["qiime"]["container"]
+    conda:
+        config["qiime"]["environment"]
+    #singularity:
+    #    config["qiime"]["container"]
     log:
         "logs/qiime_import_refseq.log"
     benchmark:
@@ -47,8 +51,10 @@ rule qiime_import_taxonomy:
     output:
         "db/qiime/ref-taxonomy.qza"
     threads: 1
-    singularity:
-        config["qiime"]["container"]
+    conda:
+        config["qiime"]["environment"]
+    #singularity:
+    #    config["qiime"]["container"]
     log:
         "logs/qiime_import_taxonomy.log"
     benchmark:   
@@ -74,8 +80,10 @@ rule qiime_classify:
         out = "classifications/{run}/qiime/{sample}.qiime.out"
     threads:
         config["qiime"]["threads"]
-    singularity:
-        config["qiime"]["container"]
+    conda:
+        config["qiime"]["environment"]
+    #singularity:
+    #    config["qiime"]["container"]
     log:
         "logs/qiime_classify_{run}_{sample}.log"
     benchmark:
@@ -92,8 +100,8 @@ rule qiime_classify:
             2>&1 | tee -a {log}
         qiime tools export \
             --input-path {output.qza} \
-            --output-path {output.path}
-        mv {output.path}/taxonomy.tsv {output.out}
+            --output-path {output.path} 2>&1 | tee -a {log}
+        mv {output.path}/taxonomy.tsv {output.out} 2>> {log}
         """
 
 
@@ -103,8 +111,6 @@ rule qiime_taxlist:
     output:
         "classifications/{run}/qiime/{sample}.qiime.taxlist"
     threads: 1
-    singularity:
-        config["container"]
     log:
         "logs/qiime_tomat_{run}_{sample}.log"
     benchmark:
@@ -117,7 +123,7 @@ rule qiime_taxlist:
                 print "#readid","Domain","Phylum","Class","Order","Family","Genus";
             else
                  print $1, $2, $3, $4, $5, $6, $7 \
-        }}' | sed "s/D_[[:digit:]]__//g" > {output}
+        }}' | sed "s/D_[[:digit:]]__//g" > {output} 2> {log}
         """
 
 rule qiime_tomat:
@@ -127,14 +133,10 @@ rule qiime_tomat:
         taxmat = "classifications/{run}/qiime/{sample}.qiime.taxmat",
         otumat = "classifications/{run}/qiime/{sample}.qiime.otumat"
     threads: 1
-    singularity:
-        config["container"]
     log:
         "logs/qiime_tomat_{run}_{sample}.log"
     benchmark:
         "benchmarks/qiime_tomat_{run}_{sample}.txt"
     shell:
-        """
-        scripts/tomat.py -l {input.list}
-        """
+        "scripts/tomat.py -l {input.list} 2> {log}"
 

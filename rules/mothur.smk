@@ -12,12 +12,14 @@ rule mothur_build_db:
         "logs/mothur_build_db.log"
     benchmark:
         "benchmarks/mothur_build_db.txt"
-    singularity:
-        config["container"]
+    conda:
+        config["mothur"]["environment"]
+    #singularity:
+    #    config["common"]["container2"]
     shell:
         """
         scripts/todb.py -s {input.aln} -t {input.tax} -m mothur \
-            -S {output.aln} -T {output.tax}
+            -S {output.aln} -T {output.tax} 2> {log}
         """
 
 rule mothur_classify:
@@ -33,8 +35,10 @@ rule mothur_classify:
         config["mothur"]["threads"]
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["mothur"]["memory"]
-    singularity:
-        config["mothur"]["container"]
+    conda:
+        config["mothur"]["environment"]
+    #singularity:
+    #    config["mothur"]["container"]
     log:
         "logs/mothur_classify_{run}_{sample}.log"
     benchmark:
@@ -46,8 +50,9 @@ rule mothur_classify:
         alnf=$(basename {input.aln})
         echo \"align.seqs(candidate={output.dir}/$queryf, template={output.dir}/$alnf, \
             processors={threads}, ksize=6, align=needleman)\" > {output.dir}/mothur.cmd
-        mothur {output.dir}/mothur.cmd
-        awk -F '\\t' -v OFS='\\t' '{{if (NR==1) printf "%s","#"; print $1, $3}}' {output.dir}/{params.file} > {output.out} 
+        mothur {output.dir}/mothur.cmd 2> {log}
+        awk -F '\\t' -v OFS='\\t' '{{if (NR==1) printf "%s","#"; print $1, $3}}' \
+          {output.dir}/{params.file} > {output.out} 2>> {log} 
         """
 
 
@@ -60,13 +65,9 @@ rule mothur_tomat:
         taxmat = "classifications/{run}/mothur/{sample}.mothur.taxmat",
         otumat = "classifications/{run}/mothur/{sample}.mothur.otumat"
     threads: 1
-    singularity:
-        config["container"]
     log:
         "logs/mothur_tomat_{run}_{sample}.log"
     benchmark:
         "benchmarks/mothur_tomat_{run}_{sample}.txt"
     shell:
-        """
-        scripts/tomat.py -b {input.out} -t {input.tax}
-        """
+        "scripts/tomat.py -b {input.out} -t {input.tax} 2> {log}"

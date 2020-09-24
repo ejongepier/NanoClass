@@ -5,17 +5,18 @@ rule idtaxa_build_db:
     output:
         "db/idtaxa/ref-db.Rdata"
     threads: 1
-    singularity:
-        config["idtaxa"]["container"]
+    resources:
+        mem_mb = lambda wildcards, attempt: attempt * config["idtaxa"]["dbmemory"]
+    conda:
+        config["idtaxa"]["environment"]
+    #singularity:
+    #    config["idtaxa"]["container"]
     log:
         "logs/idtaxa_learn_taxa.log"
     benchmark:
         "benchmarks/idtaxa_learn_taxa.txt"
     shell:
-        """
-        export PATH=/opt/conda/envs/R-4.0-conda-only/bin/:$PATH
-        Rscript scripts/learntaxa.R {input.ref_seqs} {input.ref_tax} {output}
-        """
+        "Rscript scripts/learntaxa.R {input.ref_seqs} {input.ref_tax} {output} 2> {log}"
 
 
 rule idtaxa_classify:
@@ -28,17 +29,17 @@ rule idtaxa_classify:
         config["idtaxa"]["threads"]
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["idtaxa"]["memory"]
-    singularity:
-        config["idtaxa"]["container"]
+    conda:
+        config["idtaxa"]["environment"]
+    #singularity:
+    #    config["idtaxa"]["container"]
     log:
         "logs/idtaxa_classify_{run}_{sample}.log"
     benchmark:
         "benchmarks/idtaxa_classify_{run}_{sample}.txt"
     shell:
-        """
-        export PATH=/opt/conda/envs/R-4.0-conda-only/bin/:$PATH
-        Rscript scripts/idtaxa.R {input.db} {input.query} {output} {threads}
-        """
+        "Rscript scripts/idtaxa.R {input.db} {input.query} {output} {threads} 2> {log}"
+
 
 rule idtaxa_tomat:
     input:
@@ -47,14 +48,10 @@ rule idtaxa_tomat:
         taxmat = "classifications/{run}/idtaxa/{sample}.idtaxa.taxmat",
         otumat = "classifications/{run}/idtaxa/{sample}.idtaxa.otumat"
     threads: 1
-    singularity:
-        config["container"]
     log:
         "logs/idtaxa_tomat_{run}_{sample}.log"
     benchmark:
         "benchmarks/idtaxa_tomat_{run}_{sample}.txt"
     shell:
-        """
-        scripts/tomat.py -l {input.list}
-        """
+        "scripts/tomat.py -l {input.list} 2> {log}"
 

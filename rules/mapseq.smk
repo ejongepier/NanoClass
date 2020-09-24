@@ -10,16 +10,15 @@ rule mapseq_classify:
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["mapseq"]["memory"]
     singularity:
-        config["container"]
+        config["mapseq"]["container"]
     log:
         "logs/mapseq_classify_{run}_{sample}.log"
     benchmark:
         "benchmarks/mapseq_classify_{run}_{sample}.txt"
     shell:
         """
-        export LD_LIBRARY_PATH="/usr/local/lib"
-        mapseq -nthreads {threads} {input.query} {input.ref_seqs} {input.ref_tax} \
-            > {output} 2> {log}
+        mapseq -nthreads {threads} {input.query} {input.ref_seqs} \
+           {input.ref_tax}  > {output} 2> {log}
         """
 
 rule mapseq_tomat:
@@ -31,14 +30,10 @@ rule mapseq_tomat:
         taxmat = "classifications/{run}/mapseq/{sample}.mapseq.taxmat",
         otumat = "classifications/{run}/mapseq/{sample}.mapseq.otumat"
     threads: 1
-    singularity:
-        config["container"]
     log:
         "logs/mapseq_tomat_{run}_{sample}.log"
     benchmark:
         "benchmarks/mapseq_tomat_{run}_{sample}.txt"
     shell:
-        """
-        scripts/tomat.py -b {input.out} -t {input.db}
-        """
+        "scripts/tomat.py -b {input.out} -t {input.db} 2> {log}"
 

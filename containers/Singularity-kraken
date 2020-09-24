@@ -1,0 +1,33 @@
+Bootstrap: debootstrap
+OSVersion: bionic
+MirrorURL: http://us.archive.ubuntu.com/ubuntu/
+
+%environment
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+
+%post
+    apt update
+    apt install -y software-properties-common
+    apt-add-repository universe
+    apt update
+    apt install -y git wget build-essential unzip
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    {
+        echo "export PATH=/usr/local:/usr/local/bin:/usr/local/lib:$PATH"
+        echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
+    } >> "$SINGULARITY_ENVIRONMENT"
+
+
+    # ================================
+    # INSTALL kraken2
+    # ================================
+    apt install -y rsync
+    URL=https://github.com/mbhall88/kraken2.git
+    cd /usr/local || exit 1
+    git clone "$URL"
+    cd kraken2 || exit 1
+    bash install_kraken2.sh ../bin/
+    cd "$HOME" || exit 1

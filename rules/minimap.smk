@@ -3,13 +3,15 @@ rule minimap_classify:
         target = "db/common/ref-seqs.fna",
         query = "data/{run}/nanofilt/{sample}.subsampled.fastq.gz"
     output:
-        "classifications/{run}/minimap/{sample}.minimap.bam"
+        temp("classifications/{run}/minimap/{sample}.minimap.bam")
     threads: 
         config["minimap"]["threads"]
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["minimap"]["memory"]
-    singularity:
-        config["container"]
+    conda:
+        config["minimap"]["environment"]
+    #singularity:
+    #    config["minimap"]["container"]
     params:
         extra = "-K 25M --no-kalloc --print-qname -aLx map-ont"
     log:
@@ -18,31 +20,31 @@ rule minimap_classify:
         "benchmarks/minimap_classify_{run}_{sample}.txt"
     shell:
         """
-        minimap2 {params.extra} -t {threads} {input.target} {input.query} | \
-            samtools sort -@{threads} -o {output} - 2> {log}
+        minimap2 {params.extra} -t {threads} {input.target} \
+          {input.query} -o {output} 2> {log}
         """
-
 
 rule minimap_bam2out:
     input:
         "classifications/{run}/minimap/{sample}.minimap.bam"
     output:
         "classifications/{run}/minimap/{sample}.minimap.out"
-    singularity:
-        config["container"]
-    threads: 1
-    params:
-       "-F 2308"
+    threads:
+        config["minimap"]["threads"]
+    conda:
+        config["minimap"]["environment"]
+    #singularity:
+    #    config["common"]["container2"]
     log:
-        "logs/minimap_bam2out_{run}_{sample}.log"
+        "logs/minimap_sortbam_{run}_{sample}.log"
     benchmark:
-        "benchmarks/minimap_bam2out_{run}_{sample}.txt"
+        "benchmarks/minimap_sortbam_{run}_{sample}.txt"
     shell:
         """
-        samtools view {params} {input} | \
-        cut -f 1,3 > {output}
+        samtools sort -@ {threads} {input} | \
+        samtools view -@ {threads} -F 2308 | \
+        cut -f 1,3 > {output} 2> {log}
         """
-
 
 rule minimap_tomat:
     input:
@@ -52,14 +54,10 @@ rule minimap_tomat:
         taxlist = "classifications/{run}/minimap/{sample}.minimap.taxlist",
         taxmat = "classifications/{run}/minimap/{sample}.minimap.taxmat",
         otumat = "classifications/{run}/minimap/{sample}.minimap.otumat"
-    singularity:
-        config["container"]
     threads: 1
     log:
         "logs/minimap_tomat_{run}_{sample}.log"
     benchmark:
         "benchmarks/minimap_tomat_{run}_{sample}.txt"
     shell:
-        """
-        scripts/tomat.py -b {input.out} -t {input.db}
-        """
+        "scripts/tomat.py -b {input.out} -t {input.db} 2> {log}"

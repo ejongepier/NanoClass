@@ -13,8 +13,10 @@ rule centrifuge_get_db:
         mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["dbmemory"]
     params:
         url = config["centrifuge"]["taxmapurl"]
-    singularity:
-        config["container"]
+    #singularity:
+    #    config["centrifuge"]["container"]
+    conda:
+        config["centrifuge"]["environment"]
     log:
         "logs/centrifuge_get_db.log"
     benchmark:
@@ -22,11 +24,11 @@ rule centrifuge_get_db:
     shell:
         """
         centrifuge-download -o db/centrifuge/taxonomy taxonomy 2> {log}
-        wget {params.url} -O - | gzip -d -c - | \
+        wget {params.url} -q -O - | gzip -d -c - | \
             awk '{{print $1\".\"$2\".\"$3\"\t\"$(NF)}}' \
-            > {output.tax_map} 2> {log}
+            > {output.tax_map} 2>> {log}
         scripts/todb.py -s {input.seq} -t {input.tax} -m centrifuge \
-            -S {output.ref_seqs} -T {output.ref_tax}
+            -S {output.ref_seqs} -T {output.ref_tax} 2>> {log}
         """
 
 
@@ -44,8 +46,10 @@ rule centrifuge_build_db:
         mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["dbmemory"]
     params:
         prefix = "db/centrifuge/ref-db"
-    singularity:
-        config["container"]
+    #singularity:
+    #    config["centrifuge"]["container"]
+    conda:
+        config["centrifuge"]["environment"]
     log:
         "logs/centrifuge_build_db.log"
     benchmark:
@@ -58,7 +62,7 @@ rule centrifuge_build_db:
           --taxonomy-tree {input.tax_tree} \
           --name-table {input.name_table} \
           {input.ref_seqs} \
-          {params.prefix} 2> {log}
+          {params.prefix} > {log}
         """
 
 
@@ -76,8 +80,10 @@ rule centrifuge_classify:
         mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["memory"]
     params:
         index_prefix = "db/centrifuge/ref-db"
-    singularity:
-        config["container"]
+    conda:
+        config["centrifuge"]["environment"]
+    #singularity:
+    #    config["centrifuge"]["container"]
     log:
         "logs/centrifuge_classify_{run}_{sample}.log"
     benchmark:
@@ -89,7 +95,7 @@ rule centrifuge_classify:
           --threads {threads} \
           --report-file {output.report} \
           -S  {output.classification} \
-          --met-stderr 2> {log}
+          --met-stderr > {log}
         """
 
 
@@ -102,14 +108,10 @@ rule centrifuge_tomat:
         taxmat = "classifications/{run}/centrifuge/{sample}.centrifuge.taxmat",
         otumat = "classifications/{run}/centrifuge/{sample}.centrifuge.otumat"
     threads: 1
-    singularity:
-        config["container"]
     log:
         "logs/centrifuge_tomat_{run}_{sample}.log"
     benchmark:
         "benchmarks/centrifuge_tomat_{run}_{sample}.txt"
     shell:
-        """
-        scripts/tomat.py -c {input.out} -f {input.ref_seqs}
-        """
+        "scripts/tomat.py -c {input.out} -f {input.ref_seqs} 2> {log}"
 
