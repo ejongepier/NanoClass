@@ -1,47 +1,41 @@
-Bootstrap: debootstrap
-OSVersion: bionic
-MirrorURL: http://us.archive.ubuntu.com/ubuntu/
+BootStrap: docker
+From: ubuntu:latest
 
-%environment
-    export LC_ALL=C.UTF-8
-    export LANG=C.UTF-8
-    export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+%pre
+    apt-get install -y debootstrap
 
 %post
-%post
-    apt update
-    apt install -y software-properties-common
+    apt-get update
+    apt-get install -y software-properties-common
     apt-add-repository universe
-    apt update
-    apt install -y git wget build-essential unzip
+    apt-get update
 
-#    apt-get install -y python3-setuptools \
-#        python3-pkg-resources \
-#        python3-distutils \
-#        python3-lib2to3
-#    apt install -y libidn11-dev
-    apt-get -y install autoconf automake zlib1g-dev libbz2-dev liblzma-dev libcurl4-gnutls-dev libssl-dev libncurses5-dev
+    apt-get install -y build-essential
+    apt-get install -y git
+    apt-get install -y wget
+    apt-get install -y subversion
+    apt-get install -y unzip 
+    apt-get install -y autoconf
+    apt-get install -y automake
+    apt-get install -y libtool
+    apt-get install -y zlib1g-dev
+    apt-get install -y libbz2-dev
+    apt-get install -y liblzma-dev
+    apt-get install -y libcurl4-gnutls-dev
+    apt-get install -y libssl-dev
+    apt-get install -y libncurses5-dev
 
-
-    export LC_ALL=C.UTF-8
-    export LANG=C.UTF-8
-    {
-        echo "export PATH=/usr/local:/usr/local/bin:/usr/local/lib:$PATH"
-        echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH"
-    } >> "$SINGULARITY_ENVIRONMENT"
-
-
-    # ================================
-    # INSTALL mapseq
-    # ================================
-    VERSION="v1.2.6"
-    apt-get install -y build-essential wget subversion git libncurses5-dev libtool automake autoconf
     git clone https://github.com/jfmrod/MAPseq.git
     cd MAPseq || exit 1
-    git checkout "$VERSION"
+    git checkout "v1.2.6"
     ./setup.sh
     ./bootstrap
     ./configure
     make
     make install
     cd "$HOME" || exit 1
+
+%environment
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"

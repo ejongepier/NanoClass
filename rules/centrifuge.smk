@@ -95,7 +95,7 @@ rule centrifuge_classify:
           --threads {threads} \
           --report-file {output.report} \
           -S  {output.classification} \
-          --met-stderr > {log}
+          --met-stderr 2> {log}
         """
 
 

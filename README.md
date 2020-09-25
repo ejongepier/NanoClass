@@ -2,24 +2,24 @@
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥5.7.4-brightgreen.svg)](https://snakemake.bitbucket.io)
 
-NanoClass is a taxonomic meta-classification tool for 16S amplicon sequencing data generated with the Nanopore MiniION.
-With a single command, the user can choose to run eleven popular tools on multiple samples in parallel.
-These include `blastn`, `centrifuge`, `kraken2`, `idtaxa`, `mapseq` ,`megablast` , `minimap2`, `mothur`, `qiime2`, `rdp` and `spingo`.
+NanoClass is a taxonomic meta-classification tool for 16S/18S amplicon sequencing data generated with the Nanopore MiniION.
+With a single command, you can run up to eleven popular classification tools on multiple samples in parallel.
+These include BLASTN, Centrifuge, Kraken2, IDTAXA, MAPseq, MegaBLAST, Minimap2, Mothur, QIIME2, RDP and SPINGO.
 Optional read preparation steps, such as demultiplexing, adaptor trimming, length filtering and sub-sampling, are an integral part of the pipeline.
+In addition to taxonomic barplots, NanoClass computes and vizualizes precision and runtime to compare the performance of each taxonomic classification tool on your data.
 
-Thus a single command installs all necessary software packages and dependencies, downloads and builds all required databases and runs the pipeline on the user's samples.
+NanoClass automatically installs all software packages and dependencies, downloads and builds required taxonomic databases and runs the analysis on your samples.
 
 ## Getting started
 
 ### Requirements
 
-NanoClass can be run on a desktop computer. 
-All classification tools implemented in NanoClass will run in a matter of minutes to hours, with the exception of `qiime2`.
+NanoClass can be run on a powerfull desktop computer. All classification tools implemented in NanoClass will run in a matter of minutes to hours, with the exception of QIIME2.
+Prerequisites are [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html), [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) 
+and [Singularity](https://singularity.lbl.gov/). The latter two can be conveniently installed using the included recipe (see NanoClass/envs/README.md).
 
-NanoClass is implemented in [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) 
-and used the [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html) package manager.
-
-The NanoClass-snakemake pipeline automatically installs all necessary software packages and dependencies.
+NanoClass automatically installs all other software packages and dependencies, with the exception of MAPseq as it is not implemented in conda.
+To facilitate the use of MAPseq, you can easily build it from included singularity recipe (see NanoClass/containers/README.md). 
 
 ### Installation
 
@@ -27,10 +27,7 @@ You can either clone NanoClass, like so:
 
     git clone https://github.com/ejongepier/NanoClass
 
-Or download and unpack the ZIP from https://github.com/ejongepier/NanoClass, e.g.:
-
-    wget -O NanoClass.zip https://github.com/ejongepier/NanoClass/archive/master.zip
-    unzip NanoClass.zip
+Or download and extract the zip archive from https://github.com/ejongepier/NanoClass.
 
 NanoClass is immediately ready for use.
 
@@ -38,19 +35,20 @@ NanoClass is immediately ready for use.
 
 ### Quick start
 
-You only need to copy the Nanopore MiniION fastq or fastq.gz files to the input directory.
-and make sure the samples.tsv file contains a comma separated table with run_id,sample_id,barcode.
+Copy your Nanopore MinION sequencing files to path: NanoClass/data/<runID>/basecalled/<sampleID>.passed.fastq.gz,
+where <runID> and <sampleID> are the labels you should provide in the file NanoClass/samples.csv as a comma separated table with runID,sampleID,barcode.
 
 The entire pipeline can then be run with a single command:
 
-    snakemake --use-conda --cores <number of cores>
+    snakemake --use-conda --cores <ncores>
+
+Where `--cores` are the number of CPU cores/jobs that can be run in parallel on your system.
 
 ### Customizing
 
-You can opt to customize the pipeline through the config.yaml.
-e.g. by running only a subset of the 11 classsification tools by modifying the config.yaml,
-or by changing the default 16S Silva v 132 database.  
-
+You can opt to customize the pipeline through the config.yaml,
+e.g. by running only a subset of the 11 classsification tools or by changing the default Silva 16S taxonomic database.  
+For details on how to customize NanoClass, see the Documentation.
 
 ### Report
 
@@ -80,13 +78,13 @@ After successful execution, you can create an interactive HTML report with:
 - [x] Initiate git version control
 - [x] Write README.md
 - [x] Push to git
+- [x] Remove redundance / increase consistency of db use.
+- [x] Compartmentalize environments / containers
+- [x] Replace non-conda programs in singularity container
 - [ ] Implement optional comparison to known composition of samples from mock communities.
 - [ ] Benchmark, optimize resource allocation
 - [ ] Write documentation and import in read the docs.
-- [ ] Remove redundance / increase consistency of db use.
 - [ ] Implement use of alternative db such as 18S, ITS, NCBI COI, ...
-- [ ] Compartmentalize environments / containers
-- [ ] Replace non-conda programs in singularity container
 
 
 ## Advanced

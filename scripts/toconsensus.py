@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
-__author__ = "Evelien Jongier"
+__author__ = "Evelien Jongepier"
 __copyright__ = "Copyright 2020, Evelien Jongepier"
 __email__ = "e.jongepier@uva.nl"
 __license__ = "MIT"
