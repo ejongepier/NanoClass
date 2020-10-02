@@ -141,6 +141,9 @@ properties:
             taxmapurl:
                 type:                 string
                 default:              "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/taxonomy/taxmap_embl_ssu_ref_nr99_132.txt.gz"
+            sequrl:
+                type:                 string
+                default:              "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/SILVA_132_SSURef_Nr99_tax_silva.fasta.gz"
             dbthreads:
                 type:                 number
                 default:              4

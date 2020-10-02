@@ -12,7 +12,7 @@ rule centrifuge_get_db:
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["dbmemory"]
     params:
-        url = config["centrifuge"]["taxmapurl"]
+        map_url = config["centrifuge"]["taxmapurl"]
     #singularity:
     #    config["centrifuge"]["container"]
     conda:
@@ -23,20 +23,26 @@ rule centrifuge_get_db:
         "benchmarks/centrifuge_get_db.txt"
     shell:
         """
-        centrifuge-download -o db/centrifuge/taxonomy taxonomy 2> {log}
-        wget {params.url} -q -O - | gzip -d -c - | \
+        centrifuge-download -o db/centrifuge/taxonomy taxonomy > {log} 2>&1
+        wget {params.map_url} -q -O - | gzip -d -c - | \
             awk '{{print $1\".\"$2\".\"$3\"\t\"$(NF)}}' \
             > {output.tax_map} 2>> {log}
         scripts/todb.py -s {input.seq} -t {input.tax} -m centrifuge \
             -S {output.ref_seqs} -T {output.ref_tax} 2>> {log}
         """
 
+#wget {params.seq_url} -q -O - | gzip -d -c - | sed -e /^>/!y/U/T > {output.ref_seqs} 2>> {log}
 
 rule centrifuge_build_db:
     input:
+        ## the approach using kraken db only classifies 10% of reads
+        #name_table = "db/kraken/taxonomy/names.dmp",
+        #tax_tree = "db/kraken/taxonomy/nodes.dmp",
+        #conversion_table = "db/kraken/seqid2taxid.map",
+        #ref_seqs = "db/kraken/data/SILVA_132_SSURef_Nr99_tax_silva.fasta"
         name_table = "db/centrifuge/taxonomy/names.dmp",
         tax_tree = "db/centrifuge/taxonomy/nodes.dmp",
-        tax_map = "db/centrifuge/ref-tax.map",
+        conversion_table = "db/centrifuge/ref-tax.map",
         ref_seqs = "db/centrifuge/ref-seqs.fna"
     output:
         touch("db/centrifuge/CENTRIFUGE_DB_BUILD")
@@ -58,11 +64,10 @@ rule centrifuge_build_db:
         """
         centrifuge-build \
           --threads {threads} \
-          --conversion-table {input.tax_map} \
+          --conversion-table {input.conversion_table} \
           --taxonomy-tree {input.tax_tree} \
           --name-table {input.name_table} \
-          {input.ref_seqs} \
-          {params.prefix} > {log}
+          {input.ref_seqs} {params.prefix} > {log} 2>&1
         """
 
 
@@ -71,6 +76,7 @@ rule centrifuge_classify:
         rules.centrifuge_build_db.output,
         fastq = "data/{run}/nanofilt/{sample}.subsampled.fastq.gz",
         ref_seqs = "db/centrifuge/ref-seqs.fna"
+        #ref_seqs = "db/kraken/data/SILVA_132_SSURef_Nr99_tax_silva.fasta"
     output:
         report = temp("classifications/{run}/centrifuge/{sample}.report.tsv"),
         classification = "classifications/{run}/centrifuge/{sample}.centrifuge.out",
@@ -95,7 +101,7 @@ rule centrifuge_classify:
           --threads {threads} \
           --report-file {output.report} \
           -S  {output.classification} \
-          --met-stderr 2> {log}
+          --met-stderr > {log} 2>&1
         """
 
 
@@ -103,6 +109,7 @@ rule centrifuge_tomat:
     input:
         out = "classifications/{run}/centrifuge/{sample}.centrifuge.out",
         ref_seqs = "db/centrifuge/ref-seqs.fna"
+        #ref_seqs = "db/kraken/data/SILVA_132_SSURef_Nr99_tax_silva.fasta"
     output:
         taxlist = "classifications/{run}/centrifuge/{sample}.centrifuge.taxlist",
         taxmat = "classifications/{run}/centrifuge/{sample}.centrifuge.taxmat",
@@ -114,4 +121,3 @@ rule centrifuge_tomat:
         "benchmarks/centrifuge_tomat_{run}_{sample}.txt"
     shell:
         "scripts/tomat.py -c {input.out} -f {input.ref_seqs} 2> {log}"
-

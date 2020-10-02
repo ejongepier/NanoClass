@@ -1,5 +1,5 @@
 samples:                           "samples.csv"
-methods:                           ["blastn","centrifuge","kraken","idtaxa","megablast","mapseq","minimap","mothur","qiime","rdp","spingo"]
+methods:                           ["centrifuge"]#["blastn","centrifuge","kraken","idtaxa","megablast","mapseq","minimap","mothur","qiime","rdp","spingo"]
 
 porechop:
     environment:                   "../envs/preprocess.yml"
@@ -48,6 +48,7 @@ centrifuge:
     environment:                   "../envs/centrifuge.yml"
     container:                     "containers/centrifuge.simg"
     taxmapurl:                     "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/taxonomy/taxmap_embl_ssu_ref_nr99_132.txt.gz"
+    sequrl:                        "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/SILVA_132_SSURef_Nr99_tax_silva.fasta.gz"
     dbthreads:                     4
     dbmemory:                      500
     threads:                       1

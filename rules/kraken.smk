@@ -1,8 +1,5 @@
 rule kraken_build_db:
     output:
-        "db/kraken/hash.k2d",
-        "db/kraken/opts.k2d",
-        "db/kraken/taxo.k2d",
         name_table = "db/kraken/taxonomy/names.dmp",
         tax_tree = "db/kraken/taxonomy/nodes.dmp",
         conversion_table = "db/kraken/seqid2taxid.map",
@@ -54,7 +51,6 @@ rule kraken_classify:
         kraken2 --db {params.db_dir} \
             --output {output.out} \
             --report {output.report} \
-            --fastq-input \
             --gzip-compressed \
             --threads {threads} {input.fastq} 2> {log}
         """

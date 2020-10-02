@@ -16,7 +16,7 @@ NanoClass automatically installs all software packages and dependencies, downloa
 
 NanoClass can be run on a powerfull desktop computer. All classification tools implemented in NanoClass will run in a matter of minutes to hours, with the exception of QIIME2.
 Prerequisites are [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html), [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) 
-and [Singularity](https://singularity.lbl.gov/). The latter two can be conveniently installed using the included recipe (see NanoClass/envs/README.md).
+and [Singularity](https://singularity.lbl.gov/). The latter two can be conveniently installed using the included NanoClass-env.yml recipe (see NanoClass/envs/README.md).
 
 NanoClass automatically installs all other software packages and dependencies, with the exception of MAPseq as it is not implemented in conda.
 To facilitate the use of MAPseq, you can easily build it from included singularity recipe (see NanoClass/containers/README.md). 

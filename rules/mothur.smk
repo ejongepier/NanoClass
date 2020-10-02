@@ -53,6 +53,7 @@ rule mothur_classify:
         mothur {output.dir}/mothur.cmd 2> {log}
         awk -F '\\t' -v OFS='\\t' '{{if (NR==1) printf "%s","#"; print $1, $3}}' \
           {output.dir}/{params.file} > {output.out} 2>> {log} 
+        rm ./mothur.*.logfile
         """
 
 

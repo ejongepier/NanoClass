@@ -1,9 +1,6 @@
 BootStrap: docker
 From: ubuntu:latest
 
-%pre
-    apt-get install -y debootstrap
-
 %post
     apt-get update
     apt-get install -y software-properties-common
