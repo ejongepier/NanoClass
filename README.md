@@ -35,19 +35,19 @@ NanoClass is immediately ready for use.
 
 ### Quick start
 
-Copy your Nanopore MinION sequencing files to path: NanoClass/data/<runID>/basecalled/<sampleID>.passed.fastq.gz,
-where <runID> and <sampleID> are the labels you should provide in the file NanoClass/samples.csv as a comma separated table with runID,sampleID,barcode.
+Copy your Nanopore MinION sequencing files to path: NanoClass/data/runID/basecalled/sampleID.passed.fastq.gz,
+where runID and sampleID are the labels you should provide in the file NanoClass/samples.csv as a comma separated table with runID,sampleID,barcode.
 
 The entire pipeline can then be run with a single command:
 
-    snakemake --use-conda --cores <ncores>
+    snakemake --use-singularity --use-conda --cores <ncores>
 
 Where `--cores` are the number of CPU cores/jobs that can be run in parallel on your system.
 
 ### Customizing
 
 You can opt to customize the pipeline through the config.yaml,
-e.g. by running only a subset of the 11 classsification tools or by changing the default Silva 16S taxonomic database.  
+e.g. by running only a subset of the 11 classification tools or by changing the default Silva 16S taxonomic database.  
 For details on how to customize NanoClass, see the Documentation.
 
 ### Report
