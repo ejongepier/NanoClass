@@ -16,12 +16,16 @@ report: "report/workflow.rst"
 configfile: "config.yaml"
 validate(config, "schemas/config.schema.yaml")
 
-smpls = pd.read_csv(config["samples"]).set_index(["run", "sample"], drop=False)
-validate(smpls, "schemas/samples.schema.yaml")
+#smpls = pd.read_csv(config["samples"]).set_index(["run", "sample"], drop=False)
+#validate(smpls, "schemas/samples.schema.yaml")
+
+smpls = pd.read_csv(config["samples"], dtype=str).set_index(["run", "sample"], drop=False)
+smpls.index = smpls.index.set_levels([i.astype(str) for i in smpls.index.levels])
+validate(smpls, schema="schemas/samples.schema.yaml")
 
 wildcard_constraints:
-    sample = '\w+',
-    run = '\w+'
+    sample = '[A-Za-z0-9]+',
+    run = '[A-Za-z0-9]+'
 
 # ======================================================
 # Rules
@@ -32,6 +36,9 @@ optrules.extend(["plots/precision.pdf"] if len(config["methods"]) > 2 else [])
 
 rule all:
     input:
+        expand("data/{samples.run}/porechopped/{samples.sample}.trimmed.fastq.gz",
+            samples=smpls.itertuples()
+        ),
         expand("classifications/{samples.run}/{method}/{samples.sample}.{method}.taxmat",
             samples=smpls.itertuples(), method=config["methods"]
         ),

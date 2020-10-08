@@ -10,14 +10,12 @@ rule minimap_classify:
         mem_mb = lambda wildcards, attempt: attempt * config["minimap"]["memory"]
     conda:
         config["minimap"]["environment"]
-    #singularity:
-    #    config["minimap"]["container"]
     params:
         extra = "-K 25M --no-kalloc --print-qname -aLx map-ont"
     log:
-        "logs/minimap_classify_{run}_{sample}.log"
+        "logs/{run}/minimap_classify_{sample}.log"
     benchmark:
-        "benchmarks/minimap_classify_{run}_{sample}.txt"
+        "benchmarks/{run}/minimap_classify_{sample}.txt"
     shell:
         """
         minimap2 {params.extra} -t {threads} {input.target} \
@@ -28,17 +26,15 @@ rule minimap_bam2out:
     input:
         "classifications/{run}/minimap/{sample}.minimap.bam"
     output:
-        "classifications/{run}/minimap/{sample}.minimap.out"
+        temp("classifications/{run}/minimap/{sample}.minimap.out")
     threads:
         config["minimap"]["threads"]
     conda:
         config["minimap"]["environment"]
-    #singularity:
-    #    config["common"]["container2"]
     log:
-        "logs/minimap_sortbam_{run}_{sample}.log"
+        "logs/{run}/minimap_sortbam_{sample}.log"
     benchmark:
-        "benchmarks/minimap_sortbam_{run}_{sample}.txt"
+        "benchmarks/{run}/minimap_sortbam_{sample}.txt"
     shell:
         """
         samtools sort -@ {threads} {input} | \
@@ -56,8 +52,8 @@ rule minimap_tomat:
         otumat = "classifications/{run}/minimap/{sample}.minimap.otumat"
     threads: 1
     log:
-        "logs/minimap_tomat_{run}_{sample}.log"
+        "logs/{run}/minimap_tomat_{sample}.log"
     benchmark:
-        "benchmarks/minimap_tomat_{run}_{sample}.txt"
+        "benchmarks/{run}/minimap_tomat_{sample}.txt"
     shell:
         "scripts/tomat.py -b {input.out} -t {input.db} 2> {log}"

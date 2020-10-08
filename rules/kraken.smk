@@ -13,8 +13,6 @@ rule kraken_build_db:
         db_type = config["kraken"]["dbtype"]
     conda:
         config["kraken"]["environment"]
-    #singularity:
-    #    config["kraken"]["container"]
     log:
         "logs/kraken_build_db.log"
     benchmark:
@@ -30,8 +28,8 @@ rule kraken_classify:
         rules.kraken_build_db.output,
         fastq = "data/{run}/nanofilt/{sample}.subsampled.fastq.gz"
     output:
-        report = "classifications/{run}/kraken/{sample}.kraken.report",
-        out = "classifications/{run}/kraken/{sample}.kraken.out"
+        report = temp("classifications/{run}/kraken/{sample}.kraken.report"),
+        out = temp("classifications/{run}/kraken/{sample}.kraken.out")
     threads:
         config["kraken"]["threads"]
     resources:
@@ -40,12 +38,10 @@ rule kraken_classify:
         db_dir = "db/kraken"
     conda:
         config["kraken"]["environment"]
-    #singularity:
-    #    config["kraken"]["container"]
     log:
-        "logs/kraken_classify_{run}_{sample}.log"
+        "logs/{run}/kraken_classify_{sample}.log"
     benchmark:
-        "benchmarks/kraken_classify_{run}_{sample}.txt"
+        "benchmarks/{run}/kraken_classify_{sample}.txt"
     shell:
         """
         kraken2 --db {params.db_dir} \
@@ -67,9 +63,9 @@ rule kraken_tomat:
         otumat = "classifications/{run}/kraken/{sample}.kraken.otumat"
     threads: 1
     log:
-        "logs/kraken_tomat_{run}_{sample}.log"
+        "logs/{run}/kraken_tomat_{sample}.log"
     benchmark:
-        "benchmarks/kraken_tomat_{run}_{sample}.txt"
+        "benchmarks/{run}/kraken_tomat_{sample}.txt"
     shell:
         """
         scripts/tomat.py -k {input.kraken_out} -f {input.silva_seqs} \

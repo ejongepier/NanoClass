@@ -4,7 +4,7 @@ rule mapseq_classify:
         ref_tax = "db/common/ref-taxonomy.txt",
         ref_seqs = "db/common/ref-seqs.fna"
     output:
-        "classifications/{run}/mapseq/{sample}.mapseq.out"
+        temp("classifications/{run}/mapseq/{sample}.mapseq.out")
     threads:
         config["mapseq"]["threads"]
     resources:
@@ -12,9 +12,9 @@ rule mapseq_classify:
     singularity:
         config["mapseq"]["container"]
     log:
-        "logs/mapseq_classify_{run}_{sample}.log"
+        "logs/{run}/mapseq_classify_{sample}.log"
     benchmark:
-        "benchmarks/mapseq_classify_{run}_{sample}.txt"
+        "benchmarks/{run}/mapseq_classify_{sample}.txt"
     shell:
         """
         mapseq -nthreads {threads} {input.query} {input.ref_seqs} \
@@ -31,9 +31,9 @@ rule mapseq_tomat:
         otumat = "classifications/{run}/mapseq/{sample}.mapseq.otumat"
     threads: 1
     log:
-        "logs/mapseq_tomat_{run}_{sample}.log"
+        "logs/{run}/mapseq_tomat_{sample}.log"
     benchmark:
-        "benchmarks/mapseq_tomat_{run}_{sample}.txt"
+        "benchmarks/{run}/mapseq_tomat_{sample}.txt"
     shell:
         "scripts/tomat.py -b {input.out} -t {input.db} 2> {log}"
 

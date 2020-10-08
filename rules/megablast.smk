@@ -10,8 +10,6 @@ rule megablast_build_db:
         "benchmarks/megablast_build_db.txt"
     conda:
         config["megablast"]["environment"]
-    #singularity:
-    #    config["megablast"]["container"]
     shell:
         """
         makeblastdb -in {input} -parse_seqids \
@@ -23,9 +21,9 @@ rule megablast_chunk:
     input:
         fasta = rules.prep_fasta_query.output
     output:
-        expand("classifications/{{run}}/megablast/{{sample}}/{chunk}",
+        temp(expand("classifications/{{run}}/megablast/{{sample}}/{chunk}",
             chunk = range(1, (int(config["subsample"]["samplesize"]/config["megablast"]["chunksize"])+1))
-        )
+        ))
     params:
         lines = 2 * config["megablast"]["chunksize"],
         out_dir = "classifications/{run}/megablast/{sample}"
@@ -42,19 +40,17 @@ rule megablast_classify:
         db = "db/common/ref-seqs.fna",
         fasta = "classifications/{run}/megablast/{sample}/{chunk}"
     output:
-        all = "classifications/{run}/megablast/{sample}/{chunk}.megablast.tmp",
-        bestb = "classifications/{run}/megablast/{sample}/{chunk}.megablast.out"
+        all = temp("classifications/{run}/megablast/{sample}/{chunk}.megablast.tmp"),
+        bestb = temp("classifications/{run}/megablast/{sample}/{chunk}.megablast.out")
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["megablast"]["memory"]
     conda:
         config["megablast"]["environment"]
-    #singularity:
-    #    config["megablast"]["container"]
     log:
-        "logs/megablast_classify_{run}_{sample}_{chunk}.log"
+        "logs/{run}/megablast_classify_{sample}_{chunk}.log"
     benchmark:
-        "benchmarks/megablast_classify_{run}_{sample}_{chunk}.txt"
+        "benchmarks/{run}/megablast_classify_{sample}_{chunk}.txt"
     shell:
         """
         blastn -task 'megablast' -db {input.db} \
@@ -71,17 +67,17 @@ rule megablast_aggregate:
         out = expand("classifications/{{run}}/megablast/{{sample}}/{chunk}.megablast.out",
             chunk = range(1, (int(config["subsample"]["samplesize"]/config["blastn"]["chunksize"])+1))
         ),
-        benchm = expand("benchmarks/megablast_classify_{{run}}_{{sample}}_{chunk}.txt",
+        benchm = expand("benchmarks/{{run}}/megablast_classify_{{sample}}_{chunk}.txt",
             chunk = range(1, (int(config["subsample"]["samplesize"]/config["blastn"]["chunksize"])+1))
         )
     output:
-        out = "classifications/{run}/megablast/{sample}.megablast.out",
-        benchm = "benchmarks/megablast_classify_{run}_{sample}.txt"
+        out = temp("classifications/{run}/megablast/{sample}.megablast.out"),
+        benchm = "benchmarks/{run}/megablast_classify_{sample}.txt"
     threads: 1
     log:
-        "logs/megablast_aggregate_{run}_{sample}.log"
+        "logs/{run}/megablast_aggregate_{sample}.log"
     benchmark:
-        "benchmarks/megablast_aggregate_{run}_{sample}.txt"
+        "benchmarks/{run}/megablast_aggregate_{sample}.txt"
     shell:
         """
         cat {input.out} > {output.out}
@@ -101,8 +97,8 @@ rule megablast_tomat:
         otumat = "classifications/{run}/megablast/{sample}.megablast.otumat"
     threads: 1
     log:
-        "logs/megablast_tomat_{run}_{sample}.log"
+        "logs/{run}/megablast_tomat_{sample}.log"
     benchmark:
-        "benchmarks/megablast_tomat_{run}_{sample}.txt"
+        "benchmarks/{run}/megablast_tomat_{sample}.txt"
     shell:
         "scripts/tomat.py -b {input.out} -t {input.db} 2> {log}"

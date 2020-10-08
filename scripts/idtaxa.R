@@ -11,7 +11,7 @@ threads = as.numeric(args[4])
 query <- readDNAStringSet(args[2])
 db <- load(args[1])
 
-taxann <- IdTaxa(query, trained_classifiyer, strand = "both", threshold = 0, processors = threads, verbose = T)
+taxann <- IdTaxa(query, trained_classifiyer, strand = "both", threshold = 0, processors = threads, verbose = F)
 
 assignment <- sapply(taxann, function(x) paste(x$taxon, collapse="\t"))
 names(assignment) <- sapply(strsplit(names(assignment)," "), `[`, 1)

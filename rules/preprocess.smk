@@ -1,6 +1,9 @@
+def get_fastq(wildcards):
+    return smpls.loc[(wildcards.run, wildcards.sample), ["path"]].dropna()
+
 rule prep_porechop:
     input:
-        "data/{run}/basecalled/{sample}.passed.fastq.gz"
+        get_fastq
     output:
         "data/{run}/porechopped/{sample}.trimmed.fastq.gz"
     threads:
@@ -10,14 +13,12 @@ rule prep_porechop:
     priority: 50
     conda:
         config["porechop"]["environment"]
-    #singularity:
-    #    config["porechop"]["container"]
     params:
         check_reads = config["porechop"]["checkreads"]
     log:
-        "logs/prep_porechop_{run}_{sample}.log"
+        "logs/{run}/prep_porechop_{sample}.log"
     benchmark:
-        "benchmarks/prep_porechop_{run}_{sample}.txt"
+        "benchmarks/{run}/prep_porechop_{sample}.txt"
     shell:
         """
         porechop --input {input} \
@@ -40,13 +41,11 @@ rule prep_nanofilt:
         min_len = config["nanofilt"]["minlen"],
         max_len = config["nanofilt"]["maxlen"],
     log:
-        "logs/prep_nanofilt_{run}_{sample}.log"
+        "logs/{run}/prep_nanofilt_{sample}.log"
     benchmark:
-        "benchmarks/prep_nanofilt_{run}_{sample}.txt"
+        "benchmarks/{run}/prep_nanofilt_{sample}.txt"
     conda:
         config["nanofilt"]["environment"]
-    #singularity:
-    #    config["nanofilt"]["container"]
     shell:
         """
         gzip -d -c {input} | \
@@ -65,9 +64,9 @@ rule prep_subsample:
         n = config["subsample"]["samplesize"],
         seed = 12345
     log:
-        "logs/prep_subsample_{run}_{sample}.log"
+        "logs/{run}/prep_subsample_{sample}.log"
     benchmark:
-        "benchmarks/prep_subsample_{run}_{sample}.txt"
+        "benchmarks/{run}/prep_subsample_{sample}.txt"
     wrapper:
         "0.66.0/bio/seqtk/subsample/se"
 
@@ -92,9 +91,9 @@ rule prep_nanofilt_plot:
                category="Read-processing"
               )
     log:
-        "logs/prep_nanofilt_plot_{run}_{sample}.log"
+        "logs/{run}/prep_nanofilt_plot_{sample}.log"
     benchmark:
-        "benchmarks/prep_nanofilt_plot_{run}_{sample}.txt"
+        "benchmarks/{run}/prep_nanofilt_plot_{sample}.txt"
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["nanoplot"]["memory"]
@@ -102,8 +101,6 @@ rule prep_nanofilt_plot:
         downsample = config["nanoplot"]["downsample"]
     conda:
         config["nanoplot"]["environment"]
-    #singularity:
-    #    config["nanoplot"]["container"]
     shell:
         """
         pistis --fastq {input} --output {output} \
@@ -117,17 +114,15 @@ rule prep_nanofilt_stats:
     output:
         "stats/{run}/nanofilt/{sample}.filtered.txt"
     log:
-        "logs/prep_nanofilt_stats_{run}_{sample}.log"
+        "logs/{run}/prep_nanofilt_stats_{sample}.log"
     benchmark:
-        "benchmarks/prep_nanofilt_stats_{run}_{sample}.log"
+        "benchmarks/{run}/prep_nanofilt_stats_{sample}.txt"
     threads:
         config["nanostats"]["threads"]
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["nanostats"]["memory"]
     conda:
         config["nanostats"]["environment"]
-    #singularity:
-    #    config["nanostats"]["container"]
     shell:
         """
         NanoStat --fastq {input} --name {output} \

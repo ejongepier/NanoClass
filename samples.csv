@@ -1,2 +1,4 @@
-run,sample,barcode
-caulerpa,barcode03,
+run,sample,barcode,path
+r20201008,MockZymo,,input/barcode06.passed.fastq.gz
+r20201008,MockATCC,,input/barcode09.fastq.gz
+r20201008,Caulerpa,,input/barcode10.fastq.gz

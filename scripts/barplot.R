@@ -8,7 +8,8 @@ suppressPackageStartupMessages(library(tidyr))
 
 args = commandArgs(trailingOnly=TRUE)
 
-taxmat <- as.data.frame(unique(vroom(args)))
+taxmat <- as.data.frame(unique(vroom(delim = '\t', args)))
+taxmat <- taxmat[!is.na(taxmat$Domain),]
 names(taxmat)[1] <- "taxid"
 rownames(taxmat) <- taxmat$taxid
 taxmat$taxid <- NULL
@@ -57,7 +58,7 @@ theme_set(theme_bw())
 for (level in colnames(taxmat)){
     p = plot_bar(ent10, x="method", fill=level, 
         facet_grid=paste0("Run: ", run) ~ 
-                   paste0("Sample: ", sample))
+                   paste0("", sample))
     p = p + labs(x = "Method")
     ggsave(paste0("plots/", level, ".pdf"), plot=p, device="pdf")
 }

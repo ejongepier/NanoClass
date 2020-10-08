@@ -15,8 +15,6 @@ rule spingo_build_db:
         "benchmarks/spingo_db.txt"
     conda:
         config["spingo"]["environment"]
-    #singularity:
-    #    config["spingo"]["container"]
     shell:
         """
         scripts/todb.py -s {input.seq} -t {input.tax} -m spingo \
@@ -37,12 +35,10 @@ rule spingo_classify:
         mem_mb = lambda wildcards, attempt: attempt * config["spingo"]["memory"]
     conda:
         config["spingo"]["environment"]
-    #singularity:
-    #    config["spingo"]["container"]
     log:
-        "logs/spingo_classify_{run}_{sample}.log"
+        "logs/{run}/spingo_classify_{sample}.log"
     benchmark:
-        "benchmarks/spingo_classify_{run}_{sample}.txt"
+        "benchmarks/{run}/spingo_classify_{sample}.txt"
     shell:
         """
         spingo -d {input.db} -k 8 -a \
@@ -66,8 +62,8 @@ rule spingo_tomat:
         otumat = "classifications/{run}/spingo/{sample}.spingo.otumat"
     threads: 1
     log:
-        "logs/spingo_tomat_{run}_{sample}.log"
+        "logs/{run}/spingo_tomat_{sample}.log"
     benchmark:
-        "benchmarks/spingo_tomat_{run}_{sample}.txt"
+        "benchmarks/{run}/spingo_tomat_{sample}.txt"
     shell:
         "scripts/tomat.py -l {input.list} 2> {log}"

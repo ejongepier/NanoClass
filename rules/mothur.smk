@@ -14,8 +14,6 @@ rule mothur_build_db:
         "benchmarks/mothur_build_db.txt"
     conda:
         config["mothur"]["environment"]
-    #singularity:
-    #    config["common"]["container2"]
     shell:
         """
         scripts/todb.py -s {input.aln} -t {input.tax} -m mothur \
@@ -28,7 +26,7 @@ rule mothur_classify:
         aln = "db/mothur/ref-seqs.aln"
     output:
         dir = temp(directory("classifications/{run}/mothur/{sample}/")),
-        out = "classifications/{run}/mothur/{sample}.mothur.out"
+        out = temp("classifications/{run}/mothur/{sample}.mothur.out")
     params:
         file = "{sample}.subsampled.align.report"
     threads:
@@ -37,12 +35,10 @@ rule mothur_classify:
         mem_mb = lambda wildcards, attempt: attempt * config["mothur"]["memory"]
     conda:
         config["mothur"]["environment"]
-    #singularity:
-    #    config["mothur"]["container"]
     log:
-        "logs/mothur_classify_{run}_{sample}.log"
+        "logs/{run}/mothur_classify_{sample}.log"
     benchmark:
-        "benchmarks/mothur_classify_{run}_{sample}.txt"
+        "benchmarks/{run}/mothur_classify_{sample}.txt"
     shell:
         """
         cp {input} {output.dir}
@@ -53,7 +49,6 @@ rule mothur_classify:
         mothur {output.dir}/mothur.cmd 2> {log}
         awk -F '\\t' -v OFS='\\t' '{{if (NR==1) printf "%s","#"; print $1, $3}}' \
           {output.dir}/{params.file} > {output.out} 2>> {log} 
-        rm ./mothur.*.logfile
         """
 
 
@@ -67,8 +62,8 @@ rule mothur_tomat:
         otumat = "classifications/{run}/mothur/{sample}.mothur.otumat"
     threads: 1
     log:
-        "logs/mothur_tomat_{run}_{sample}.log"
+        "logs/{run}/mothur_tomat_{sample}.log"
     benchmark:
-        "benchmarks/mothur_tomat_{run}_{sample}.txt"
+        "benchmarks/{run}/mothur_tomat_{sample}.txt"
     shell:
         "scripts/tomat.py -b {input.out} -t {input.tax} 2> {log}"

@@ -13,8 +13,6 @@ rule centrifuge_get_db:
         mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["dbmemory"]
     params:
         map_url = config["centrifuge"]["taxmapurl"]
-    #singularity:
-    #    config["centrifuge"]["container"]
     conda:
         config["centrifuge"]["environment"]
     log:
@@ -30,8 +28,6 @@ rule centrifuge_get_db:
         scripts/todb.py -s {input.seq} -t {input.tax} -m centrifuge \
             -S {output.ref_seqs} -T {output.ref_tax} 2>> {log}
         """
-
-#wget {params.seq_url} -q -O - | gzip -d -c - | sed -e /^>/!y/U/T > {output.ref_seqs} 2>> {log}
 
 rule centrifuge_build_db:
     input:
@@ -52,8 +48,6 @@ rule centrifuge_build_db:
         mem_mb = lambda wildcards, attempt: attempt * config["centrifuge"]["dbmemory"]
     params:
         prefix = "db/centrifuge/ref-db"
-    #singularity:
-    #    config["centrifuge"]["container"]
     conda:
         config["centrifuge"]["environment"]
     log:
@@ -79,7 +73,7 @@ rule centrifuge_classify:
         #ref_seqs = "db/kraken/data/SILVA_132_SSURef_Nr99_tax_silva.fasta"
     output:
         report = temp("classifications/{run}/centrifuge/{sample}.report.tsv"),
-        classification = "classifications/{run}/centrifuge/{sample}.centrifuge.out",
+        classification = temp("classifications/{run}/centrifuge/{sample}.centrifuge.out"),
     threads:
         config["centrifuge"]["threads"]
     resources:
@@ -88,12 +82,10 @@ rule centrifuge_classify:
         index_prefix = "db/centrifuge/ref-db"
     conda:
         config["centrifuge"]["environment"]
-    #singularity:
-    #    config["centrifuge"]["container"]
     log:
-        "logs/centrifuge_classify_{run}_{sample}.log"
+        "logs/{run}/centrifuge_classify_{sample}.log"
     benchmark:
-        "benchmarks/centrifuge_classify_{run}_{sample}.txt"
+        "benchmarks/{run}/centrifuge_classify_{sample}.txt"
     shell:
         """
         centrifuge -x {params.index_prefix} \
@@ -116,8 +108,8 @@ rule centrifuge_tomat:
         otumat = "classifications/{run}/centrifuge/{sample}.centrifuge.otumat"
     threads: 1
     log:
-        "logs/centrifuge_tomat_{run}_{sample}.log"
+        "logs/{run}/centrifuge_tomat_{sample}.log"
     benchmark:
-        "benchmarks/centrifuge_tomat_{run}_{sample}.txt"
+        "benchmarks/{run}/centrifuge_tomat_{sample}.txt"
     shell:
         "scripts/tomat.py -c {input.out} -f {input.ref_seqs} 2> {log}"

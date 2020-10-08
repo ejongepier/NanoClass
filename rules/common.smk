@@ -46,8 +46,6 @@ rule common_plot_tax:
         "benchmarks/common_plot_tax.txt"
     conda:
         config["common"]["environment"]
-    #singularity:
-    #    config["common"]["container1"]
     shell:
         """
         mkdir -p ./plots
@@ -86,8 +84,6 @@ rule common_plot_precision:
         "benchmarks/common_plot_precision.txt"
     conda:
         config["common"]["environment"]
-    #singularity:
-    #    config["common"]["container1"]
     shell:
         """
         mkdir -p ./plots
@@ -97,7 +93,7 @@ rule common_plot_precision:
 
 rule common_plot_runtime:
     input:
-        expand("benchmarks/{method}_classify_{smpls.run}_{smpls.sample}.txt",
+        expand("benchmarks/{smpls.run}/{method}_classify_{smpls.sample}.txt",
             method = config["methods"], smpls =  smpls.itertuples()
         )
     output:
@@ -110,8 +106,6 @@ rule common_plot_runtime:
         "benchmarks/common_plot_runtime.txt"
     conda:
         config["common"]["environment"]
-    #singularity:
-    #    config["common"]["container1"]
     shell:
         """
         mkdir -p ./plots

@@ -2,17 +2,15 @@ rule qiime_import_query:
     input:
         fasta = rules.prep_fasta_query.output
     output:
-        "classifications/{run}/qiime/{sample}.seqs.qza"
+        temp("classifications/{run}/qiime/{sample}.seqs.qza")
     threads:
         1
     conda:
         config["qiime"]["environment"]
-    #singularity:
-    #    config["qiime"]["container"]
     log:
-        "logs/qiime_import_query_{run}_{sample}.log"
+        "logs/{run}/qiime_import_query_{sample}.log"
     benchmark:
-        "benchmarks/qiime_import_query_{run}_{sample}.txt"
+        "benchmarks/{run}/qiime_import_query_{sample}.txt"
     shell:
         """
         qiime tools import \
@@ -30,8 +28,6 @@ rule qiime_import_refseq:
     threads: 1
     conda:
         config["qiime"]["environment"]
-    #singularity:
-    #    config["qiime"]["container"]
     log:
         "logs/qiime_import_refseq.log"
     benchmark:
@@ -53,8 +49,6 @@ rule qiime_import_taxonomy:
     threads: 1
     conda:
         config["qiime"]["environment"]
-    #singularity:
-    #    config["qiime"]["container"]
     log:
         "logs/qiime_import_taxonomy.log"
     benchmark:   
@@ -75,19 +69,17 @@ rule qiime_classify:
         taxo="db/qiime/ref-taxonomy.qza",
         ref_seqs="db/qiime/ref-seqs.qza"
     output:
-        qza = "classifications/{run}/qiime/{sample}.qiime.qza",
+        qza = temp("classifications/{run}/qiime/{sample}.qiime.qza"),
         path = temp(directory("classifications/{run}/qiime/{sample}/")),
-        out = "classifications/{run}/qiime/{sample}.qiime.out"
+        out = temp("classifications/{run}/qiime/{sample}.qiime.out")
     threads:
         config["qiime"]["threads"]
     conda:
         config["qiime"]["environment"]
-    #singularity:
-    #    config["qiime"]["container"]
     log:
-        "logs/qiime_classify_{run}_{sample}.log"
+        "logs/{run}/qiime_classify_{sample}.log"
     benchmark:
-        "benchmarks/qiime_classify_{run}_{sample}.txt"
+        "benchmarks/{run}/qiime_classify_{sample}.txt"
     shell:
         """
         qiime feature-classifier classify-consensus-vsearch \
@@ -112,9 +104,9 @@ rule qiime_taxlist:
         "classifications/{run}/qiime/{sample}.qiime.taxlist"
     threads: 1
     log:
-        "logs/qiime_tomat_{run}_{sample}.log"
+        "logs/{run}/qiime_tomat_{sample}.log"
     benchmark:
-        "benchmarks/qiime_tomat_{run}_{sample}.txt"
+        "benchmarks/{run}/qiime_tomat_{sample}.txt"
     shell:
         """
         cut -f 1,2 {input} | grep -P -v '\\tUnassigned$' | \
@@ -134,9 +126,9 @@ rule qiime_tomat:
         otumat = "classifications/{run}/qiime/{sample}.qiime.otumat"
     threads: 1
     log:
-        "logs/qiime_tomat_{run}_{sample}.log"
+        "logs/{run}/qiime_tomat_{sample}.log"
     benchmark:
-        "benchmarks/qiime_tomat_{run}_{sample}.txt"
+        "benchmarks/{run}/qiime_tomat_{sample}.txt"
     shell:
         "scripts/tomat.py -l {input.list} 2> {log}"
 

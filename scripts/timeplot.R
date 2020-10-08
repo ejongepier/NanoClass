@@ -7,12 +7,12 @@ args = commandArgs(trailingOnly=TRUE)
 dl = list()
 for (i in 1:length(args)){
   # Get metadata
-  lab = strsplit(args[i], "/")[[1]][2]
-  run = strsplit(lab, "[_]")[[1]][3]
-  sample = strsplit(strsplit(lab, "[_]")[[1]][4], "[.]")[[1]][1]
+  lab = strsplit(args[i], "/")[[1]][3]
+  run = strsplit(args[i], "/")[[1]][2]
+  sample = strsplit(strsplit(lab, "[_]")[[1]][3], "[.]")[[1]][1]
   method = strsplit(lab, "[_]")[[1]][1]
   # Read data
-  dt <- as.data.frame(read.table(args[i], header = T, sep = '\t', 
+  dt <- as.data.frame(read.table(args[i], header = T, sep = '\t',
                     comment = "")[,1])
   # Add meta data columns
   dt$run <- rep(run, nrow(dt))

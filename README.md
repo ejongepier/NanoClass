@@ -2,9 +2,8 @@
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥5.7.4-brightgreen.svg)](https://snakemake.bitbucket.io)
 
-NanoClass is a taxonomic meta-classification tool for 16S/18S amplicon sequencing data generated with the Nanopore MiniION.
-With a single command, you can run up to eleven popular classification tools on multiple samples in parallel.
-These include BLASTN, Centrifuge, Kraken2, IDTAXA, MAPseq, MegaBLAST, Minimap2, Mothur, QIIME2, RDP and SPINGO.
+NanoClass is a taxonomic meta-classification tool for 16S/18S amplicon sequencing data generated with the Nanopore MinION.
+With a single command, you can run ten popular classification tools on multiple samples in parallel, including BLASTN, Centrifuge, Kraken2, IDTAXA, MegaBLAST, Minimap2, Mothur, QIIME2, RDP and SPINGO.
 Optional read preparation steps, such as demultiplexing, adaptor trimming, length filtering and sub-sampling, are an integral part of the pipeline.
 In addition to taxonomic barplots, NanoClass computes and vizualizes precision and runtime to compare the performance of each taxonomic classification tool on your data.
 
@@ -14,18 +13,17 @@ NanoClass automatically installs all software packages and dependencies, downloa
 
 ### Requirements
 
-NanoClass can be run on a powerfull desktop computer. All classification tools implemented in NanoClass will run in a matter of minutes to hours, with the exception of QIIME2.
-Prerequisites are [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html), [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) 
-and [Singularity](https://singularity.lbl.gov/). The latter two can be conveniently installed using the included NanoClass-env.yml recipe (see NanoClass/envs/README.md).
+NanoClass can be run on a powerfull desktop computer. Most classification tools implemented in NanoClass will run in a matter of minutes to hours.
+Prerequisites are [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html) and [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html). 
+The latter two can be conveniently installed using the included NanoClass-env.yml recipe (see NanoClass/envs/README.md).
 
-NanoClass automatically installs all other software packages and dependencies, with the exception of MAPseq as it is not implemented in conda.
-To facilitate the use of MAPseq, you can easily build it from included singularity recipe (see NanoClass/containers/README.md). 
+NanoClass automatically installs all other software packages and dependencies.
 
 ### Installation
 
 You can either clone NanoClass, like so:
 
-    git clone https://github.com/ejongepier/NanoClass
+    git clone https://github.com/ejongepier/NanoClass.git
 
 Or download and extract the zip archive from https://github.com/ejongepier/NanoClass.
 
@@ -35,12 +33,11 @@ NanoClass is immediately ready for use.
 
 ### Quick start
 
-Copy your Nanopore MinION sequencing files to path: NanoClass/data/runID/basecalled/sampleID.passed.fastq.gz,
-where runID and sampleID are the labels you should provide in the file NanoClass/samples.csv as a comma separated table with runID,sampleID,barcode.
+Enter your samples and the paths to your fastq.gz files in the sample.csv.
 
 The entire pipeline can then be run with a single command:
 
-    snakemake --use-singularity --use-conda --cores <ncores>
+    snakemake --use-conda --cores <ncores>
 
 Where `--cores` are the number of CPU cores/jobs that can be run in parallel on your system.
 

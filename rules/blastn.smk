@@ -10,8 +10,6 @@ rule blastn_build_db:
         "benchmarks/blastn_build_db.txt"
     conda:
         config["blastn"]["environment"]
-    #singularity:
-    #    config["blastn"]["container"]
     shell:
         """
         makeblastdb -in {input} -parse_seqids \
@@ -23,9 +21,9 @@ rule blastn_chunk:
     input:
         fasta = rules.prep_fasta_query.output
     output:
-        expand("classifications/{{run}}/blastn/{{sample}}/{chunk}", 
+        temp(expand("classifications/{{run}}/blastn/{{sample}}/{chunk}", 
             chunk = range(1, (int(config["subsample"]["samplesize"]/config["blastn"]["chunksize"])+1))
-        )
+        ))
     params:
         lines = 2 * config["blastn"]["chunksize"],
         out_dir = "classifications/{run}/blastn/{sample}"
@@ -42,19 +40,17 @@ rule blastn_classify:
         db = "db/common/ref-seqs.fna",
         fasta = "classifications/{run}/blastn/{sample}/{chunk}"
     output:
-        all = "classifications/{run}/blastn/{sample}/{chunk}.blastn.tmp",
-        bestb = "classifications/{run}/blastn/{sample}/{chunk}.blastn.out"
+        all = temp("classifications/{run}/blastn/{sample}/{chunk}.blastn.tmp"),
+        bestb = temp("classifications/{run}/blastn/{sample}/{chunk}.blastn.out")
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["blastn"]["memory"]
-    #singularity:
-    #    config["blastn"]["container"]
     conda:
         config["blastn"]["environment"]
     log:
-        "logs/blastn_classify_{run}_{sample}_{chunk}.log"
+        "logs/{run}/blastn_classify_{sample}_{chunk}.log"
     benchmark:
-        "benchmarks/blastn_classify_{run}_{sample}_{chunk}.txt"
+        "benchmarks/{run}/blastn_classify_{sample}_{chunk}.txt"
     shell:
         """
         blastn -task 'blastn' -db {input.db} \
@@ -70,17 +66,17 @@ rule blastn_aggregate:
         out = expand("classifications/{{run}}/blastn/{{sample}}/{chunk}.blastn.out",
             chunk = range(1, (int(config["subsample"]["samplesize"]/config["blastn"]["chunksize"])+1))
         ),
-        benchm = expand("benchmarks/blastn_classify_{{run}}_{{sample}}_{chunk}.txt",
+        benchm = expand("benchmarks/{{run}}/blastn_classify_{{sample}}_{chunk}.txt",
             chunk = range(1, (int(config["subsample"]["samplesize"]/config["blastn"]["chunksize"])+1))
         )
     output:
-        out = "classifications/{run}/blastn/{sample}.blastn.out",
-        benchm = "benchmarks/blastn_classify_{run}_{sample}.txt"
+        out = temp("classifications/{run}/blastn/{sample}.blastn.out"),
+        benchm = "benchmarks/{run}/blastn_classify_{sample}.txt"
     threads: 1
     log:
-        "logs/blastn_aggregate_{run}_{sample}.log"
+        "logs/{run}/blastn_aggregate_{sample}.log"
     benchmark:
-        "benchmarks/blastn_aggregate_{run}_{sample}.txt"
+        "benchmarks/{run}/blastn_aggregate_{sample}.txt"
     shell:
         """
         cat {input.out} > {output.out}
@@ -100,8 +96,8 @@ rule blastn_tomat:
         otumat = "classifications/{run}/blastn/{sample}.blastn.otumat"
     threads: 1
     log:
-        "logs/blastn_tomat_{run}_{sample}.log"
+        "logs/{run}/blastn_tomat_{sample}.log"
     benchmark:
-        "benchmarks/blastn_tomat_{run}_{sample}.txt"
+        "benchmarks/{run}/blastn_tomat_{sample}.txt"
     shell:
         "scripts/tomat.py -b {input.out} -t {input.db} 2> {log}"

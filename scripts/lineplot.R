@@ -39,7 +39,7 @@ p = ggplot(df, aes(x = rank, y = precision,
     theme(axis.text.x = element_text(
         angle = 90, vjust = 0.5, hjust=1))
 p = p + facet_grid(paste0("Run: ",run) ~ 
-                   paste0("Sample: ",sample))
+                   paste0("",sample))
 ggsave("plots/precision.pdf", plot=p, device="pdf") 
 
 

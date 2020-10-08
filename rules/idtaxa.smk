@@ -9,8 +9,6 @@ rule idtaxa_build_db:
         mem_mb = lambda wildcards, attempt: attempt * config["idtaxa"]["dbmemory"]
     conda:
         config["idtaxa"]["environment"]
-    #singularity:
-    #    config["idtaxa"]["container"]
     log:
         "logs/idtaxa_learn_taxa.log"
     benchmark:
@@ -31,12 +29,10 @@ rule idtaxa_classify:
         mem_mb = lambda wildcards, attempt: attempt * config["idtaxa"]["memory"]
     conda:
         config["idtaxa"]["environment"]
-    #singularity:
-    #    config["idtaxa"]["container"]
     log:
-        "logs/idtaxa_classify_{run}_{sample}.log"
+        "logs/{run}/idtaxa_classify_{sample}.log"
     benchmark:
-        "benchmarks/idtaxa_classify_{run}_{sample}.txt"
+        "benchmarks/{run}/idtaxa_classify_{sample}.txt"
     shell:
         "Rscript scripts/idtaxa.R {input.db} {input.query} {output} {threads} 2> {log}"
 
@@ -49,9 +45,9 @@ rule idtaxa_tomat:
         otumat = "classifications/{run}/idtaxa/{sample}.idtaxa.otumat"
     threads: 1
     log:
-        "logs/idtaxa_tomat_{run}_{sample}.log"
+        "logs/{run}/idtaxa_tomat_{sample}.log"
     benchmark:
-        "benchmarks/idtaxa_tomat_{run}_{sample}.txt"
+        "benchmarks/{run}/idtaxa_tomat_{sample}.txt"
     shell:
         "scripts/tomat.py -l {input.list} 2> {log}"
 
