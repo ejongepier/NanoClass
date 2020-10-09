@@ -1,20 +1,20 @@
 rule megablast_build_db:
     input:
-        "db/common/ref-seqs.fna"
+        "db/blastn/DB_BUILD"
     output:
         touch("db/megablast/DB_BUILD")
-    threads: 1
-    log:
-        "logs/megablast_build_db.log"
-    benchmark:
-        "benchmarks/megablast_build_db.txt"
-    conda:
-        config["megablast"]["environment"]
-    shell:
-        """
-        makeblastdb -in {input} -parse_seqids \
-            -dbtype nucl 2>&1 | tee -a {log}
-        """
+#    threads: 1
+#    log:
+#        "logs/megablast_build_db.log"
+#    benchmark:
+#        "benchmarks/megablast_build_db.txt"
+#    conda:
+#        config["megablast"]["environment"]
+#    shell:
+#        """
+#        makeblastdb -in {input} -parse_seqids \
+#            -dbtype nucl 2>&1 | tee -a {log}
+#        """
 
 
 rule megablast_chunk:

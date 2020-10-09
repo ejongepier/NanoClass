@@ -50,12 +50,16 @@ physeq = phyloseq(OTU, TAX, SAM)
 
 #physeqaF <- prune_taxa(myTaxa,physeq)
 
-TopNOTUs <- names(sort(taxa_sums(physeq), TRUE)[1:20])
-ent10   <- prune_taxa(TopNOTUs, physeq)
+#TopNOTUs <- names(sort(taxa_sums(physeq), TRUE)[1:20])
+#ent10   <- prune_taxa(TopNOTUs, physeq)
 
 theme_set(theme_bw())
 
 for (level in colnames(taxmat)){
+    top.taxa <- tax_glom(physeq, level)
+    TopNOTUs <- names(sort(taxa_sums(top.taxa), TRUE)[1:20])
+    ent10   <- prune_taxa(TopNOTUs, top.taxa)
+
     p = plot_bar(ent10, x="method", fill=level, 
         facet_grid=paste0("Run: ", run) ~ 
                    paste0("", sample))
