@@ -58,6 +58,9 @@ properties:
             samplesize:
                 type:                 number
                 default:              10000
+            environment:
+                type:                 string
+                default:              "../envs/preprocess.yml"
 
     nanostats:
         type:                         object
@@ -122,12 +125,12 @@ properties:
             container:
                 type:                 string
                 default:              "docker://ncbi/blast:2.10.1"
+            threads:
+                type:                 number
+                default:              10
             memory:
                 type:                 number
                 default:              4000
-            chunksize:
-                type:                 number
-                default:              100
 
     centrifuge:
         type:                         object
@@ -225,10 +228,7 @@ properties:
                 default:              "docker://ncbi/blast:2.10.1"
             threads:
                 type:                 number
-                default:              1
-            chunksize:
-                type:                 number
-                default:              1000
+                default:              10
 
     minimap:
         type:                         object

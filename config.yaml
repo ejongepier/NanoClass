@@ -1,5 +1,5 @@
 samples:                           "samples.csv"
-methods:                           ["blastn","centrifuge","kraken","idtaxa","megablast","minimap","mothur","qiime","rdp","spingo"]
+methods:                           ["blastn","centrifuge","idtaxa","kraken","megablast","minimap","mothur","qiime","rdp","spingo"]
 
 porechop:
     environment:                   "../envs/preprocess.yml"
@@ -17,6 +17,7 @@ nanofilt:
 
 subsample:
     samplesize:                    1000
+    environment:                   "../envs/preprocess.yml"
 
 nanostats:
     environment:                   "../envs/preprocess.yml"
@@ -41,8 +42,8 @@ common:
 blastn:
     environment:                   "../envs/blast.yml"
     container:                     "docker://ncbi/blast:2.10.1"
+    threads:                       10
     memory:                        500
-    chunksize:                     100
 
 centrifuge:
     environment:                   "../envs/centrifuge.yml"
@@ -78,8 +79,8 @@ mapseq:
 megablast:
     environment:                   "../envs/blast.yml"
     container:                     "docker://ncbi/blast:2.10.1"
+    threads:                       10
     memory:                        500
-    chunksize:                     100
 
 minimap:
     environment:                   "../envs/minimap2.yml"

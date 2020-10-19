@@ -21,16 +21,18 @@ rule blastn_chunk:
     input:
         fasta = rules.prep_fasta_query.output
     output:
-        temp(expand("classifications/{{run}}/blastn/{{sample}}/{chunk}", 
-            chunk = range(1, (int(config["subsample"]["samplesize"]/config["blastn"]["chunksize"])+1))
+        temp(expand("classifications/{{run}}/blastn/{{sample}}/{{sample}}.subsampled.part-{chunk}.fasta",
+            chunk = range(1, (config["blastn"]["threads"]+1))
         ))
     params:
-        lines = 2 * config["blastn"]["chunksize"],
+        n_chunks = config["blastn"]["threads"],
         out_dir = "classifications/{run}/blastn/{sample}"
+    conda:
+        config["megablast"]["environment"]
     shell:
         """
-        split -l {params.lines} --numeric-suffixes=1 {input} {params.out_dir}/
-        for chunk in {params.out_dir}/0?; do mv $chunk ${{chunk/\/0/\/}}; done 
+        fasta-splitter --n-parts {params.n_chunks} {input} \
+            --nopad --out-dir {params.out_dir}
         """
 
 
@@ -38,7 +40,7 @@ rule blastn_classify:
     input:
         rules.blastn_build_db.output,
         db = "db/common/ref-seqs.fna",
-        fasta = "classifications/{run}/blastn/{sample}/{chunk}"
+        fasta = "classifications/{run}/blastn/{sample}/{sample}.subsampled.part-{chunk}.fasta"
     output:
         all = temp("classifications/{run}/blastn/{sample}/{chunk}.blastn.tmp"),
         bestb = temp("classifications/{run}/blastn/{sample}/{chunk}.blastn.out")
@@ -64,15 +66,17 @@ rule blastn_classify:
 rule blastn_aggregate:
     input:
         out = expand("classifications/{{run}}/blastn/{{sample}}/{chunk}.blastn.out",
-            chunk = range(1, (int(config["subsample"]["samplesize"]/config["blastn"]["chunksize"])+1))
+            chunk = range(1, (config["blastn"]["threads"]+1))
         ),
         benchm = expand("benchmarks/{{run}}/blastn_classify_{{sample}}_{chunk}.txt",
-            chunk = range(1, (int(config["subsample"]["samplesize"]/config["blastn"]["chunksize"])+1))
+            chunk = range(1, (config["blastn"]["threads"]+1))
         )
     output:
         out = temp("classifications/{run}/blastn/{sample}.blastn.out"),
         benchm = "benchmarks/{run}/blastn_classify_{sample}.txt"
     threads: 1
+    params:
+        threads = config["blastn"]["threads"]
     log:
         "logs/{run}/blastn_aggregate_{sample}.log"
     benchmark:
@@ -81,7 +85,7 @@ rule blastn_aggregate:
         """
         cat {input.out} > {output.out}
         cat {input.benchm} | grep -P "^[0-9]" | \
-          awk '{{sum+=$1}} END {{print "s"; print sum}}' \
+          awk '{{sum+=$1}} END {{print "s"; print sum/{params.threads}}}' \
           > {output.benchm} 2> {log}
         """
 

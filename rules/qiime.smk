@@ -99,7 +99,7 @@ rule qiime_classify:
 
 rule qiime_taxlist:
     input:
-        "classifications/{run}/qiime/{sample}.qiime.out",
+        "classifications/{run}/qiime/{sample}.qiime.out"
     output:
         "classifications/{run}/qiime/{sample}.qiime.taxlist"
     threads: 1
@@ -110,12 +110,11 @@ rule qiime_taxlist:
     shell:
         """
         cut -f 1,2 {input} | grep -P -v '\\tUnassigned$' | \
-        awk -F '\\t|;' -v OFS='\\t' '{{ \
-            if (NR == 1)
-                print "#readid","Domain","Phylum","Class","Order","Family","Genus";
-            else
-                 print $1, $2, $3, $4, $5, $6, $7 \
-        }}' | sed "s/D_[[:digit:]]__//g" > {output} 2> {log}
+        awk -F '\\t|;' -v OFS='\\t' '{{NF=7}}1' | \
+        awk 'BEGIN {{ FS = OFS = "\\t" }} {{ for(i=1; i<=NF; i++) if($i == "") $i = "NA" }}; 1' | \
+        sed "s/D_[[:digit:]]__//g" | \
+        sed "s/^Feature ID.*/\#readid\\tDomain\\tPhylum\\tClass\\tOrder\\tFamily\\tGenus/" \
+        > {output} 2> {log}
         """
 
 rule qiime_tomat:

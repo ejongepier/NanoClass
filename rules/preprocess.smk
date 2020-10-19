@@ -63,12 +63,20 @@ rule prep_subsample:
     params:
         n = config["subsample"]["samplesize"],
         seed = 12345
+    conda:
+        config["subsample"]["environment"]
     log:
         "logs/{run}/prep_subsample_{sample}.log"
     benchmark:
         "benchmarks/{run}/prep_subsample_{sample}.txt"
-    wrapper:
-        "0.66.0/bio/seqtk/subsample/se"
+    ## wrapper causes inconsistent behaviour on wsl conda/native pigz install
+    #wrapper:
+    #    "0.66.0/bio/seqtk/subsample/se"
+    shell:
+        """
+        seqtk sample -s {params.seed} {input} {params.n} | \
+            gzip -c > {output}
+        """
 
 
 rule prep_fasta_query:

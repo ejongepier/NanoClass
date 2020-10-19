@@ -3,42 +3,31 @@ rule megablast_build_db:
         "db/blastn/DB_BUILD"
     output:
         touch("db/megablast/DB_BUILD")
-#    threads: 1
-#    log:
-#        "logs/megablast_build_db.log"
-#    benchmark:
-#        "benchmarks/megablast_build_db.txt"
-#    conda:
-#        config["megablast"]["environment"]
-#    shell:
-#        """
-#        makeblastdb -in {input} -parse_seqids \
-#            -dbtype nucl 2>&1 | tee -a {log}
-#        """
 
 
 rule megablast_chunk:
     input:
         fasta = rules.prep_fasta_query.output
     output:
-        temp(expand("classifications/{{run}}/megablast/{{sample}}/{chunk}",
-            chunk = range(1, (int(config["subsample"]["samplesize"]/config["megablast"]["chunksize"])+1))
+        temp(expand("classifications/{{run}}/megablast/{{sample}}/{{sample}}.subsampled.part-{chunk}.fasta",
+            chunk = range(1, (config["megablast"]["threads"]+1))
         ))
     params:
-        lines = 2 * config["megablast"]["chunksize"],
+        n_chunks = config["megablast"]["threads"],
         out_dir = "classifications/{run}/megablast/{sample}"
+    conda:
+        config["megablast"]["environment"]
     shell:
         """
-        split -l {params.lines} --numeric-suffixes=1 {input} {params.out_dir}/
-        for chunk in {params.out_dir}/0?; do mv $chunk ${{chunk/\/0/\/}}; done
+        fasta-splitter --n-parts {params.n_chunks} {input} \
+            --nopad --out-dir {params.out_dir}
         """
-
 
 rule megablast_classify:
     input:
         rules.megablast_build_db.output,
         db = "db/common/ref-seqs.fna",
-        fasta = "classifications/{run}/megablast/{sample}/{chunk}"
+        fasta = "classifications/{run}/megablast/{sample}/{sample}.subsampled.part-{chunk}.fasta"
     output:
         all = temp("classifications/{run}/megablast/{sample}/{chunk}.megablast.tmp"),
         bestb = temp("classifications/{run}/megablast/{sample}/{chunk}.megablast.out")
@@ -65,15 +54,17 @@ rule megablast_classify:
 rule megablast_aggregate:
     input:
         out = expand("classifications/{{run}}/megablast/{{sample}}/{chunk}.megablast.out",
-            chunk = range(1, (int(config["subsample"]["samplesize"]/config["blastn"]["chunksize"])+1))
+            chunk = range(1, (config["megablast"]["threads"]+1))
         ),
         benchm = expand("benchmarks/{{run}}/megablast_classify_{{sample}}_{chunk}.txt",
-            chunk = range(1, (int(config["subsample"]["samplesize"]/config["blastn"]["chunksize"])+1))
+            chunk = range(1, (config["megablast"]["threads"]+1))
         )
     output:
         out = temp("classifications/{run}/megablast/{sample}.megablast.out"),
         benchm = "benchmarks/{run}/megablast_classify_{sample}.txt"
     threads: 1
+    params:
+        threads = config["megablast"]["threads"]
     log:
         "logs/{run}/megablast_aggregate_{sample}.log"
     benchmark:
@@ -82,7 +73,7 @@ rule megablast_aggregate:
         """
         cat {input.out} > {output.out}
         cat {input.benchm} | grep -P "^[0-9]" | \
-          awk '{{sum+=$1}} END {{print "s"; print sum}}' \
+          awk '{{sum+=$1}} END {{print "s"; print sum / {params.threads}}}' \
           > {output.benchm} 2> {log}
         """
 
