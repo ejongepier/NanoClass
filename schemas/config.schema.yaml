@@ -51,6 +51,9 @@ properties:
             maxlen:
                 type:                 number
                 default:              1000000000
+            quality:
+                type:                 number
+                default:              0
 
     subsample:
         type:                         object

@@ -40,6 +40,7 @@ rule prep_nanofilt:
     params:
         min_len = config["nanofilt"]["minlen"],
         max_len = config["nanofilt"]["maxlen"],
+        quality = config["nanofilt"]["quality"]
     log:
         "logs/{run}/prep_nanofilt_{sample}.log"
     benchmark:
@@ -49,7 +50,7 @@ rule prep_nanofilt:
     shell:
         """
         gzip -d -c {input} | \
-          NanoFilt --length {params.min_len} --maxlength {params.max_len} | \
+          NanoFilt --quality {params.quality} --length {params.min_len} --maxlength {params.max_len} | \
           gzip > {output} 2> {log}
         """
 

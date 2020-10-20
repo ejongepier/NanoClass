@@ -14,9 +14,10 @@ nanofilt:
     memory:                        2000
     minlen:                        1400
     maxlen:                        1600
+    quality:                       10
 
 subsample:
-    samplesize:                    1000
+    samplesize:                    100
     environment:                   "../envs/preprocess.yml"
 
 nanostats:
