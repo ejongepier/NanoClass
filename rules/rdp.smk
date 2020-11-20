@@ -46,6 +46,8 @@ rule rdp_tomat:
         taxmat = "classifications/{run}/rdp/{sample}.rdp.taxmat",
         otumat = "classifications/{run}/rdp/{sample}.rdp.otumat"
     threads: 1
+    conda:
+        config["rdp"]["environment"]
     log:
         "logs/{run}/rdp_tomat_{sample}.log"
     benchmark:

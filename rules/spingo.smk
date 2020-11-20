@@ -61,6 +61,8 @@ rule spingo_tomat:
         taxmat = "classifications/{run}/spingo/{sample}.spingo.taxmat",
         otumat = "classifications/{run}/spingo/{sample}.spingo.otumat"
     threads: 1
+    conda:
+        config["spingo"]["environment"]
     log:
         "logs/{run}/spingo_tomat_{sample}.log"
     benchmark:

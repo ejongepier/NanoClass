@@ -62,6 +62,8 @@ rule kraken_tomat:
         taxmat = "classifications/{run}/kraken/{sample}.kraken.taxmat",
         otumat = "classifications/{run}/kraken/{sample}.kraken.otumat"
     threads: 1
+    conda:
+        config["kraken"]["environment"]
     log:
         "logs/{run}/kraken_tomat_{sample}.log"
     benchmark:

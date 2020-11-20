@@ -13,6 +13,8 @@ rule common_download_db:
         "logs/common_download_db.log"
     benchmark:
         "benchmarks/common_download_db.txt"
+    conda:
+        config["common"]["environment"]
     shell:
         """
         wget -q -O db/common/db.zip {params.url}
@@ -23,9 +25,9 @@ rule common_download_db:
             */rep_set/rep_set_{params.ssu}_only/99/silva_*_99_{params.ssu}.fna \
             > {output.ref_seqs} 2>> {log}
         unzip -q -p -j db/common/db.zip \
-            */rep_set_aligned/99/99_alignment.fna.zip | gzip -d \
-            > {output.ref_aln} 2>> {log}
-        rm db/common/db.zip 2>> {log}
+            */rep_set_aligned/99/99_alignment.fna.zip > tmp.aln.zip
+        unzip -q -p tmp.aln.zip > {output.ref_aln} 2>> {log}
+        rm db/common/db.zip tmp.aln.zip 2>> {log}
         """
 
 rule common_plot_tax:
@@ -66,6 +68,8 @@ rule common_get_precision:
         "logs/common_get_precision.log"
     benchmark:
         "benchmarks/common_get_precision.txt"
+    conda:
+        config["common"]["environment"]
     shell:
         "scripts/toconsensus.py -l {input} 2> {log}"
 

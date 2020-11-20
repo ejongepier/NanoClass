@@ -28,7 +28,7 @@ rule blastn_chunk:
         n_chunks = config["blastn"]["threads"],
         out_dir = "classifications/{run}/blastn/{sample}"
     conda:
-        config["megablast"]["environment"]
+        config["blastn"]["environment"]
     shell:
         """
         fasta-splitter --n-parts {params.n_chunks} {input} \
@@ -77,6 +77,8 @@ rule blastn_aggregate:
     threads: 1
     params:
         threads = config["blastn"]["threads"]
+    conda:
+        config["blastn"]["environment"]
     log:
         "logs/{run}/blastn_aggregate_{sample}.log"
     benchmark:
@@ -99,6 +101,8 @@ rule blastn_tomat:
         taxmat = "classifications/{run}/blastn/{sample}.blastn.taxmat",
         otumat = "classifications/{run}/blastn/{sample}.blastn.otumat"
     threads: 1
+    conda:
+        config["blastn"]["environment"]
     log:
         "logs/{run}/blastn_tomat_{sample}.log"
     benchmark:

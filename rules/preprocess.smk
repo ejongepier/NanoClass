@@ -87,8 +87,10 @@ rule prep_fasta_query:
         "data/{run}/nanofilt/{sample}.subsampled.fasta"
     threads: 1
     priority: 50
+    conda:
+        config["subsample"]["environment"]
     shell:
-        "zcat {input} | sed -n '1~4s/^@/>/p;2~4p' > {output}"
+        "zcat < {input} | sed -n '1~4s/^@/>/p;2~4p' > {output}"
 
 
 rule prep_nanofilt_plot:

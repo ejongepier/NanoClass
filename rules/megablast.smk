@@ -65,6 +65,8 @@ rule megablast_aggregate:
     threads: 1
     params:
         threads = config["megablast"]["threads"]
+    conda:
+        config["megablast"]["environment"]
     log:
         "logs/{run}/megablast_aggregate_{sample}.log"
     benchmark:
@@ -87,6 +89,8 @@ rule megablast_tomat:
         taxmat = "classifications/{run}/megablast/{sample}.megablast.taxmat",
         otumat = "classifications/{run}/megablast/{sample}.megablast.otumat"
     threads: 1
+    conda:
+        config["megablast"]["environment"]
     log:
         "logs/{run}/megablast_tomat_{sample}.log"
     benchmark:

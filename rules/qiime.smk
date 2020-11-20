@@ -71,7 +71,7 @@ rule qiime_classify:
     output:
         qza = temp("classifications/{run}/qiime/{sample}.qiime.qza"),
         path = temp(directory("classifications/{run}/qiime/{sample}/")),
-        out = temp("classifications/{run}/qiime/{sample}.qiime.out")
+        out = "classifications/{run}/qiime/{sample}.qiime.out"
     threads:
         config["qiime"]["threads"]
     conda:
@@ -107,6 +107,8 @@ rule qiime_taxlist:
         "logs/{run}/qiime_tomat_{sample}.log"
     benchmark:
         "benchmarks/{run}/qiime_tomat_{sample}.txt"
+    conda:
+        config["qiime"]["environment"]
     shell:
         """
         cut -f 1,2 {input} | grep -P -v '\\tUnassigned$' | \

@@ -107,6 +107,8 @@ rule centrifuge_tomat:
         taxmat = "classifications/{run}/centrifuge/{sample}.centrifuge.taxmat",
         otumat = "classifications/{run}/centrifuge/{sample}.centrifuge.otumat"
     threads: 1
+    conda:
+        config["centrifuge"]["environment"]
     log:
         "logs/{run}/centrifuge_tomat_{sample}.log"
     benchmark:

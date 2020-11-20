@@ -51,6 +51,8 @@ rule minimap_tomat:
         taxmat = "classifications/{run}/minimap/{sample}.minimap.taxmat",
         otumat = "classifications/{run}/minimap/{sample}.minimap.otumat"
     threads: 1
+    conda:
+        config["minimap"]["environment"]
     log:
         "logs/{run}/minimap_tomat_{sample}.log"
     benchmark:

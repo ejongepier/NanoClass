@@ -44,6 +44,8 @@ rule idtaxa_tomat:
         taxmat = "classifications/{run}/idtaxa/{sample}.idtaxa.taxmat",
         otumat = "classifications/{run}/idtaxa/{sample}.idtaxa.otumat"
     threads: 1
+    conda:
+        config["idtaxa"]["environment"]
     log:
         "logs/{run}/idtaxa_tomat_{sample}.log"
     benchmark:

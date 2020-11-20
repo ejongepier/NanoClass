@@ -65,5 +65,7 @@ rule mothur_tomat:
         "logs/{run}/mothur_tomat_{sample}.log"
     benchmark:
         "benchmarks/{run}/mothur_tomat_{sample}.txt"
+    conda:
+        config["mothur"]["environment"]
     shell:
         "scripts/tomat.py -b {input.out} -t {input.tax} 2> {log}"
