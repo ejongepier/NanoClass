@@ -3,52 +3,46 @@ methods:                           ["blastn","centrifuge","idtaxa","kraken","meg
 
 porechop:
     environment:                   "../envs/preprocess.yml"
-    container:                     "docker://genomicpariscentre/porechop:0.2.4"
     threads:                       16
     memory:                        4000
     checkreads:                    20000 
 
 nanofilt:
     environment:                   "../envs/preprocess.yml"
-    container:                     "docker://mcfonsecalab/nanofilt"
     memory:                        2000
     minlen:                        1400
     maxlen:                        1600
     quality:                       10
 
 subsample:
+    skip:                          false
     samplesize:                    100
     environment:                   "../envs/preprocess.yml"
 
 nanostats:
     environment:                   "../envs/preprocess.yml"
-    container:                     "containers/preprocess.simg"
     threads:                       2
     memory:                        8000
 
 nanoplot:
     environment:                   "../envs/preprocess.yml"
-    container:                     "containers/preprocess.simg"
     memory:                        4000
     downsample:                    0
 
 common:
     environment:                   "../envs/R4.0.yml"
-    container1:                    "containers/R4.0.simg"
-    container2:                    "containers/common.simg"
     dburl:                         "https://www.arb-silva.de/fileadmin/silva_databases/qiime/Silva_132_release.zip"
     ssu:                           "16S" #16S or 18S
     dbmemory:                      4000
+    group-by:                      sample
 
 blastn:
     environment:                   "../envs/blast.yml"
-    container:                     "docker://ncbi/blast:2.10.1"
     threads:                       10
     memory:                        500
 
 centrifuge:
     environment:                   "../envs/centrifuge.yml"
-    container:                     "containers/centrifuge.simg"
     taxmapurl:                     "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/taxonomy/taxmap_embl_ssu_ref_nr99_132.txt.gz"
     sequrl:                        "https://www.arb-silva.de/fileadmin/silva_databases/release_132/Exports/SILVA_132_SSURef_Nr99_tax_silva.fasta.gz"
     dbthreads:                     4
@@ -58,14 +52,12 @@ centrifuge:
 
 idtaxa:
     environment:                   "../envs/R4.0.yml"
-    container:                     "containers/R4.0.simg"
     dbmemory:                      3000
     threads:                       8
     memory:                        10000
 
 kraken:
     environment:                   "../envs/kraken2.yml"
-    container:                     "containers/kraken.simg"
     dbtype:                        "silva"
     dbthreads:                     8
     dbmemory:                      1000
@@ -73,47 +65,40 @@ kraken:
     memory:                        500
 
 mapseq:
-    container:                     "containers/mapseq.simg"
     threads:                       1
     memory:                        1000
 
 megablast:
     environment:                   "../envs/blast.yml"
-    container:                     "docker://ncbi/blast:2.10.1"
     threads:                       10
     memory:                        500
 
 minimap:
     environment:                   "../envs/minimap2.yml"
-    container:                     "docker://evolbioinfo/minimap2:v2.17"
     dbmemory:                      3000
     threads:                       16
     memory:                        50000
 
 mothur:
     environment:                   "../envs/mothur.yml"
-    container:                     "docker://biocontainers/mothur:v1.41.21-1-deb_cv1"
     dbmemory:                      1000
     threads:                       8
     memory:                        20000
 
 qiime:
     environment:                   "../envs/qiime2.yml"
-    container:                     "docker://qiime2/core:2020.8"
     dbmemory:                      3000
     threads:                       16
     memory:                        10000
 
 rdp:
     environment:                   "../envs/R4.0.yml"
-    container:                     "containers/R4.0.simg"
     dbmemory:                      75000
     threads:                       8
     memory:                        5000
 
 spingo:
     environment:                   "../envs/spingo.yml"
-    container:                     "containers/spingo.simg"
     dbthreads:                     16
     dbmemory:                      50000
     threads:                       16

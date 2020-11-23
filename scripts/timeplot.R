@@ -27,24 +27,45 @@ names(df)[1] <- "s"
 
 theme_set(theme_bw())
 
-p = ggplot(df, aes(x = method, y = s, fill=method)) +
+p1 = ggplot(df, aes(x = method, y = s, fill=method)) +
     geom_bar(stat="identity", color="black") +
     labs(x = "", y = "Runtime (s)") +
     theme(axis.text.x = element_text(
         angle = 90, vjust = 0.5, hjust=1))
-p = p + facet_grid(paste0("Run: ",run) ~
+p1 = p1 + facet_grid(paste0("Run: ",run) ~
                    paste0("Sample: ",sample))
-p = p + theme(legend.position="none")
-ggsave("plots/runtime.pdf", plot=p, device="pdf")
+p1 = p1 + theme(legend.position="none")
+ggsave("plots/runtime-by-sample.pdf", plot=p1, device="pdf")
 
-q = ggplot(df, aes(x = method, y = s, fill=method)) +
+q1 = ggplot(df, aes(x = method, y = s, fill=method)) +
     geom_bar(stat="identity", color="black") +
     scale_y_continuous(trans = "log10") +
     labs(x = "", y = "Runtime (s)") +
     theme(axis.text.x = element_text(
         angle = 90, vjust = 0.5, hjust=1))
-q = q + facet_grid(paste0("Run: ",run) ~
+q1 = q1 + facet_grid(paste0("Run: ",run) ~
                    paste0("Sample: ",sample))
-q = q + theme(legend.position="none")
-ggsave("plots/runtime_log.pdf", plot=q, device="pdf")
+q1 = q1 + theme(legend.position="none")
+ggsave("plots/runtime_log-by-sample.pdf", plot=q1, device="pdf")
 
+
+p2 = ggplot(df, aes(x = sample, y = s, fill=sample)) +
+    geom_bar(stat="identity", color="black") +
+    labs(x = "", y = "Runtime (s)") +
+    theme(axis.text.x = element_text(
+        angle = 90, vjust = 0.5, hjust=1))
+p2 = p2 + facet_grid(paste0("Run: ",run) ~
+                   paste0("Method: ",method))
+p2 = p2 + theme(legend.position="none")
+ggsave("plots/runtime-by-method.pdf", plot=p2, device="pdf")
+
+q2 = ggplot(df, aes(x = sample, y = s, fill=sample)) +
+    geom_bar(stat="identity", color="black") +
+    scale_y_continuous(trans = "log10") +
+    labs(x = "", y = "Runtime (s)") +
+    theme(axis.text.x = element_text(
+        angle = 90, vjust = 0.5, hjust=1))
+q2 = q2 + facet_grid(paste0("Run: ",run) ~
+                   paste0("Method: ",method))
+q2 = q2 + theme(legend.position="none")
+ggsave("plots/runtime_log-by-method.pdf", plot=q2, device="pdf")

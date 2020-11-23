@@ -26,7 +26,7 @@ rule kraken_build_db:
 rule kraken_classify:
     input:
         rules.kraken_build_db.output,
-        fastq = "data/{run}/nanofilt/{sample}.subsampled.fastq.gz"
+        fastq = get_seqfiletype
     output:
         report = temp("classifications/{run}/kraken/{sample}.kraken.report"),
         out = temp("classifications/{run}/kraken/{sample}.kraken.out")

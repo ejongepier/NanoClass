@@ -68,7 +68,7 @@ rule centrifuge_build_db:
 rule centrifuge_classify:
     input:
         rules.centrifuge_build_db.output,
-        fastq = "data/{run}/nanofilt/{sample}.subsampled.fastq.gz",
+        fastq = get_seqfiletype,
         ref_seqs = "db/centrifuge/ref-seqs.fna"
         #ref_seqs = "db/kraken/data/SILVA_132_SSURef_Nr99_tax_silva.fasta"
     output:

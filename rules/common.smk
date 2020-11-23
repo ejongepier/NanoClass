@@ -36,11 +36,26 @@ rule common_plot_tax:
             method = config["methods"], smpls =  smpls.itertuples()
         )
     output:
-        report("plots/Phylum.pdf", caption="../report/fig-phylum.rst", category="Classification"),
-        report("plots/Class.pdf", caption="../report/fig-class.rst", category="Classification"),
-        report("plots/Order.pdf", caption="../report/fig-order.rst", category="Classification"),
-        report("plots/Family.pdf", caption="../report/fig-family.rst", category="Classification"),
-        report("plots/Genus.pdf", caption="../report/fig-genus.rst", category="Classification")
+        report(expand("plots/{absrel}-Phylum-by-{grouper}.pdf", 
+            absrel = ["aabund","rabund"], grouper = config["common"]["group-by"]),
+            caption="../report/fig-phylum.rst", category="Classification"
+        ),
+        report(expand("plots/{absrel}-Class-by-{grouper}.pdf", 
+            absrel = ["aabund","rabund"], grouper = config["common"]["group-by"]),
+            caption="../report/fig-class.rst", category="Classification"
+        ),
+        report(expand("plots/{absrel}-Order-by-{grouper}.pdf",
+            absrel = ["aabund","rabund"], grouper = config["common"]["group-by"]),
+            caption="../report/fig-order.rst", category="Classification"
+        ),
+        report(expand("plots/{absrel}-Family-by-{grouper}.pdf",
+            absrel = ["aabund","rabund"], grouper = config["common"]["group-by"]),
+            caption="../report/fig-family.rst", category="Classification"
+        ),
+        report(expand("plots/{absrel}-Genus-by-{grouper}.pdf",
+            absrel = ["aabund","rabund"], grouper = config["common"]["group-by"]),
+            caption="../report/fig-genus.rst", category="Classification"
+        )
     threads: 1
     log:
         "logs/common_plot_tax.log"
@@ -101,8 +116,12 @@ rule common_plot_runtime:
             method = config["methods"], smpls =  smpls.itertuples()
         )
     output:
-        report("plots/runtime.pdf", caption="../report/fig-runtime.rst", category="Runtime"),
-        report("plots/runtime_log.pdf", caption="../report/fig-runtime-log.rst", category="Runtime")
+        report(expand("plots/runtime-by-{grouper}.pdf", grouper = config["common"]["group-by"]),
+            caption="../report/fig-runtime.rst", category="Runtime"
+        ),
+        report(expand("plots/runtime_log-by-{grouper}.pdf", grouper = config["common"]["group-by"]),
+            caption="../report/fig-runtime-log.rst", category="Runtime"
+        )
     threads: 1
     log:
         "logs/common_plot_runtime.log"

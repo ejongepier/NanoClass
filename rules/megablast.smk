@@ -9,7 +9,7 @@ rule megablast_chunk:
     input:
         fasta = rules.prep_fasta_query.output
     output:
-        temp(expand("classifications/{{run}}/megablast/{{sample}}/{{sample}}.subsampled.part-{chunk}.fasta",
+        temp(expand("classifications/{{run}}/megablast/{{sample}}/{{sample}}.part-{chunk}.fasta",
             chunk = range(1, (config["megablast"]["threads"]+1))
         ))
     params:
@@ -27,7 +27,7 @@ rule megablast_classify:
     input:
         rules.megablast_build_db.output,
         db = "db/common/ref-seqs.fna",
-        fasta = "classifications/{run}/megablast/{sample}/{sample}.subsampled.part-{chunk}.fasta"
+        fasta = "classifications/{run}/megablast/{sample}/{sample}.part-{chunk}.fasta"
     output:
         all = temp("classifications/{run}/megablast/{sample}/{chunk}.megablast.tmp"),
         bestb = temp("classifications/{run}/megablast/{sample}/{chunk}.megablast.out")

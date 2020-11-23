@@ -1,7 +1,7 @@
 rule minimap_classify:
     input:
         target = "db/common/ref-seqs.fna",
-        query = "data/{run}/nanofilt/{sample}.subsampled.fastq.gz"
+        query = get_seqfiletype
     output:
         temp("classifications/{run}/minimap/{sample}.minimap.bam")
     threads: 

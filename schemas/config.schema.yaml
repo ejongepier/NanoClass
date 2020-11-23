@@ -58,6 +58,9 @@ properties:
     subsample:
         type:                         object
         properties:
+            skip:
+                type:                 boolean
+                default:              false
             samplesize:
                 type:                 number
                 default:              10000
@@ -118,6 +121,9 @@ properties:
             dbmemory:
                 type:                 number
                 default:              4000
+            group-by:
+                type:                 string
+                default:              sample #or method
 
     blastn:
         type:                         object

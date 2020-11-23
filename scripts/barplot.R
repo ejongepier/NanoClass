@@ -5,7 +5,6 @@ suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(vroom))
 suppressPackageStartupMessages(library(tidyr))
 
-
 args = commandArgs(trailingOnly=TRUE)
 
 taxmat <- as.data.frame(unique(vroom(delim = '\t', args)))
@@ -40,29 +39,44 @@ TAX = tax_table(taxmat)
 SAM = sample_data(sam)
 
 physeq = phyloseq(OTU, TAX, SAM)
-#physeqr = transform_sample_counts(physeq, function(x) x / sum(x))
-
-#physeqrF = filter_taxa(physeqr, function(x) mean(x) < .01,TRUE)
-#rmtaxa = taxa_names(physeqrF)
-#alltaxa = taxa_names(physeq)
-
-#myTaxa = alltaxa[!alltaxa %in% rmtaxa]
-
-#physeqaF <- prune_taxa(myTaxa,physeq)
-
-#TopNOTUs <- names(sort(taxa_sums(physeq), TRUE)[1:20])
-#ent10   <- prune_taxa(TopNOTUs, physeq)
+pphyseq  = transform_sample_counts(physeq, function(x) x / sum(x) )
 
 theme_set(theme_bw())
+
 
 for (level in colnames(taxmat)){
     top.taxa <- tax_glom(physeq, level)
     TopNOTUs <- names(sort(taxa_sums(top.taxa), TRUE)[1:20])
     ent10   <- prune_taxa(TopNOTUs, top.taxa)
 
-    p = plot_bar(ent10, x="method", fill=level, 
-        facet_grid=paste0("Run: ", run) ~ 
+    p1 = plot_bar(ent10, x="method", fill=level,
+        facet_grid=paste0("Run: ", run) ~
                    paste0("", sample))
-    p = p + labs(x = "Method")
-    ggsave(paste0("plots/", level, ".pdf"), plot=p, device="pdf")
+    p1 = p1 + labs(x = "Method", y = "Absolute abundance")
+    ggsave(paste0("plots/aabund-", level, "-by-sample.pdf"), plot=p1, device="pdf")
+
+    p2 = plot_bar(ent10, x="sample", fill=level,
+        facet_grid=paste0("Run: ", run) ~
+                   paste0("", method))
+    p2 = p2 + labs(x = "Sample", y = "Absolute abundance")
+    ggsave(paste0("plots/aabund-", level, "-by-method.pdf"), plot=p2, device="pdf")
+}
+
+
+for (level in colnames(taxmat)){
+    top.taxa <- tax_glom(pphyseq, level)
+    TopNOTUs <- names(sort(taxa_sums(top.taxa), TRUE)[1:20])
+    ent10   <- prune_taxa(TopNOTUs, top.taxa)
+
+    q1 = plot_bar(ent10, x="method", fill=level,
+        facet_grid=paste0("Run: ", run) ~
+                   paste0("", sample))
+    q1 = q1 + labs(x = "Method", y = "Relative abundance")
+    ggsave(paste0("plots/rabund-", level, "-by-sample.pdf"), plot=q1, device="pdf")
+
+    q2 = plot_bar(ent10, x="sample", fill=level,
+        facet_grid=paste0("Run: ", run) ~
+                   paste0("", method))
+    q2 = q2 + labs(x = "Sample", y = "Relative abundance")
+    ggsave(paste0("plots/rabund-", level, "-by-method.pdf"), plot=q2, device="pdf")
 }

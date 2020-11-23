@@ -21,7 +21,7 @@ rule blastn_chunk:
     input:
         fasta = rules.prep_fasta_query.output
     output:
-        temp(expand("classifications/{{run}}/blastn/{{sample}}/{{sample}}.subsampled.part-{chunk}.fasta",
+        temp(expand("classifications/{{run}}/blastn/{{sample}}/{{sample}}.part-{chunk}.fasta",
             chunk = range(1, (config["blastn"]["threads"]+1))
         ))
     params:
@@ -40,7 +40,7 @@ rule blastn_classify:
     input:
         rules.blastn_build_db.output,
         db = "db/common/ref-seqs.fna",
-        fasta = "classifications/{run}/blastn/{sample}/{sample}.subsampled.part-{chunk}.fasta"
+        fasta = "classifications/{run}/blastn/{sample}/{sample}.part-{chunk}.fasta"
     output:
         all = temp("classifications/{run}/blastn/{sample}/{chunk}.blastn.tmp"),
         bestb = temp("classifications/{run}/blastn/{sample}/{chunk}.blastn.out")

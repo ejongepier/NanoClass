@@ -1,6 +1,13 @@
 def get_fastq(wildcards):
     return smpls.loc[(wildcards.run, wildcards.sample), ["path"]].dropna()
 
+def get_seqfiletype(wildcards):
+    if config["subsample"]["skip"] is True:
+        return "data/{run}/nanofilt/{sample}.filtered.fastq.gz"
+    else:
+        return "data/{run}/nanofilt/{sample}.subsampled.fastq.gz"
+
+
 rule prep_porechop:
     input:
         get_fastq
@@ -54,9 +61,10 @@ rule prep_nanofilt:
           gzip > {output} 2> {log}
         """
 
+
 rule prep_subsample:
     input:
-        "data/{run}/nanofilt/{sample}.filtered.fastq.gz"
+        fastq = "data/{run}/nanofilt/{sample}.filtered.fastq.gz",
     output:
         "data/{run}/nanofilt/{sample}.subsampled.fastq.gz"
     threads: 1
@@ -70,9 +78,6 @@ rule prep_subsample:
         "logs/{run}/prep_subsample_{sample}.log"
     benchmark:
         "benchmarks/{run}/prep_subsample_{sample}.txt"
-    ## wrapper causes inconsistent behaviour on wsl conda/native pigz install
-    #wrapper:
-    #    "0.66.0/bio/seqtk/subsample/se"
     shell:
         """
         seqtk sample -s {params.seed} {input} {params.n} | \
@@ -82,15 +87,16 @@ rule prep_subsample:
 
 rule prep_fasta_query:
     input:
-        "data/{run}/nanofilt/{sample}.subsampled.fastq.gz"
+        get_seqfiletype
     output:
-        "data/{run}/nanofilt/{sample}.subsampled.fasta"
+        "data/{run}/nanofilt/{sample}.fasta"
     threads: 1
     priority: 50
     conda:
         config["subsample"]["environment"]
     shell:
         "zcat < {input} | sed -n '1~4s/^@/>/p;2~4p' > {output}"
+
 
 
 rule prep_nanofilt_plot:

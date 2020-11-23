@@ -34,13 +34,11 @@ wildcard_constraints:
 optrules = [] 
 optrules.extend(["plots/precision.pdf"] if len(config["methods"]) > 2 else [])
 
+
 rule all:
     input:
         expand("data/{samples.run}/porechopped/{samples.sample}.trimmed.fastq.gz",
             samples=smpls.itertuples()
-        ),
-        expand("classifications/{samples.run}/{method}/{samples.sample}.{method}.taxmat",
-            samples=smpls.itertuples(), method=config["methods"]
         ),
         expand("plots/{samples.run}/nanofilt/{samples.sample}.filtered.pdf",
             samples=smpls.itertuples(), method=config["methods"]
@@ -48,9 +46,27 @@ rule all:
         expand("stats/{samples.run}/nanofilt/{samples.sample}.filtered.txt",
             samples=smpls.itertuples(), method=config["methods"]
         ),
-        "plots/Genus.pdf",
-        "plots/runtime.pdf",
+        expand("classifications/{samples.run}/{method}/{samples.sample}.{method}.taxmat",
+            samples=smpls.itertuples(), method=config["methods"]
+        ),
+        expand("plots/{absrel}-Genus-by-{grouper}.pdf", 
+            absrel = ["aabund","rabund"], grouper=config["common"]["group-by"]
+        ), 
+        expand("plots/runtime-by-{grouper}.pdf", grouper=config["common"]["group-by"]
+        ),
         optrules
+
+
+rule filter:
+    input:
+        expand("plots/{samples.run}/nanofilt/{samples.sample}.filtered.pdf",
+            samples=smpls.itertuples(), method=config["methods"]
+        ),
+        expand("stats/{samples.run}/nanofilt/{samples.sample}.filtered.txt",
+            samples=smpls.itertuples(), method=config["methods"]
+        )
+
+
 
 # ======================================================
 # Functions and Classes

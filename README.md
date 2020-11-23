@@ -5,7 +5,6 @@
 NanoClass is a taxonomic meta-classifier for 16S/18S amplicon sequencing data generated with the Oxford Nanopore MinION.
 With a single command, you can run ten popular classification tools on multiple samples in parallel, including BLASTN, Centrifuge, Kraken2, IDTAXA, MegaBLAST, Minimap2, Mothur, QIIME2, RDP and SPINGO.
 Optional read preparation steps, such as demultiplexing, adaptor trimming, length filtering and sub-sampling, are an integral part of the pipeline.
-.. In addition to taxonomic barplots, NanoClass computes and vizualizes precision and runtime to compare the performance of each taxonomic classification tool on your data.
 
 NanoClass automatically installs all software packages and dependencies, downloads and builds required taxonomic databases and runs the analysis on your samples.
 
