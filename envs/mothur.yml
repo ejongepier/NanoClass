@@ -6,5 +6,6 @@ channels:
 dependencies:
   - mothur=1.44
   - gawk
+  - pip
   - pip:
     - biopython==1.78

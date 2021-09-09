@@ -7,5 +7,6 @@ dependencies:
   - centrifuge=1.0.4_beta
   - gawk
   - wget
+  - pip
   - pip:
-    - biopython==1.78
+    - biopython==1.76
