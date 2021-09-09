@@ -5,6 +5,7 @@
 !/envs
 !/envs/*
 !/input
+!/input/.gitkeep
 !/schemas
 !/schemas/*
 !/scripts
@@ -15,3 +16,6 @@
 !config.yaml
 !samples.csv
 !README.md
+!jobscript.sh
+!/cluster
+!/cluster/.gitkeep
