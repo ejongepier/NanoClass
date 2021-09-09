@@ -4,6 +4,7 @@
 !/rules/*
 !/envs
 !/envs/*
+!/input
 !/schemas
 !/schemas/*
 !/scripts

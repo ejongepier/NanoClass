@@ -28,7 +28,7 @@ rule mothur_classify:
         dir = temp(directory("classifications/{run}/mothur/{sample}/")),
         out = temp("classifications/{run}/mothur/{sample}.mothur.out")
     params:
-        file = "{sample}.subsampled.align.report"
+        file = "{sample}.align.report"
     threads:
         config["mothur"]["threads"]
     resources:
@@ -41,6 +41,7 @@ rule mothur_classify:
         "benchmarks/{run}/mothur_classify_{sample}.txt"
     shell:
         """
+        mkdir -p {output.dir}
         cp {input} {output.dir}
         queryf=$(basename {input.query})
         alnf=$(basename {input.aln})
