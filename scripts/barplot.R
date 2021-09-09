@@ -9,7 +9,10 @@ args = commandArgs(trailingOnly=TRUE)
 
 taxmat <- as.data.frame(unique(vroom(delim = '\t', args)))
 taxmat <- taxmat[!is.na(taxmat$Domain),]
+
+taxmat <- unique(taxmat)
 names(taxmat)[1] <- "taxid"
+
 rownames(taxmat) <- taxmat$taxid
 taxmat$taxid <- NULL
 taxmat <- as.matrix(taxmat)
@@ -29,8 +32,12 @@ for (i in 1:length(file)){
 } 
 
 otumat[is.na(otumat)] <- 0
-rownames(otumat) <- otumat$taxid
-otumat$taxid <- NULL
+
+## for some custom DB like BOLD local copy, the same taxonomic lineage may occur 2x.
+## This causes an error when they are used as rownames, which should be unique --> fix: aggregate
+otumat <- aggregate(otumat[2:length(otumat)], by=list(otumat$taxid), sum)
+rownames(otumat) <- otumat$Group.1
+otumat$Group.1 <- NULL
 otumat <- as.matrix(otumat)
 rownames(sam) <- colnames(otumat)
 
