@@ -29,11 +29,14 @@ rule megablast_classify:
         db = "db/common/ref-seqs.fna",
         fasta = "classifications/{run}/megablast/{sample}/{sample}.part-{chunk}.fasta"
     output:
-        all = temp("classifications/{run}/megablast/{sample}/{chunk}.megablast.tmp"),
-        bestb = temp("classifications/{run}/megablast/{sample}/{chunk}.megablast.out")
+        all = temp("classifications/{run}/megablast/{sample}/{chunk}.megablast.out")
     threads: 1
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["megablast"]["memory"]
+    params:
+       	eval = config["blastn"]["evalue"],
+        pident = config["megablast"]["pctidentity"],
+        nseqs = config["blastn"]["ntargetseqs"]
     conda:
         config["megablast"]["environment"]
     log:
@@ -42,12 +45,10 @@ rule megablast_classify:
         "benchmarks/{run}/megablast_classify_{sample}_{chunk}.txt"
     shell:
         """
-        blastn -task 'megablast' -db {input.db} \
+        blastn -task 'megablast' -db {input.db} -evalue {params.eval} \
+            -perc_identity {params.pident} -max_target_seqs {params.nseqs} \
             -query {input.fasta} -out {output.all} -outfmt 6 \
             2> {log} 
-        cat {output.all} | sort -k1,1 -k12,12nr -k11,11n | \
-            sort -u -k1,1 --merge | awk \'{{print $1\"\t\"$2}}\' | \
-            LANG=en_EN sort -k2 > {output.bestb} 2> {log}
         """
    
 
@@ -64,7 +65,8 @@ rule megablast_aggregate:
         benchm = "benchmarks/{run}/megablast_classify_{sample}.txt"
     threads: 1
     params:
-        threads = config["megablast"]["threads"]
+        threads = config["megablast"]["threads"],
+        alnlen = config["megablast"]["alnlength"]
     conda:
         config["megablast"]["environment"]
     log:
@@ -73,19 +75,40 @@ rule megablast_aggregate:
         "benchmarks/{run}/megablast_aggregate_{sample}.txt"
     shell:
         """
-        cat {input.out} > {output.out}
+	cat {input.out} | awk -F '\\t' -v l={params.alnlen} \
+            '{{if ($4 > l) print $0}}' \
+            > {output.out}
         cat {input.benchm} | grep -P "^[0-9]" | \
           awk '{{sum+=$1}} END {{print "s"; print sum / {params.threads}}}' \
           > {output.benchm} 2> {log}
         """
 
 
-rule megablast_tomat:
+rule megablast_tolca:
     input:
-        out = "classifications/{run}/megablast/{sample}.megablast.out",
+        blast = "classifications/{run}/megablast/{sample}.megablast.out",
         db = "db/common/ref-taxonomy.txt"
     output:
-        taxlist = "classifications/{run}/megablast/{sample}.megablast.taxlist", 
+        "classifications/{run}/megablast/{sample}.megablast.taxlist",
+    threads: 1
+    params:
+        lcacons = config["megablast"]["lcaconsensus"]
+    conda:
+        config["megablast"]["environment"]
+    log:
+        "logs/{run}/megablast_tolca_{sample}.log"
+    benchmark:
+        "benchmarks/{run}/megablast_tolca_{sample}.txt"
+    shell:
+      	"""
+        scripts/tolca.py -b {input.blast} -t {input.db} \
+             -l {output} -c {params.lcacons} > {log}
+        """
+
+rule megablast_tomat:
+    input:
+        "classifications/{run}/megablast/{sample}.megablast.taxlist"
+    output: 
         taxmat = "classifications/{run}/megablast/{sample}.megablast.taxmat",
         otumat = "classifications/{run}/megablast/{sample}.megablast.otumat"
     threads: 1
@@ -96,4 +119,4 @@ rule megablast_tomat:
     benchmark:
         "benchmarks/{run}/megablast_tomat_{sample}.txt"
     shell:
-        "scripts/tomat.py -b {input.out} -t {input.db} 2> {log}"
+        "scripts/tomat.py -l {input} 2> {log}"

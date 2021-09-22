@@ -11,15 +11,16 @@ rule minimap_classify:
     conda:
         config["minimap"]["environment"]
     params:
-        extra = "-K 25M --no-kalloc --print-qname -aLx map-ont"
+        extra = "-K 25M --no-kalloc --print-qname -aLx map-ont",
+        nseqs = config["minimap"]["ntargetseqs"]
     log:
         "logs/{run}/minimap_classify_{sample}.log"
     benchmark:
         "benchmarks/{run}/minimap_classify_{sample}.txt"
     shell:
         """
-        minimap2 {params.extra} -t {threads} {input.target} \
-          {input.query} -o {output} 2> {log}
+        minimap2 {params.extra} -t {threads} -N {params.nseqs} \
+          {input.target} {input.query} -o {output} 2> {log}
         """
 
 rule minimap_bam2out:
@@ -38,16 +39,36 @@ rule minimap_bam2out:
     shell:
         """
         samtools sort -@ {threads} {input} | \
-        samtools view -@ {threads} -F 2308 | \
+        samtools view -@ {threads} | \
         cut -f 1,3 > {output} 2> {log}
         """
 
-rule minimap_tomat:
+rule minimap_tolca:
     input:
-        out = "classifications/{run}/minimap/{sample}.minimap.out",
+        mm = "classifications/{run}/minimap/{sample}.minimap.out",
         db = "db/common/ref-taxonomy.txt"
     output:
-        taxlist = "classifications/{run}/minimap/{sample}.minimap.taxlist",
+        "classifications/{run}/minimap/{sample}.minimap.taxlist"
+    threads: 1
+    params:
+        lcacons = config["minimap"]["lcaconsensus"]
+    conda:
+        config["blastn"]["environment"]
+    log:
+        "logs/{run}/minimap_tolca_{sample}.log"
+    benchmark:
+        "benchmarks/{run}/minimap_tolca_{sample}.txt"
+    shell:
+        """
+	scripts/tolca.py -b {input.mm} -t {input.db} \
+             -l {output} -c {params.lcacons} > {log}
+        """
+
+
+rule minimap_tomat:
+    input:
+        "classifications/{run}/minimap/{sample}.minimap.taxlist",
+    output:
         taxmat = "classifications/{run}/minimap/{sample}.minimap.taxmat",
         otumat = "classifications/{run}/minimap/{sample}.minimap.otumat"
     threads: 1
@@ -58,4 +79,4 @@ rule minimap_tomat:
     benchmark:
         "benchmarks/{run}/minimap_tomat_{sample}.txt"
     shell:
-        "scripts/tomat.py -b {input.out} -t {input.db} 2> {log}"
+        "scripts/tomat.py -l {input} 2> {log}"

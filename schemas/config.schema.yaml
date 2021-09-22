@@ -140,6 +140,21 @@ properties:
             memory:
                 type:                 number
                 default:              4000
+            lcaconsensus:
+                type:                 number
+                default:              0.5
+            evalue:
+                type:                 number
+                default:              0.00001
+            pctident:
+                type:                 number
+                default:              80
+            alnlength:
+                type:                 number
+                default:              100
+            ntargetseqs:
+                type:                 number
+                default:              50
 
     centrifuge:
         type:                         object
@@ -187,6 +202,9 @@ properties:
             memory:
                 type:                 number
                 default:              1000
+            pctthreshold:
+                type:                 number
+                default:              60
 
     kraken:
         type:                         object
@@ -238,6 +256,21 @@ properties:
             threads:
                 type:                 number
                 default:              10
+            lcaconsensus:
+                type:                 number
+                default:              0.5
+            evalue:
+                type:                 number
+                default:              0.00001
+            pctident:
+                type:                 number
+                default:              80   
+            alnlength:
+                type:                 number
+                default:              100
+            ntargetseqs:
+                type:                 number
+                default:              50
 
     minimap:
         type:                         object
@@ -257,8 +290,12 @@ properties:
             threads:
                 type:                 number
                 default:              1
-
-
+            lcaconsensus:
+                type:                 number
+                default:              0.5
+            ntargetseqs:
+                type:                 number
+                default:              5
     mothur:
         type:                         object
         properties:
@@ -277,7 +314,6 @@ properties:
             memory:
                 type:                 number
                 default:              1000
-
 
     qiime:
         type:                         object

@@ -27,6 +27,8 @@ rule idtaxa_classify:
         config["idtaxa"]["threads"]
     resources:
         mem_mb = lambda wildcards, attempt: attempt * config["idtaxa"]["memory"]
+    params:
+        config["idtaxa"]["pctthreshold"]
     conda:
         config["idtaxa"]["environment"]
     log:
@@ -34,7 +36,7 @@ rule idtaxa_classify:
     benchmark:
         "benchmarks/{run}/idtaxa_classify_{sample}.txt"
     shell:
-        "Rscript scripts/idtaxa.R {input.db} {input.query} {output} {threads} 2> {log}"
+        "Rscript scripts/idtaxa.R {input.db} {input.query} {output} {threads} {params} 2> {log}"
 
 
 rule idtaxa_tomat:

@@ -40,6 +40,11 @@ blastn:
     environment:                   "../envs/blast.yml"
     threads:                       10
     memory:                        500
+    lcaconsensus:                  0.5
+    evalue:                        0.00001
+    pctidentity:                   80
+    alnlength:                     100
+    ntargetseqs:                   50
 
 centrifuge:
     environment:                   "../envs/centrifuge.yml"
@@ -55,6 +60,7 @@ idtaxa:
     dbmemory:                      3000
     threads:                       8
     memory:                        10000
+    pctthreshold:                  60
 
 kraken:
     environment:                   "../envs/kraken2.yml"
@@ -72,12 +78,19 @@ megablast:
     environment:                   "../envs/blast.yml"
     threads:                       10
     memory:                        500
+    lcaconsensus:                  0.5
+    evalue:                        0.00001
+    pctidentity:                   80
+    alnlength:                     100
+    ntargetseqs:                   50
 
 minimap:
     environment:                   "../envs/minimap2.yml"
     dbmemory:                      3000
     threads:                       16
     memory:                        50000
+    lcaconsensus:                  0.5
+    ntargetseqs:                   10
 
 mothur:
     environment:                   "../envs/mothur.yml"
