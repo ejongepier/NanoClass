@@ -101,7 +101,6 @@ rule centrifuge_tomat:
     input:
         out = "classifications/{run}/centrifuge/{sample}.centrifuge.out",
         ref_seqs = "db/centrifuge/ref-seqs.fna"
-        #ref_seqs = "db/kraken/data/SILVA_132_SSURef_Nr99_tax_silva.fasta"
     output:
         taxlist = "classifications/{run}/centrifuge/{sample}.centrifuge.taxlist",
         taxmat = "classifications/{run}/centrifuge/{sample}.centrifuge.taxmat",

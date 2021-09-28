@@ -103,12 +103,16 @@ qiime:
     dbmemory:                      3000
     threads:                       16
     memory:                        10000
+    lcaconsensus:                  0.51
+    pctidentity:                   0.8
+    ntargetseqs:                   10
 
 rdp:
     environment:                   "../envs/R4.0.yml"
     dbmemory:                      75000
     threads:                       8
     memory:                        5000
+    pctthreshold:                  60
 
 spingo:
     environment:                   "../envs/spingo.yml"

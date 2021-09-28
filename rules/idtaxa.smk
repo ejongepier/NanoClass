@@ -22,7 +22,8 @@ rule idtaxa_classify:
         db = "db/idtaxa/ref-db.Rdata",
         query = rules.prep_fasta_query.output
     output:
-        "classifications/{run}/idtaxa/{sample}.idtaxa.taxlist"
+        tmp = temp("classifications/{run}/idtaxa/{sample}.idtaxa.tmp"),
+        out = "classifications/{run}/idtaxa/{sample}.idtaxa.taxlist"
     threads:
         config["idtaxa"]["threads"]
     resources:
@@ -36,7 +37,10 @@ rule idtaxa_classify:
     benchmark:
         "benchmarks/{run}/idtaxa_classify_{sample}.txt"
     shell:
-        "Rscript scripts/idtaxa.R {input.db} {input.query} {output} {threads} {params} 2> {log}"
+        """
+        Rscript scripts/idtaxa.R {input.db} {input.query} {output.tmp} {threads} {params} 2> {log}
+        awk 'BEGIN{{FS=OFS="\\t"}} {{for (i=1; i<=7; i++) if ($i ~ /^ *$/) $i="NA"}} 1' {output.tmp} > {output.out}
+        """
 
 
 rule idtaxa_tomat:

@@ -25,6 +25,8 @@ rule rdp_classify:
         query = rules.prep_fasta_query.output
     output:
         "classifications/{run}/rdp/{sample}.rdp.taxlist"
+    params:
+        config["rdp"]["pctthreshold"]
     threads:
         config["rdp"]["threads"]
     resources:
@@ -36,7 +38,7 @@ rule rdp_classify:
     benchmark:
         "benchmarks/{run}/rdp_classify_{sample}.txt"
     shell:
-        "Rscript scripts/assigntaxonomy.R {input.db} {input.query} {output} {threads} 2> {log}"
+        "Rscript scripts/assigntaxonomy.R {input.db} {input.query} {output} {threads} {params} 2> {log}"
 
 
 rule rdp_tomat:

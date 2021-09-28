@@ -16,9 +16,6 @@ report: "report/workflow.rst"
 configfile: "config.yaml"
 validate(config, "schemas/config.schema.yaml")
 
-#smpls = pd.read_csv(config["samples"]).set_index(["run", "sample"], drop=False)
-#validate(smpls, "schemas/samples.schema.yaml")
-
 smpls = pd.read_csv(config["samples"], dtype=str).set_index(["run", "sample"], drop=False)
 smpls.index = smpls.index.set_levels([i.astype(str) for i in smpls.index.levels])
 validate(smpls, schema="schemas/samples.schema.yaml")
@@ -71,18 +68,6 @@ rule filter:
 # ======================================================
 # Functions and Classes
 # ======================================================
-
-#for samples in smpls.itertuples():
-#    file = Path('data/{samples.run}/basecalled/{samples.sample}.passed.fastq.gz'.format(samples=samples))
-#    try:
-#        abs_path = file.resolve(strict=True)
-#    except FileNotFoundError:
-#        print('There is no file called "{file}".'.format(file = file))
-#        if not os.path.exists('data/{samples.run}/basecalled/'.format(samples=samples)):
-#            os.makedirs('data/{samples.run}/basecalled/'.format(samples=samples))
-#            print('Created directory "data/{samples.run}/basecalled/".'.format(samples=samples))
-#        print('Please copy your basecalled fastq files into the "data/{samples.run}/basecalled/" directory.'.format(samples=samples))
-#        print('Make sure it is named "{samples.sample}.passed.fastq" (or "{samples.sample}.passed.fastq.gz" if zipped)"'.format(samples=samples))
 
 
 onsuccess:

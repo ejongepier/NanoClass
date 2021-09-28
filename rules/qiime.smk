@@ -72,6 +72,10 @@ rule qiime_classify:
         qza = temp("classifications/{run}/qiime/{sample}.qiime.qza"),
         path = temp(directory("classifications/{run}/qiime/{sample}/")),
         out = "classifications/{run}/qiime/{sample}.qiime.out"
+    params:
+        pident = config["qiime"]["pctidentity"],
+        nseqs = config["qiime"]["ntargetseqs"],
+        lcacons = config["qiime"]["lcaconsensus"]
     threads:
         config["qiime"]["threads"]
     conda:
@@ -88,7 +92,9 @@ rule qiime_classify:
             --i-reference-taxonomy {input.taxo} \
             --o-classification {output.qza} \
             --p-threads {threads} \
-            --p-top-hits-only \
+            --p-perc-identity {params.pident} \
+            --p-maxaccepts {params.nseqs} \
+            --p-min-consensus {params.lcacons} \
             2>&1 | tee -a {log}
         qiime tools export \
             --input-path {output.qza} \

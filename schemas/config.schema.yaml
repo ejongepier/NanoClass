@@ -333,6 +333,15 @@ properties:
             memory:
                 type:                 number
                 default:              10000
+            lcaconsensus:
+                type:                 number
+                default:              0.51
+            pctidentity:
+                type:                 number                  
+                default:              0.8
+            ntargetseqs:
+                type:                 number
+                default:              10
 
     rdp:
         type:                         object
@@ -352,6 +361,9 @@ properties:
             memory:
                 type:                 number
                 default:              5000
+            pctthreshold:
+                type:                 number
+                default:              60
 
     spingo:
         type:                         object

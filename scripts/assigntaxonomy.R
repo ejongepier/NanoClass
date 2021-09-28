@@ -7,12 +7,13 @@ suppressPackageStartupMessages(library(seqinr))
 
 args = commandArgs(trailingOnly=TRUE)
 threads = as.numeric(args[4])
+pident = as.numeric(args[5])
 
 query <- read.fasta(args[2], as.string = T, forceDNAtolower = F, set.attributes = F)
 
 set.seed(100)
 taxann <- assignTaxonomy(seqs =  unlist(query), refFasta = args[1], 
-          tryRC = T, outputBootstraps=F, minBoot=50, multithread = threads, verbose = F, 
+          tryRC = T, outputBootstraps=F, minBoot = pident, multithread = threads, verbose = F, 
           taxLevels = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus")
           )
 
