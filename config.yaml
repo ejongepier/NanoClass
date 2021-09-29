@@ -1,5 +1,5 @@
 samples:                           "samples.csv"
-methods:                           ["blastn","centrifuge","idtaxa","kraken","megablast","minimap","mothur","qiime","rdp","spingo"]
+methods:                           ["blastn","centrifuge","dcmegablast","idtaxa","kraken","megablast","minimap","mothur","qiime","rdp","spingo"]
 
 porechop:
     environment:                   "../envs/preprocess.yml"
@@ -54,6 +54,16 @@ centrifuge:
     dbmemory:                      500
     threads:                       1
     memory:                        16000
+
+dcmegablast:
+    environment:                   "../envs/blast.yml"
+    threads:                       10
+    memory:                        500
+    lcaconsensus:                  0.5
+    evalue:                        0.00001
+    pctidentity:                   80
+    alnlength:                     100
+    ntargetseqs:                   50
 
 idtaxa:
     environment:                   "../envs/R4.0.yml"

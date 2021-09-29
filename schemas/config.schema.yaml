@@ -184,6 +184,34 @@ properties:
                 type:                 number
                 default:              1000
 
+    dcmegablast:
+        type:                         object
+        properties:
+            environment:
+                type:                 string
+                default:              "../envs/blast.yml"
+            container:
+                type:                 string
+                default:              "docker://ncbi/blast:2.10.1"
+            threads:
+                type:                 number
+                default:              10
+            lcaconsensus:
+                type:                 number
+                default:              0.5
+            evalue:
+                type:                 number
+                default:              0.00001
+            pctident:
+                type:                 number
+                default:              80
+            alnlength:
+                type:                 number
+                default:              100
+            ntargetseqs:
+                type:                 number
+                default:              50
+
     idtaxa:
         type:                         object
         properties:
