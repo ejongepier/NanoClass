@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Metabarcoding analyses on Crunchomics &mdash; QIIME2-workshop 2021.06 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Taxonomic classification" href="taxonomy.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> QIIME2-workshop
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="genintro.html">General Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="denoise.html">Quality control and feature tabulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="taxonomy.html">Taxonomic classification</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Metabarcoding analyses on Crunchomics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#some-preparatory-steps">Some preparatory steps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#setup-your-environment">Setup your environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#define-global-variables">Define global variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setup-your-working-directory">Setup your working directory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#importing-data">Importing data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#primer-removal">Primer removal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#feature-table-construction">Feature table construction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deblur-denoise">Deblur denoise</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#step-1-joining-read-pairs">Step 1. Joining read pairs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-2-quality-filter">Step 2. Quality filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-3-denoise">Step 3. Denoise</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dada2-denoise">DADA2-denoise</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#taxonomic-classification">Taxonomic classification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#extract-reference-reads">Extract reference reads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#train-the-classifier">Train the classifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Taxonomic classification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#taxonomic-barplot">Taxonomic barplot</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QIIME2-workshop</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Metabarcoding analyses on Crunchomics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="metabarcoding-analyses-on-crunchomics">
+<h1>Metabarcoding analyses on Crunchomics<a class="headerlink" href="#metabarcoding-analyses-on-crunchomics" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial will walk you though ASV abundance table construction and taxonomic classification using QIIME2 on the Crunchomics cluster.
+It only contains information relevant for cluster usage. For detailed desciption of the workflow see the previous tutorials.</p>
+<div class="section" id="some-preparatory-steps">
+<h2>Some preparatory steps<a class="headerlink" href="#some-preparatory-steps" title="Permalink to this headline">¶</a></h2>
+<p>Before getting started, lets collect the data.
+There is a copy on the amplicomics group share which you can use, for instance by creating a link to your current directory on the Crunchomics cluster, like so:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ln -s /zfs/omics/projects/amplicomics/demodata/metabarcoding-qiime2-datapackage-v2021.06/data ./
+</pre></div>
+</div>
+<div class="section" id="setup-your-environment">
+<h3>Setup your environment<a class="headerlink" href="#setup-your-environment" title="Permalink to this headline">¶</a></h3>
+<p>As an amplicomics group member, you can use the existing QIIME2 version 2021.2 installation.
+Make sure your <code class="docutils literal notranslate"><span class="pre">~/.condarc</span></code> contains the path to the miniconda environments on the amplicomics project space and activate the QIIME2 environment, like so:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda config --add envs_dirs /zfs/omics/projects/amplicomics/miniconda3/envs/
+conda activate qiime2-2021.2
+</pre></div>
+</div>
+</div>
+<div class="section" id="define-global-variables">
+<h3>Define global variables<a class="headerlink" href="#define-global-variables" title="Permalink to this headline">¶</a></h3>
+<p>Lets define some variables upfront such that we can easily reuse the rest of the script when parameter values change.
+We define them as global variables using <code class="docutils literal notranslate"><span class="pre">export</span></code> to make sure they are defined also when we send certain jobs to the Slurm cluster management and job scheduling system.</p>
+<p>First define the path to the MANIFEST and META file. Note that the MANIFEST file contains paths to the actual input fastq.gz data, so we do not need to define those here.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">MANIFEST</span><span class="o">=</span><span class="s2">&quot;data/MANIFEST.csv&quot;</span>
+<span class="nb">export</span> <span class="nv">META</span><span class="o">=</span><span class="s2">&quot;data/META.tsv&quot;</span>
+</pre></div>
+</div>
+<p>Now the primer sequences that were used, which we will use for primer trimming as well as for extracting fragments of the reference database.
+Defining the here makes it easier to use re-use your script when you use other primers.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">PRIMFWD</span><span class="o">=</span><span class="s2">&quot;GTGYCAGCMGCCGCGGTAA&quot;</span>
+<span class="nb">export</span> <span class="nv">PRIMREV</span><span class="o">=</span><span class="s2">&quot;CCGYCAATTYMTTTRAGTTT&quot;</span>
+</pre></div>
+</div>
+<p>The trim and trunk lengths used by deblur-denoise and DADA2-denoise:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">TRIMLENG</span><span class="o">=</span><span class="m">370</span>
+<span class="nb">export</span> <span class="nv">TRUNKFWD</span><span class="o">=</span><span class="m">230</span>
+<span class="nb">export</span> <span class="nv">TRUNKREV</span><span class="o">=</span><span class="m">220</span>
+</pre></div>
+</div>
+<p>And finally the path to the SILVA database on the amplicomics group share. There is no need for each user to have a private copy of common databases, which is why it is better to share these.
+If you like to add another database or a new release, just contact <a class="reference external" href="mailto:e&#46;jongepier&#37;&#52;&#48;uva&#46;nl">Evelien Jongepier</a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">DBSEQ</span><span class="o">=</span><span class="s2">&quot;/zfs/omics/projects/amplicomics/databases/SILVA/SILVA_138_QIIME/data/silva-138-99-seqs.qza&quot;</span>
+<span class="nb">export</span> <span class="nv">DBTAX</span><span class="o">=</span><span class="s2">&quot;/zfs/omics/projects/amplicomics/databases/SILVA/SILVA_138_QIIME/data/silva-138-99-tax.qza&quot;</span>
+<span class="nb">export</span> <span class="nv">DBPREFIX</span><span class="o">=</span><span class="s2">&quot;SILVA_138_99_16S&quot;</span>
+</pre></div>
+</div>
+<p>Now that we have defined all these variables, we can simply refer to them using the $ notation. To print the value of DBPREFIX:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="nv">$DBPREFIX</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setup-your-working-directory">
+<h3>Setup your working directory<a class="headerlink" href="#setup-your-working-directory" title="Permalink to this headline">¶</a></h3>
+<p>Now, lets create the directories where your results are written to. Make sure you are in the same directory where the “data” subdirectory is.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir -p logs
+mkdir -p prep
+mkdir -p deblur
+mkdir -p dada2
+mkdir -p db
+mkdir -p taxonomy
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="importing-data">
+<h2>Importing data<a class="headerlink" href="#importing-data" title="Permalink to this headline">¶</a></h2>
+<p>Lets submit the following <code class="docutils literal notranslate"><span class="pre">qiime</span> <span class="pre">tools</span> <span class="pre">import</span></code>-command to Slurm, using the <code class="docutils literal notranslate"><span class="pre">srun</span></code>-command.
+<code class="docutils literal notranslate"><span class="pre">n</span></code> and <code class="docutils literal notranslate"><span class="pre">cpus-per-task</span></code> are <code class="docutils literal notranslate"><span class="pre">srun</span></code> parameters that define what resources you require.
+Here, your specify your job consists of 1 task (<code class="docutils literal notranslate"><span class="pre">-n</span></code>) that needs to be run on 1 cpu (<code class="docutils literal notranslate"><span class="pre">--cpus-per-task</span></code>).
+For more <code class="docutils literal notranslate"><span class="pre">srun</span></code> parameters and options check out the help function (<code class="docutils literal notranslate"><span class="pre">srun</span> <span class="pre">--help</span></code>) or the manual (<code class="docutils literal notranslate"><span class="pre">man</span> <span class="pre">srun</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>srun -n <span class="m">1</span> --cpus-per-task <span class="m">1</span> qiime tools import <span class="se">\</span>
+  --type <span class="s1">&#39;SampleData[PairedEndSequencesWithQuality]&#39;</span> <span class="se">\</span>
+  --input-path <span class="nv">$MANIFEST</span> <span class="se">\</span>
+  --input-format PairedEndFastqManifestPhred33 <span class="se">\</span>
+  --output-path prep/demux-seqs.qza
+</pre></div>
+</div>
+<p>When running such a <code class="docutils literal notranslate"><span class="pre">srun</span></code>-command, 3 things will happen:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>The job scheduler adds your job to the queue.</p></li>
+<li><p>Once the requested resources are found (here, 1 cpu), they will be allocated to your job.</p></li>
+<li><p>Once the resources are allocated, your job will start.</p></li>
+</ol>
+</div></blockquote>
+<p>Now, let create the vizualisation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>srun -n <span class="m">1</span> --cpus-per-task <span class="m">1</span> qiime demux summarize <span class="se">\</span>
+  --i-data prep/demux-seqs.qza <span class="se">\</span>
+  --o-visualization prep/demux-seqs.qzv
+</pre></div>
+</div>
+<p>Viewing vizualisations can better be done on your local laptop or computer.
+The following command gives you instructions how to do that.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>how-to-view-this-qzv prep/demux-seqs.qzv
+</pre></div>
+</div>
+</div>
+<div class="section" id="primer-removal">
+<h2>Primer removal<a class="headerlink" href="#primer-removal" title="Permalink to this headline">¶</a></h2>
+<p>Using 2 cpus, this takes ca. 3m26.193s. On a larger data set you may want to use more <code class="docutils literal notranslate"><span class="pre">cpus-per-task</span></code>.
+Of course you need to increase the number of cpus by changing both the <code class="docutils literal notranslate"><span class="pre">cpus-per-task</span></code> parameter of the
+<code class="docutils literal notranslate"><span class="pre">srun</span></code>-command and the <code class="docutils literal notranslate"><span class="pre">p-cores</span></code> parameter of the <code class="docutils literal notranslate"><span class="pre">qiime</span> <span class="pre">cutadapt</span> <span class="pre">trim-paired</span></code>-command. The reason is that
+<code class="docutils literal notranslate"><span class="pre">cpus-per-task</span></code> merely specifies the number of cores you reserve for this job, while <code class="docutils literal notranslate"><span class="pre">p-cores</span></code> defines how many are actually used.
+The latter may be differently defined, depending on which command you run. Check out the help functions to find out more.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>srun -n <span class="m">1</span> --cpus-per-task <span class="m">2</span> qiime cutadapt trim-paired <span class="se">\</span>
+  --i-demultiplexed-sequences prep/demux-seqs.qza <span class="se">\</span>
+  --p-front-f <span class="nv">$PRIMFWD</span> <span class="se">\</span>
+  --p-front-r <span class="nv">$PRIMREV</span> <span class="se">\</span>
+  --p-error-rate <span class="m">0</span> <span class="se">\</span>
+  --o-trimmed-sequences prep/trimmed-seqs.qza <span class="se">\</span>
+  --p-cores <span class="m">2</span> <span class="se">\</span>
+  --verbose <span class="se">\</span>
+  <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> tee logs/qiime-cutadapt-trim-paired.log
+
+srun -n <span class="m">1</span> --cpus-per-task <span class="m">1</span> qiime demux summarize <span class="se">\</span>
+  --i-data prep/trimmed-seqs.qza <span class="se">\</span>
+  --o-visualization prep/trimmed-seqs.qzv
+</pre></div>
+</div>
+<p>This last task typically takes only a few seconds, so it can also be run on the head node of Crunchomics (i.e. no need to submit to Slurm).
+For the rest of this workflow, we will not use <code class="docutils literal notranslate"><span class="pre">srun</span></code> for these quick jobs anymore because resource allocation takes a disproportionate amount of time.
+Please mind though that to avoid overloading the head node you should never run larger jobs there.</p>
+<p>And again check out instructions how to transfer and view the vizualisation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>how-to-view-this-qzv prep/trimmed-seqs.qzv
+</pre></div>
+</div>
+</div>
+<div class="section" id="feature-table-construction">
+<h2>Feature table construction<a class="headerlink" href="#feature-table-construction" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="deblur-denoise">
+<h3>Deblur denoise<a class="headerlink" href="#deblur-denoise" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="step-1-joining-read-pairs">
+<h4>Step 1. Joining read pairs<a class="headerlink" href="#step-1-joining-read-pairs" title="Permalink to this headline">¶</a></h4>
+<p>Using 2 cpus, this takes ca. 3m1.940s. On a larger data set you may want to use more <code class="docutils literal notranslate"><span class="pre">cpus-per-task</span></code>.
+Note that for the <code class="docutils literal notranslate"><span class="pre">qiime</span> <span class="pre">cutadapt</span> <span class="pre">trim-paired</span></code>-command you used <code class="docutils literal notranslate"><span class="pre">p-cores</span></code> while here you need <code class="docutils literal notranslate"><span class="pre">p-threads</span></code>.
+Pretty annoying that this is not consistent, but that simply is the way the developers defined their parameters
+which often differs. Check-out the help function of the command you like to run to learn more.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>srun -n <span class="m">1</span> --cpus-per-task <span class="m">2</span> qiime vsearch join-pairs <span class="se">\</span>
+  --i-demultiplexed-seqs prep/trimmed-seqs.qza <span class="se">\</span>
+  --o-joined-sequences deblur/joined-seqs.qza <span class="se">\</span>
+  --p-threads <span class="m">2</span> <span class="se">\</span>
+  --verbose <span class="se">\</span>
+  <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> tee logs/qiime-vsearch-join-pairs.log
+
+qiime demux summarize <span class="se">\</span>
+  --i-data deblur/joined-seqs.qza <span class="se">\</span>
+  --o-visualization deblur/joined-seqs.qzv
+
+how-to-view-this-qzv deblur/joined-seqs.qzv
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-2-quality-filter">
+<h4>Step 2. Quality filter<a class="headerlink" href="#step-2-quality-filter" title="Permalink to this headline">¶</a></h4>
+<p>This task takes ca. 9m15.097s but cannot be sped up because the <code class="docutils literal notranslate"><span class="pre">qiime</span> <span class="pre">quality-filter</span> <span class="pre">q-score</span></code>-command
+does not have an option to use multiple cpus (see <code class="docutils literal notranslate"><span class="pre">qiime</span> <span class="pre">quality-filter</span> <span class="pre">q-score</span> <span class="pre">--help</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>srun -n <span class="m">1</span> --cpus-per-task <span class="m">1</span> qiime quality-filter q-score <span class="se">\</span>
+  --i-demux deblur/joined-seqs.qza <span class="se">\</span>
+  --o-filtered-sequences deblur/filt-seqs.qza <span class="se">\</span>
+  --o-filter-stats deblur/filt-stats.qza <span class="se">\</span>
+  --verbose <span class="se">\</span>
+  <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> tee logs/qiime-quality-filter-q-score.log
+</pre></div>
+</div>
+<p>You can ignore the <code class="docutils literal notranslate"><span class="pre">YAMLLoadWarning</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>qiime demux summarize <span class="se">\</span>
+  --i-data deblur/filt-seqs.qza <span class="se">\</span>
+  --o-visualization deblur/filt-seqs.qzv
+
+qiime metadata tabulate <span class="se">\</span>
+  --m-input-file deblur/filt-stats.qza <span class="se">\</span>
+  --o-visualization deblur/filt-stats.qzv
+
+how-to-view-this-qzv deblur/filt-seqs.qzv
+how-to-view-this-qzv deblur/filt-stats.qzv
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-3-denoise">
+<h4>Step 3. Denoise<a class="headerlink" href="#step-3-denoise" title="Permalink to this headline">¶</a></h4>
+<p>With 8 cpus the following takes ca. 6m56.972s. You may want to increase the no. cpus on larger data sets.
+Also note I now explicitely defined a memory allocation of 16GB. This is the total amount of RAM
+you expect to need for this job (+ a bit more to be on the safe side). How much you need is not
+always easy to predict and requires some experience/trial and error.
+As a rule of thumb: if you get an <code class="docutils literal notranslate"><span class="pre">Out</span> <span class="pre">Of</span> <span class="pre">Memory</span></code> error, double it and try again.
+Note that you can also define <code class="docutils literal notranslate"><span class="pre">mem-per-cpu</span></code>, which may be easier to work with if you often change the
+number of cpus between analyses.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>srun -n <span class="m">1</span> --cpus-per-task <span class="m">8</span> --mem<span class="o">=</span>16GB qiime deblur denoise-16S <span class="se">\</span>
+  --i-demultiplexed-seqs deblur/filt-seqs.qza <span class="se">\</span>
+  --p-trim-length <span class="nv">$TRIMLENG</span> <span class="se">\</span>
+  --o-representative-sequences deblur/deblur-reprseqs.qza <span class="se">\</span>
+  --o-table deblur/deblur-table.qza <span class="se">\</span>
+  --p-sample-stats <span class="se">\</span>
+  --o-stats deblur/deblur-stats.qza <span class="se">\</span>
+  --p-jobs-to-start <span class="m">8</span> <span class="se">\</span>
+  --verbose <span class="se">\</span>
+  <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> tee logs/qiime-deblur-denoise-16S.log
+
+cat deblur.log &gt;&gt; logs/qiime_deblur_denoise-16S.log <span class="o">&amp;&amp;</span> rm deblur.log
+
+qiime deblur visualize-stats <span class="se">\</span>
+  --i-deblur-stats deblur/deblur-stats.qza <span class="se">\</span>
+  --o-visualization deblur/deblur-stats.qzv
+
+qiime feature-table summarize <span class="se">\</span>
+  --i-table deblur/deblur-table.qza <span class="se">\</span>
+  --o-visualization deblur/deblur-table.qzv
+
+qiime feature-table tabulate-seqs <span class="se">\</span>
+  --i-data deblur/deblur-reprseqs.qza <span class="se">\</span>
+  --o-visualization deblur/deblur-reprseqs.qzv
+
+how-to-view-this-qzv deblur/deblur-stats.qzv
+how-to-view-this-qzv deblur/deblur-table.qzv
+how-to-view-this-qzv deblur/deblur-reprseqs.qzv
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="dada2-denoise">
+<h3>DADA2-denoise<a class="headerlink" href="#dada2-denoise" title="Permalink to this headline">¶</a></h3>
+<p>DADA2 performs filtering, joining and denoising all with one single command, and therefor takes longer to run.
+Here, it takes ca. 30m5.334s using 8 cpus. It is tempting to just increase the number of cpus when impatient,
+but please note that not all commands are very efficient at running more jobs in parallel (i.e. on multiple cpus).
+The reason often is that the rate-limiting step in the workflow is unable to use multiple cpus, so all but one are idle.</p>
+<p>To make responsable use of the cluster, it is always good to keep an eye on how well runtime scales with <code class="docutils literal notranslate"><span class="pre">cpus-per-task</span></code>.
+You can easily time any command using the <code class="docutils literal notranslate"><span class="pre">time</span></code>-command, like so:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">time</span> srun -n <span class="m">1</span> --cpus-per-task <span class="m">8</span> --mem<span class="o">=</span>32GB qiime dada2 denoise-paired <span class="se">\</span>
+  --i-demultiplexed-seqs prep/trimmed-seqs.qza <span class="se">\</span>
+  --p-trunc-len-f <span class="nv">$TRUNKFWD</span> <span class="se">\</span>
+  --p-trunc-len-r <span class="nv">$TRUNKREV</span> <span class="se">\</span>
+  --p-n-threads <span class="m">8</span> <span class="se">\</span>
+  --o-table dada2/dada2-table.qza <span class="se">\</span>
+  --o-representative-sequences dada2/dada2-reprseqs.qza <span class="se">\</span>
+  --o-denoising-stats dada2/dada2-stats.qza <span class="se">\</span>
+  --verbose <span class="se">\</span>
+  <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> tee logs/qiime-dada2-denoise-paired.log
+
+qiime metadata tabulate <span class="se">\</span>
+  --m-input-file dada2/dada2-stats.qza <span class="se">\</span>
+  --o-visualization dada2/dada2-stats.qzv
+
+qiime feature-table summarize <span class="se">\</span>
+  --i-table dada2/dada2-table.qza <span class="se">\</span>
+  --o-visualization dada2/dada2-table.qzv
+
+qiime feature-table tabulate-seqs <span class="se">\</span>
+  --i-data dada2/dada2-reprseqs.qza <span class="se">\</span>
+  --o-visualization dada2/dada2-reprseqs.qzv
+
+how-to-view-this-qzv dada2/dada2-stats.qzv
+how-to-view-this-qzv dada2/dada2-table.qzv
+how-to-view-this-qzv dada2/dada2-reprseqs.qzv
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="taxonomic-classification">
+<h2>Taxonomic classification<a class="headerlink" href="#taxonomic-classification" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="extract-reference-reads">
+<h3>Extract reference reads<a class="headerlink" href="#extract-reference-reads" title="Permalink to this headline">¶</a></h3>
+<p>This takes ca. 6m20.559s on 8 cpus.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">time</span> srun -n <span class="m">1</span> --cpus-per-task <span class="m">8</span> --mem<span class="o">=</span>4GB qiime feature-classifier extract-reads <span class="se">\</span>
+  --i-sequences <span class="nv">$DBSEQ</span> <span class="se">\</span>
+  --p-f-primer <span class="nv">$PRIMFWD</span> <span class="se">\</span>
+  --p-r-primer <span class="nv">$PRIMREV</span> <span class="se">\</span>
+  --o-reads db/<span class="nv">$DBPREFIX</span>-ref-frags.qza <span class="se">\</span>
+  --p-n-jobs <span class="m">8</span> <span class="se">\</span>
+  --verbose <span class="se">\</span>
+  <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> tee logs/qiime-feature-classifier-extract-reads.log
+</pre></div>
+</div>
+</div>
+<div class="section" id="train-the-classifier">
+<h3>Train the classifier<a class="headerlink" href="#train-the-classifier" title="Permalink to this headline">¶</a></h3>
+<p>Training a classifier takes quite some time, especially because the <code class="docutils literal notranslate"><span class="pre">qiime</span> <span class="pre">feature-classifier</span> <span class="pre">fit-classifier-naive-bayes</span></code>-
+command cannot use multiple cpus in parallel (see <code class="docutils literal notranslate"><span class="pre">qiime</span> <span class="pre">feature-classifier</span> <span class="pre">fit-classifier-naive-bayes</span> <span class="pre">--help</span></code>).
+Here, it took ca. 145m56.836s. You can however often re-use your classifier, provided you used the same primers and db.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">time</span> srun -n <span class="m">1</span> --cpus-per-task <span class="m">1</span> --mem<span class="o">=</span>32GB qiime feature-classifier fit-classifier-naive-bayes <span class="se">\</span>
+  --i-reference-reads db/<span class="nv">$DBPREFIX</span>-ref-frags.qza <span class="se">\</span>
+  --i-reference-taxonomy <span class="nv">$DBTAX</span> <span class="se">\</span>
+  --o-classifier db/<span class="nv">$DBPREFIX</span>-ref-classifier.qza <span class="se">\</span>
+  --p-verbose <span class="se">\</span>
+  <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> tee logs/qiime-feature-classifier-extract-reads.log
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>Taxonomic classification<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>The classifier takes up quite some disc space. If you ‘just’ run it you are likely to get a
+<code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">space</span> <span class="pre">left</span> <span class="pre">on</span> <span class="pre">device</span></code>-error. You can avoid this by changing the directory where temporary
+files are written to, but make sure you have sufficient space there as well of course.</p>
+<p>Lets create a temporary directory in my current working directory called ‘tmptmp’.
+Then export this as <code class="docutils literal notranslate"><span class="pre">TMPDIR</span></code>, which qiime will automatically recognize and use as the temporary directory.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir -p tmptmp
+<span class="nb">export</span> <span class="nv">TMPDIR</span><span class="o">=</span><span class="nv">$PWD</span>/tmptmp/
+</pre></div>
+</div>
+<p>You need quite a lot of RAM to run the classifier. Note that this means that is many of us do this in parallel,
+you may end up in the queue. This took 14m13.817s to run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">time</span> srun -n <span class="m">1</span> --cpus-per-task <span class="m">32</span> --mem<span class="o">=</span>160GB qiime feature-classifier classify-sklearn <span class="se">\</span>
+  --i-classifier db/<span class="nv">$DBPREFIX</span>-ref-classifier.qza <span class="se">\</span>
+  --i-reads dada2/dada2-reprseqs.qza <span class="se">\</span>
+  --o-classification taxonomy/dada2-<span class="nv">$DBPREFIX</span>-taxonomy.qza <span class="se">\</span>
+  --p-n-jobs <span class="m">16</span> <span class="se">\</span>
+  --verbose <span class="se">\</span>
+  <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> tee logs/qiime-feature-classifier-classify-sklearn.log
+
+rm -fr tmptmp <span class="c1">## clean up afterwards</span>
+
+qiime metadata tabulate <span class="se">\</span>
+  --m-input-file taxonomy/dada2-<span class="nv">$DBPREFIX</span>-taxonomy.qza <span class="se">\</span>
+  --o-visualization taxonomy/dada2-<span class="nv">$DBPREFIX</span>-taxonomy.qzv
+</pre></div>
+</div>
+</div>
+<div class="section" id="taxonomic-barplot">
+<h3>Taxonomic barplot<a class="headerlink" href="#taxonomic-barplot" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>qiime taxa barplot <span class="se">\</span>
+  --i-table dada2/dada2-table.qza <span class="se">\</span>
+  --i-taxonomy taxonomy/dada2-<span class="nv">$DBPREFIX</span>-taxonomy.qza <span class="se">\</span>
+  --m-metadata-file <span class="nv">$META</span> <span class="se">\</span>
+  --o-visualization taxonomy/dada2-<span class="nv">$DBPREFIX</span>-taxplot.qzv
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="taxonomy.html" class="btn btn-neutral float-left" title="Taxonomic classification" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Evelien Jongepier
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

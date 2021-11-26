@@ -4,7 +4,7 @@
 
 NanoClass is a taxonomic meta-classifier for 16S/18S amplicon sequencing data generated with the Oxford Nanopore MinION.
 With a single command, you can run ten popular classification tools on multiple samples in parallel, including BLASTN, Centrifuge, Kraken2, IDTAXA, MegaBLAST, Minimap2, Mothur, QIIME2, RDP and SPINGO.
-Optional read preparation steps, such as demultiplexing, adaptor trimming, length filtering and sub-sampling, are an integral part of the pipeline.
+Optional read preparation steps, such as quality trimming, length filtering and sub-sampling, are an integral part of the pipeline.
 
 NanoClass automatically installs all software packages and dependencies, downloads and builds required taxonomic databases and runs the analysis on your samples.
 
@@ -35,8 +35,8 @@ NanoClass is immediately ready for use.
 
 Enter your samples and the paths to your fastq.gz files in the sample.csv. 
 Sample labels should be unique. Both sample and run labels should contain letters and numbers only.
-Barcode column should be left empty for the time being, meaning your input files should already be demultiplexed.
-For an eample see the sample.csv file.
+Barcode column should be left empty, meaning your input files should already be demultiplexed.
+For an example see the sample.csv file.
 
 After editing the samples.csv, the entire pipeline can be run with a single command:
 

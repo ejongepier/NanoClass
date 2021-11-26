@@ -6,6 +6,9 @@ cluster
 !config.yaml
 data
 db
+!/docs/
+!/docs/*
+!/docs/*/*
 !/envs
 !/envs/*
 !/input

@@ -1,0 +1,309 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>General Introduction &mdash; QIIME2-workshop 2021.06 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting started" href="gettingstarted.html" />
+    <link rel="prev" title="Welcome to the Metabarcoding - QIIME2 workshop!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> QIIME2-workshop
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">General Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#time-and-place">Time and place</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-prepare">How to prepare?</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-qiime2-version-2021-2">Install QIIME2 version 2021.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#familiarize-yourself-with-unix">Familiarize yourself with UNIX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optional-sign-up-for-the-crunchomics-cluster">OPTIONAL: Sign up for the Crunchomics cluster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optional-become-a-member-of-the-amplicomics-group">OPTIONAL: Become a member of the amplicomics group</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="denoise.html">Quality control and feature tabulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="taxonomy.html">Taxonomic classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crunchomics.html">Metabarcoding analyses on Crunchomics</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QIIME2-workshop</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>General Introduction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="general-introduction">
+<h1>General Introduction<a class="headerlink" href="#general-introduction" title="Permalink to this headline">¶</a></h1>
+<p>This workshop will introduce you to analysis of DNA metabarcoding sequencing data using the command line tool QIIME2.
+QIIME2™ is a next-generation microbiome bioinformatics platform that is extensible, free, open source, and community developed (<a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/31341288/">Bolyen et al. 2019</a>).</p>
+<div class="section" id="objectives">
+<h2>Objectives<a class="headerlink" href="#objectives" title="Permalink to this headline">¶</a></h2>
+<p>At the end of the two-day Metabarcoding - QIIME2 workshop, you are able to</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><strong>Perform quality control and produce an ASV abundance table from raw amplicon sequences.</strong> These can be used for downstream analyses like community profiling or diversity analyses, although this is not part of the workshop.</p></li>
+<li><p><strong>Perform taxonomic classification and generate interactive</strong> <a class="reference external" href="https://view.qiime2.org/visualization/?type=html&amp;src=https%3A%2F%2Fdocs.qiime2.org%2F2020.6%2Fdata%2Ftutorials%2Fmoving-pictures%2Ftaxa-bar-plots.qzv">taxonomic barplots</a>  <strong>of bacterial and archeal communities</strong> using the SILVA 16S database. These skills can be readily applied to other taxonomic groups such as animals, plants and fungi, using other marker genes and databases (e.g. 18S/SILVA, ITS/UNITE or CO1/BOLD).</p></li>
+<li><p><strong>Run these analyses on the Crunchomics cluster</strong>*, such that you have access to sufficient computational power to analyse your own amplicon sequencing data set.</p></li>
+</ol>
+</div></blockquote>
+<p>* <em>Only possible for participants from SILS or IBED that have access to the Crunchomics cluster.</em></p>
+</div>
+<div class="section" id="time-and-place">
+<h2>Time and place<a class="headerlink" href="#time-and-place" title="Permalink to this headline">¶</a></h2>
+<p>The workshop will be held through Zoom.
+To join, just follow <a class="reference external" href="https://uva-live.zoom.us/j/85878918578">this link</a>.</p>
+<table class="colwidths-given docutils align-default" id="id5">
+<caption><span class="caption-text">Schedule QIIME2 workshop June 2021</span><a class="headerlink" href="#id5" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Day</p></th>
+<th class="head"><p>Time</p></th>
+<th class="head"><p>Topic</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Mon June 28th</p></td>
+<td><p>09:00 - 12:30</p></td>
+<td><p>Quality control and ASV table construction</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>13:30 - 17:00</p></td>
+<td><p>OPTIONAL: Running analyses on Crunchomics*</p></td>
+</tr>
+<tr class="row-even"><td><p>Tue June 29th</p></td>
+<td><p>09:00 - 12:30</p></td>
+<td><p>Taxonomic classification using the SILVA 16S database</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>13:30 - 17:00</p></td>
+<td><p>OPTIONAL: Running analyses on Crunchomics*</p></td>
+</tr>
+</tbody>
+</table>
+<p>* <em>Only possible for participants from SILS or IBED that have access to the Crunchomics cluster.</em></p>
+</div>
+<div class="section" id="how-to-prepare">
+<h2>How to prepare?<a class="headerlink" href="#how-to-prepare" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-qiime2-version-2021-2">
+<h3>Install QIIME2 version 2021.2<a class="headerlink" href="#install-qiime2-version-2021-2" title="Permalink to this headline">¶</a></h3>
+<p>Please install QIIME2 version 2021.2 on your laptop or desktop computer following <a class="reference external" href="https://docs.qiime2.org/2021.2/install/native/">these installation instructions</a>.
+Windows users will first need to setup <a class="reference external" href="https://docs.qiime2.org/2021.2/install/virtual/wsl/">Windows subsystem for Linux</a>.
+This may take some time, so please do so well in advance.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>QIIME2 version 2021.2 is not the latest version of QIIME2, but is is the version you will need for this workshop.
+The reason is that you may not be able to skip computationally intensive steps if you use a different version of QIIME2.</p>
+</div>
+</div>
+<div class="section" id="familiarize-yourself-with-unix">
+<h3>Familiarize yourself with UNIX<a class="headerlink" href="#familiarize-yourself-with-unix" title="Permalink to this headline">¶</a></h3>
+<p>The emphasis of this workshop lies on getting hands-on experience with data analyses.
+No prior experience in bioinformatics is needed, but some basic knowledge of the UNIX operating system will come in handy.
+Check out for instance <a class="reference external" href="http://www.ee.surrey.ac.uk/Teaching/Unix/">these tutorials</a> in preparation for the workshop, in particular Tutorial
+<a class="reference external" href="http://www.ee.surrey.ac.uk/Teaching/Unix/unix1.html">1</a>,
+<a class="reference external" href="http://www.ee.surrey.ac.uk/Teaching/Unix/unix2.html">2</a> and
+<a class="reference external" href="http://www.ee.surrey.ac.uk/Teaching/Unix/unix3.html">3</a>.</p>
+</div>
+<div class="section" id="optional-sign-up-for-the-crunchomics-cluster">
+<h3>OPTIONAL: Sign up for the Crunchomics cluster<a class="headerlink" href="#optional-sign-up-for-the-crunchomics-cluster" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://crunchomics-documentation.readthedocs.io/en/latest/">Crunchomics</a> is the genomics compute environment for SILS and IBED.
+It is only accessible for participants with an UvA netID that have pre-registered for an account.
+To register, please send an email including your UvA netID to the Crunchomics system administrator <a class="reference external" href="mailto:w&#46;c&#46;deleeuw&#37;&#52;&#48;uva&#46;nl">Wim de Leeuw</a>.
+Once you have an account you should <a class="reference external" href="https://crunchomics-documentation.readthedocs.io/en/latest/intro_crunchomics.html">login to Crunchomics</a>
+and <a class="reference external" href="https://crunchomics-documentation.readthedocs.io/en/latest/miniconda.html">install miniconda</a>.</p>
+</div>
+<div class="section" id="optional-become-a-member-of-the-amplicomics-group">
+<h3>OPTIONAL: Become a member of the amplicomics group<a class="headerlink" href="#optional-become-a-member-of-the-amplicomics-group" title="Permalink to this headline">¶</a></h3>
+<p>During the optional Crunchomics module (and afterwards when working on your own data), you can use pre-installed programs and databases available only to amplicomics group members.
+To become a member, send an email including your UvA netID to <a class="reference external" href="mailto:e&#46;jongepier&#37;&#52;&#48;uva&#46;nl">Evelien Jongepier</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Membership of the amplicomics group goes through the faculty ICTS department so may take several days to arrange.
+Please contact <a class="reference external" href="mailto:e&#46;jongepier&#37;&#52;&#48;uva&#46;nl">Evelien Jongepier</a> well in advance if you like to participate in the optional Crunchomics module of the workshop.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gettingstarted.html" class="btn btn-neutral float-right" title="Getting started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to the Metabarcoding - QIIME2 workshop!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Evelien Jongepier
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
