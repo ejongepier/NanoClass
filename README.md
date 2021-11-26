@@ -3,7 +3,7 @@
 [![Snakemake](https://img.shields.io/badge/snakemake-≥5.7.4-brightgreen.svg)](https://snakemake.bitbucket.io)
 
 NanoClass is a taxonomic meta-classifier for 16S/18S amplicon sequencing data generated with the Oxford Nanopore MinION.
-With a single command, you can run ten popular classification tools on multiple samples in parallel, including BLASTN, Centrifuge, Kraken2, IDTAXA, MegaBLAST, dcMegaBLAST, Minimap2, Mothur, QIIME2, RDP and SPINGO.
+With a single command, you can run upto 11 popular classification tools on multiple samples in parallel, including BLASTN, Centrifuge, Kraken2, IDTAXA, MegaBLAST, dcMegaBLAST, Minimap2, Mothur, QIIME2, RDP and SPINGO.
 Optional read preparation steps, such as quality trimming, length filtering and sub-sampling, are an integral part of the pipeline.
 
 NanoClass automatically installs all software packages and dependencies, downloads and builds required taxonomic databases and runs the analysis on your samples.
@@ -28,7 +28,7 @@ You can either clone NanoClass, like so:
 Or download and extract the zip archive from https://github.com/ejongepier/NanoClass.
 
 NanoClass is immediately ready for use.
-See also the [Documentation](see https://ejongepier.github.io/NanoClass).
+See also the [Documentation](https://ejongepier.github.io/NanoClass).
 
 ## Usage 
 
