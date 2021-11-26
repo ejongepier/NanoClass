@@ -9,6 +9,9 @@ db
 !/docs/
 !/docs/*
 !/docs/*/*
+!/docsrc/
+!/docsrc/*
+!/docsrc/*/*
 !/envs
 !/envs/*
 !/input
