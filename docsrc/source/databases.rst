@@ -5,29 +5,29 @@ Databases
 NanoClass was designed to classify 16S or 18S rRNA amplicon sequences based on the SILVA database.
 Most tools implemented in NanoClass will be able to classify sequences using alternative databases. 
 The use of custom databases has not been fully tested and comes with no warrenties, 
-but some advise on how to prepare your the UNITE database for ITS amplicon sequences, as well as custom database is provided below.
+but some advise on how to prepare the UNITE database for ITS amplicon sequences, as well as custom databases is provided below.
 
-.. important
+.. important::
 
    To reduce runtime, NanoClass will only run those steps in the pipeline for which no output files are detected.
-   This means that if a database was downloaded and build during an earlier run of NanoClass, it will automatically use this database, in stead of downloading and building it again.
+   This means that if a database was downloaded and build during an earlier run of NanoClass, it will automatically use this database, in stead of downloading and building a new one.
    This saves a lot of time and computational resources, but also requires care by the user to make sure the intended database is used.
 
    It is recommended to always use a fresh NanoClass application if a different database is used. 
-   Simply clone or download NanoClass again following the instructions in the quich start section of this documentation.
+   Simply clone or download NanoClass again following the instructions in the quick start section of this documentation.
 
 
 16S or 18S rRNA SILVA database
 ********************************
 
-To use these either of these databases, simply enter "16S" or "18S" under the common ssu object in the config.yaml, like so:
+To use either of these databases, simply enter "16S" or "18S" under the common ssu object in the config.yaml, like so:
 
 .. code-block:: bash 
 
    common:
       ssu:                           "16S"
 
-Provided no database was already used during an earlier run, NanoClass will now automatically use the "16S" database for classification.
+Provided no database was already used during an earlier run, NanoClass will now automatically download and use the "16S" database for classification.
 
 In addition, make sure that the minlen and maxlen parameters specified in the config.yaml are appropriate for the marker gene of interest.
 Reads that are shorter than *minlen* or longer then *maxlen* will be discarded during length filtering by nanofilt.
@@ -66,9 +66,9 @@ Lastly, you need to create a file called db/common/ref-seqs.aln, which can be em
    touch db/common/ref-seqs.aln
 
 This is a dummy file for the multiple sequence alignment needed by Mother. As this file is empty, Mother can not be used in combination with the UNITE database.
-Use with methods ["centrifuge","kraken"] is highly discouraged as these require specially formatted databases and compatibility with the UNITE database is not setup.
+Use with methods ["centrifuge","kraken"] is highly discouraged as these require specially formatted databases and compatibility with the UNITE database has not been tested.
 
-To select UNITE-compatible tools to be run in NanoClass, simply change the methods object in the config.yaml, e.g.:
+To select UNITE-compatible tools to be run in NanoClass, simply change the methods object in the ``config.yaml``, e.g.:
 
 .. code-block:: bash
 
@@ -76,7 +76,7 @@ To select UNITE-compatible tools to be run in NanoClass, simply change the metho
  
 This UNITE reference database will now automatically be used once you start the NanoClass workflow, like so:
 
-    .. code-block:: bash
+.. code-block:: bash
 
     snakemake --use-conda --cores <ncores>
 
@@ -87,8 +87,8 @@ Custom databases
 
 Most classification tools implemented in NanoClass can use alternative databases supplied by the user (but see exceptions below), provided they are formatted correctly.
 These databases will not be automatically downloaded as part of the NanoClass pipeline, as is the case for the SILVA 16S or 18S databases.
-Instead, users should provide the databases themselves and store them in the db/common/ subdirectory of the NanoClass directory.
-These will then be automatically detected once NanoClass is started and NanoClass will create / reformat all tools-specific databases based on this database.
+Instead, users should provide the databases themselves and store them in the ``db/common/`` subdirectory of the NanoClass directory.
+These will then be automatically detected once NanoClass is started and NanoClass will create / reformat all tools-specific databases based on this user-provided database.
 
 Two files are required:
 

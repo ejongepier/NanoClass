@@ -52,8 +52,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#include-all-reads-per-sample">Include all reads per sample</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#include-all-samples">Include all samples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#run-nanoclass-stage-2">Run NanoClass stage 2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#assess-classification-nanoclass-stage-2">Assess classification NanoClass stage 2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id1">Assess classification NanoClass stage 2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#assess-classification-nanoclass-stage-2">Assess classification NanoClass stage 2</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#abundance-table">Abundance table</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#taxonomy-table">Taxonomy table</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#taxonomy-list">Taxonomy list</a></li>
@@ -94,34 +93,34 @@
   <div class="section" id="two-tools-in-one">
 <h1>Two tools in one<a class="headerlink" href="#two-tools-in-one" title="Permalink to this headline"></a></h1>
 <p>Assuming you have no preference or prior knowledge of which tool performs best on your specific data, you may first want to assess tool performance.
-This can be quite time consuming if you would run all 10 tools on all of your data.
-Luckily tests on data sets of variable complexity has shown that a small subset of data is enough to assess tool performance.
+This can be quite time consuming if you would run all 11 tools on all of your data.
+Luckily, tests on data sets of variable complexity have shown that a small subset of data is enough to assess tool performance.
 Once you have decided which tool or tools to use you can run these tools on your entire dataset.</p>
 <div class="section" id="stage-1-tool-selection">
 <h2>Stage 1 - Tool selection<a class="headerlink" href="#stage-1-tool-selection" title="Permalink to this headline"></a></h2>
-<p>To run all 10 tools on a small subset of your data, you can specify how many reads and samples to consider.
+<p>To run all 11 tools on a small subset of your data, you can specify how many reads and samples to consider.
 Tests showed that 100 reads for 3 representative samples each works for most datasets.</p>
 <div class="section" id="subset-the-number-of-reads">
 <h3>Subset the number of reads<a class="headerlink" href="#subset-the-number-of-reads" title="Permalink to this headline"></a></h3>
-<p>In the <cite>config.yaml</cite> you can whether you like to subset the number of reads and how many reads per sample you like to include:</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> you can enter whether you like to subset the number of reads and how many reads per sample you like to include:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>subsample:
    skip:                          <span class="nb">false</span>
    samplesize:                    <span class="m">100</span>
 </pre></div>
 </div>
 <p>In above example subsample is enabled and 100 random reads per sample will be included in the analyses.
-Mind that no tabs are allowed in the <cite>config.yaml</cite>, only spaces.</p>
+Mind that no tabs are allowed in the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>, only spaces.</p>
 </div>
 <div class="section" id="subset-the-number-of-samples">
 <h3>Subset the number of samples<a class="headerlink" href="#subset-the-number-of-samples" title="Permalink to this headline"></a></h3>
-<p>In the <cite>samples.csv</cite> you can enter the sample labels and the paths to the input files. If you only want to use a small subset of your samples in this initial stage, simply list only those samples.
-If you expect the community structure and composition to differ between treatments, it is recommended to include a sample from each of tese treatments at this stage.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">samples.csv</span></code> you can enter the sample labels and the paths to the input files. If you only want to use a small subset of your samples in this initial stage, simply list only those samples.
+If you expect the community structure and composition to differ between treatments, it is recommended to include a sample from each of these treatments at this stage.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>run,sample,barcode,path
 stage1,MockZymo,,input/barcode06.passed.fastq.gz
 stage1,MockATCC,,input/barcode09.fastq.gz
 </pre></div>
 </div>
-<p>In this example only two samples are used to test the performance of all 10 tools.
+<p>In this example only two samples are used to test the performance of all 11 tools.
 The first line is an obligatory header.
 The next lines are a comma separated list of:</p>
 <ul class="simple">
@@ -148,9 +147,9 @@ The next lines are a comma separated list of:</p>
 <p>Unzip it and view the NanoClass-stage1/report.html.
 Three results in particular can help decide on which tool te continue with in the next stage of the analysis:</p>
 <ul class="simple">
-<li><p>Classification - Set of taxonomic bar plots of the abundances at different taxonomic levels. May help to decide which tools best fit your expectations if you already have prior knowledge of the composition of your samples.</p></li>
-<li><p>Precision: Precision plot with information on how much the taxonomic classification of each tool deviates from the majority consensus classification at each taxonomic level. Note that precision is not the same as accuracy, because for accuracy you would need to know the exact composition of the subsample of your data, which is typically unknown.</p></li>
-<li><p>Runtime: Runtime plots showing how long it took for each of the 10 tools to run. This may be a decisive factor in your choice of tools if multiple tools show similar performace based on classification or precision, or if you are looking at a deadline.</p></li>
+<li><p><strong>Classification</strong> - Set of taxonomic bar plots of the abundances at different taxonomic levels. May help to decide which tools best fit your expectations if you already have prior knowledge of the composition of your samples.</p></li>
+<li><p><strong>Precision</strong> - Precision plot with information on how much the taxonomic classification of each tool deviates from the majority consensus classification at each taxonomic level. Note that precision is not the same as accuracy, because for accuracy you would need to know the exact composition of the subsample of your data, which is typically unknown.</p></li>
+<li><p><strong>Runtime</strong> - Runtime plots showing how long it took for each of the 10 tools to run. This may be a decisive factor for your choice of tool(s) if multiple tools show similar performace based on classification or precision, or if you are looking at a deadline.</p></li>
 </ul>
 <p>For detailed information on the content of the report see the report documentation.</p>
 </div>
@@ -160,33 +159,33 @@ Three results in particular can help decide on which tool te continue with in th
 <p>Once you decided on which tool or tools to continue with, you can run NanoClass using only that tool / those tools on your complete dataset.</p>
 <div class="section" id="select-a-tool-s">
 <h3>Select a tool(s)<a class="headerlink" href="#select-a-tool-s" title="Permalink to this headline"></a></h3>
-<p>At the top of the <cite>config.yaml</cite> file you can limit the number of tools. By default all 10 tools are listed, but you can remove those you sre not interested in:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>methods:                           <span class="o">[</span><span class="s2">&quot;megablast&quot;</span>,<span class="s2">&quot;minimap&quot;</span><span class="o">]</span>
+<p>At the top of the <cite>config.yaml</cite> file you can limit the number of tools. By default all 11 tools are listed, but you can remove the ones you are not interested in:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>methods:                           <span class="o">[</span><span class="s2">&quot;dcmegablast&quot;</span>,<span class="s2">&quot;minimap&quot;</span><span class="o">]</span>
 </pre></div>
 </div>
-<p>In this example only minimap2 and megablast are used.</p>
+<p>In this example only minimap2 and dcmegablast are used.</p>
 </div>
 <div class="section" id="include-all-reads-per-sample">
 <h3>Include all reads per sample<a class="headerlink" href="#include-all-reads-per-sample" title="Permalink to this headline"></a></h3>
-<p>In the <cite>config.yaml</cite> you can now disable subsampling using skip true.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> you can now disable subsampling using skip true.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>subsample:
    skip:                          <span class="nb">true</span>
    samplesize:                    <span class="m">100</span>
 </pre></div>
 </div>
 <p>In this example the sample size is ignored because subsampling is skipped.
-Mind that no tabs are allowed in the <cite>config.yaml</cite>, only spaces.</p>
-<p>Of course you can still opt to subsample your complete dataset, for instance when the number of reads vary between samples or when more data was generated then needed to characterize your community.
+Mind that no tabs are allowed in the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>, only spaces.</p>
+<p>Of course you can still opt to subsample your complete dataset, for instance when the number of reads vary between samples or when more data was generated than needed to characterize your community.
 In that case, set skip to false and just increase the sample size.</p>
 </div>
 <div class="section" id="include-all-samples">
 <h3>Include all samples<a class="headerlink" href="#include-all-samples" title="Permalink to this headline"></a></h3>
-<p>To run NanoClass on all of your samples simply complement the <cite>samples.csv</cite> with your remaining samples and change the run ID, e.g. to stage2.</p>
+<p>To run NanoClass on all of your samples simply complement the <code class="docutils literal notranslate"><span class="pre">samples.csv</span></code> with your remaining samples and change the run ID, e.g. to stage2.</p>
 </div>
 <div class="section" id="run-nanoclass-stage-2">
 <h3>Run NanoClass stage 2<a class="headerlink" href="#run-nanoclass-stage-2" title="Permalink to this headline"></a></h3>
 <p>You can run NanoClass stage 2 the same way as for stage 1.
-NanoClass will automatically use the new settings you provided in the <cite>config.yaml</cite> and all the samples in the <cite>sample.cvs</cite></p>
+NanoClass will automatically use the new settings you provided in the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> and all the samples in the <code class="docutils literal notranslate"><span class="pre">sample.cvs</span></code>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Snakemake --use-conda --cores &lt;ncores&gt;
 </pre></div>
 </div>
@@ -198,11 +197,8 @@ NanoClass will automatically use the new settings you provided in the <cite>conf
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>snakemake --report report/NanoClass-stage2.zip
 </pre></div>
 </div>
-</div>
-<div class="section" id="id1">
-<h3>Assess classification NanoClass stage 2<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
 <p>Unzip it and view the NanoClass-stage2/report.html.
-Which again contain the classification barplots and run time.
+Which again contain the classification barplots and runtime plots.
 Mind that precision is missing if you run fewer then 3 tools because the consensus taxonomy based on few tools is not particularly informative.</p>
 <p>For detailed information on the content of the report see the report documentation.</p>
 <p>In addition to the report, you can access the following raw data tables for downstream analyses.</p>

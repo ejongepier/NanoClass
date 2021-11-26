@@ -83,15 +83,23 @@
 <p>NanoClass was designed to classify 16S or 18S rRNA amplicon sequences based on the SILVA database.
 Most tools implemented in NanoClass will be able to classify sequences using alternative databases.
 The use of custom databases has not been fully tested and comes with no warrenties,
-but some advise on how to prepare your the UNITE database for ITS amplicon sequences, as well as custom database is provided below.</p>
+but some advise on how to prepare the UNITE database for ITS amplicon sequences, as well as custom databases is provided below.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>To reduce runtime, NanoClass will only run those steps in the pipeline for which no output files are detected.
+This means that if a database was downloaded and build during an earlier run of NanoClass, it will automatically use this database, in stead of downloading and building a new one.
+This saves a lot of time and computational resources, but also requires care by the user to make sure the intended database is used.</p>
+<p>It is recommended to always use a fresh NanoClass application if a different database is used.
+Simply clone or download NanoClass again following the instructions in the quick start section of this documentation.</p>
+</div>
 <div class="section" id="s-or-18s-rrna-silva-database">
 <h2>16S or 18S rRNA SILVA database<a class="headerlink" href="#s-or-18s-rrna-silva-database" title="Permalink to this headline"></a></h2>
-<p>To use these either of these databases, simply enter “16S” or “18S” under the common ssu object in the config.yaml, like so:</p>
+<p>To use either of these databases, simply enter “16S” or “18S” under the common ssu object in the config.yaml, like so:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>common:
    ssu:                           <span class="s2">&quot;16S&quot;</span>
 </pre></div>
 </div>
-<p>Provided no database was already used during an earlier run, NanoClass will now automatically use the “16S” database for classification.</p>
+<p>Provided no database was already used during an earlier run, NanoClass will now automatically download and use the “16S” database for classification.</p>
 <p>In addition, make sure that the minlen and maxlen parameters specified in the config.yaml are appropriate for the marker gene of interest.
 Reads that are shorter than <em>minlen</em> or longer then <em>maxlen</em> will be discarded during length filtering by nanofilt.
 Users should carefully choose this value to prevent spurious sequences (if too low) or valid data loss (if too high).</p>
@@ -119,25 +127,22 @@ mv sh_taxonomy_qiime_ver8_99_04.02.2020.txt db/common/ref-taxonomy.txt
 </pre></div>
 </div>
 <p>This is a dummy file for the multiple sequence alignment needed by Mother. As this file is empty, Mother can not be used in combination with the UNITE database.
-Use with methods [“centrifuge”,”kraken”] is highly discouraged as these require specially formatted databases and compatibility with the UNITE database is not setup.</p>
-<p>To select UNITE-compatible tools to be run in NanoClass, simply change the methods object in the config.yaml, e.g.:</p>
+Use with methods [“centrifuge”,”kraken”] is highly discouraged as these require specially formatted databases and compatibility with the UNITE database has not been tested.</p>
+<p>To select UNITE-compatible tools to be run in NanoClass, simply change the methods object in the <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>, e.g.:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>methods:                           <span class="o">[</span><span class="s2">&quot;blastn&quot;</span>,<span class="s2">&quot;megablast&quot;</span>,<span class="s2">&quot;minimap&quot;</span>,<span class="s2">&quot;spingo&quot;</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>This UNITE reference database will now automatically be used once you start the NanoClass workflow, like so:</p>
-<blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>snakemake --use-conda --cores &lt;ncores&gt;
 </pre></div>
 </div>
-<p>snakemake –use-conda –cores &lt;ncores&gt;</p>
-</div></blockquote>
 </div>
 <div class="section" id="custom-databases">
 <h2>Custom databases<a class="headerlink" href="#custom-databases" title="Permalink to this headline"></a></h2>
 <p>Most classification tools implemented in NanoClass can use alternative databases supplied by the user (but see exceptions below), provided they are formatted correctly.
 These databases will not be automatically downloaded as part of the NanoClass pipeline, as is the case for the SILVA 16S or 18S databases.
-Instead, users should provide the databases themselves and store them in the db/common/ subdirectory of the NanoClass directory.
-These will then be automatically detected once NanoClass is started and NanoClass will create / reformat all tools-specific databases based on this database.</p>
+Instead, users should provide the databases themselves and store them in the <code class="docutils literal notranslate"><span class="pre">db/common/</span></code> subdirectory of the NanoClass directory.
+These will then be automatically detected once NanoClass is started and NanoClass will create / reformat all tools-specific databases based on this user-provided database.</p>
 <p>Two files are required:</p>
 <div class="section" id="the-reference-sequences">
 <h3>The reference sequences<a class="headerlink" href="#the-reference-sequences" title="Permalink to this headline"></a></h3>

@@ -6,12 +6,12 @@ The config yaml
 ********************************
 
 Parameter setting can be customized using the `config.yaml`.
-Parameters that are commonly altered are listed in the `config.yaml` in the NanoClass directory, whihc loos like this:
+Parameters that are commonly altered are listed in the `config.yaml` in the NanoClass directory, which looks like this:
 
 .. code-block:: bash
 
    samples:                           "samples.csv"
-   methods:                           ["blastn","centrifuge","idtaxa","kraken","megablast","minimap","mothur","qiime","rdp","spingo"]
+   methods:                           ["blastn","centrifuge","dcmegablast","idtaxa","kraken","megablast","minimap","mothur","qiime","rdp","spingo"]
 
    porechop:
        checkreads:                    20000 
@@ -31,6 +31,13 @@ Parameters that are commonly altered are listed in the `config.yaml` in the Nano
        group-by:                      sample
 
    blastn:
+       lcaconsensus:                  0.5
+       evalue:                        0.00001
+       pctidentity:                   80
+       alnlength:                     100
+       ntargetseqs:                   50
+
+   dcmegablast:
        lcaconsensus:                  0.5
        evalue:                        0.00001
        pctidentity:                   80
@@ -77,7 +84,7 @@ All parameters in NanoClass
     Only numbers and letters are allowed for sample and run labels.
     The barcode column should be left empty as NanClass can only take demultiplexed input data.
 
-*methods* [array] (default: ["blastn","centrifuge","idtaxa","kraken","mapseq","megablast","minimap","mothur","qiime","rdp","spingo"])
+*methods* [array] (default: ["blastn","centrifuge","dcmegablast","idtaxa","kraken","mapseq","megablast","minimap","mothur","qiime","rdp","spingo"])
     Array of tools used in NanoClass run.
     Notation should be ["toolname"], including square brackets, even if only a single tool is selected. 
 
@@ -237,7 +244,7 @@ The following common parameter settings can be changed by the user:
 blastn
 ^^^^^^^^^^^^^^^^^^^^
 
-BLASTn is one of the 10 classification tools implemented in NanoClass.
+BLASTn is one of the 11 classification tools implemented in NanoClass.
 BLASTn finds regions of similarity between the Nanofilt-filtered (and, if enabled, subsampled) reads and the entries in the database.
 Typically, BLASTn finds multiple good hits to different taxa in the database.
 To obtain a consensus classification, NanoClass uses a (LCA) Last Common Ancestor approach.
@@ -279,11 +286,61 @@ The following blastn parameter settings can be changed by the user:
     Therefore, it is not necessary to change this value for a typical NanoClass run.
 
 
+dcmegablast
+^^^^^^^^^^^^^^^^^^^^
+
+dcMegablast is one of the 11 classification tools implemented in NanoClass.
+dcMegablast finds regions of similarity between the Nanofilt-filtered (and, if enabled, subsampled) reads and the entries in the database.
+Typically, dcMegablast finds multiple good hits to different taxonomic groups.
+To obtain a consensus classification, NanoClass uses a Last Common Ancestor approach.
+
+The following blastn parameter settings can be changed by the user:
+
+*lcaconsensus* [float] (default: 0.5)
+    Threshold for calling a consensus. Proportion of dcmegablast hits with the same classification needed to return a consensus.
+    Taxonomic classifications at each of the 6 taxonomic levels (Domain, Phylum, Class, Order, Family, Genus) will only be assigned if there is consensus at that level.
+    Range: 0.5-0.99, where 0.5 indicates majority consensus and 0.99 indicates absolute consensus.
+
+*evalue* [float] (default: 0.00001)
+    Expectation value (E) threshold for saving dcmegablast hits. Needs to be provided as decimal number, not in scientific notation!
+    Decreasing the *evalue* may result in more consensus classifications but could also reduce the likelyhood of finding any taxonomic classification, in particular for organisms that are poorly represented in the database.
+
+*pctidentity* [integer] (default: 80)
+    Percent identity threshold for saving dcmegablast hits. Range: 0-100.
+    Increasing the *pctidentity* may result in more consensus classifications but could also reduce the likelyhood of finding any taxonomic classification, in particular for organisms that are poorly represented in the database.
+
+*alnlength* [integer] (default: 100)
+    Minimal absolute alignment length for saving dcmegablast hits.
+    Increasing the *alnlength* may result in more consensus classifications but could also reduce the likelyhood of finding any taxonomic classification, in particular for organisms that are poorly represented in the database.
+
+*ntargetseqs* [integer] (Default: 50)
+    Maximum number of aligned sequences to keep. Increasing the *ntargetseqs* increases runtime but may also result in more accurate classifications.
+
+*environment* [string] (default: "../envs/blast.yml")
+    The recipe for conda to create the blast environment including all dependencies needed to run dcmegablast.
+    If not already present, the environment will be automatically installed by NanoClass when using the ``snakemake --use-conda`` option.
+    Changes to the environment are not recommended unless you are an advanced user.
+
+*dbmemory* [integer] (default: 3000)
+    Memory reserved to build the dcmegablast database in Mb.
+    This step is independent of the properties of the data to be analysed and therefore does not need to be changed.
+    The same database is used by blastn and mageblast, if one is already present, it will not be build again.
+
+*threads* [interger] (default: 16)
+    The number of threads used per sample by dcmegablast. Increasing the number of threads may speed up the analyses.
+    NanoClass will automatically downgrade the number of threads when fewer cores are specified by the user in the ``snakemake --use-conda --cores <ncores>``
+    command. It is therefore not necesary to change this value for a typical run of NanoClass.
+
+*memory* [integer] (default: 50000)
+    Memory reserved for dcmegablast per sample per thread in Mb. If insufficient, NanoClass will automatically double the amount of memory and try again.
+    Therefore, it is not necessary to change this value for a typical NanoClass run.
+
+
 
 centrifuge
 ^^^^^^^^^^^^^^^^
 
-Centrifuge is one of the 10 classification tools implemented in NanoClass.
+Centrifuge is one of the 11 classification tools implemented in NanoClass.
 In addition to the common database, centrifuge requires mapping and sequence files which will be automatically downloaded by NanoClass using the following parameter settings.
 Note that the Centrifuge SILVA version should correspond to the common SILVA version.
 
@@ -318,7 +375,7 @@ The following centrifuge parameter settings can be changed by the user:
 idtaxa
 ^^^^^^^^^^^^^^^^^^
 
-IDtaxa is one of the 10 classification tools implemented in NanoClass (https://rdrr.io/bioc/DECIPHER/man/IdTaxa.html).
+IDtaxa is one of the 11 classification tools implemented in NanoClass (https://rdrr.io/bioc/DECIPHER/man/IdTaxa.html).
 IDtaxa is implemented in the DECIPHER R package and classifies sequences by assigning a confidence to taxonomic labels for each taxonomic level.
 The training set used by IDtaxa is produced by learntaxa.
 
@@ -350,7 +407,7 @@ The following idtaxa parameter settings can be changed by the user:
 kraken
 ^^^^^^^^^^^^^^^^^^
 
-Kraken2 is one of the 10 classification tools implemented in NanoClass (https://github.com/DerrickWood/kraken2/wiki/Manual).
+Kraken2 is one of the 11 classification tools implemented in NanoClass (https://github.com/DerrickWood/kraken2/wiki/Manual).
 Unlike the other tools, Kraken2 is a k-mer based classifier with an integrated lowest common ancestor (LCA) approach and is super fast.
 
 The following kraken parameter settings can be changed by the user:
@@ -382,7 +439,7 @@ The following kraken parameter settings can be changed by the user:
 megablast
 ^^^^^^^^^^^^^^^^^^^^
 
-Megablast is one of the 10 classification tools implemented in NanoClass.
+Megablast is one of the 11 classification tools implemented in NanoClass.
 Megablast finds regions of similarity between the Nanofilt-filtered (and, if enabled, subsampled) reads and the entries in the database.
 Typically, Megablast finds multiple good hits to different taxonomic groups.
 To obtain a consensus classification, NanoClass uses a Last Common Ancestor approach.
@@ -432,7 +489,7 @@ The following blastn parameter settings can be changed by the user:
 minimap
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Minimap2 is one of the 10 classification tools implemented in NanoClass.
+Minimap2 is one of the 11 classification tools implemented in NanoClass.
 Minimap2 is a fast sequence alignment program used to align noisy Oxfort Nanopore MinION reads against a reference database (https://github.com/lh3/minimap2).
 In NanoClass, Minimap2 aligns Nanofilt-filtered (and, if enabled, subsampled) reads against the reference database, where the user can determine how many seconday alignments to consider.
 To obtain a consensus classification of the primary and seconday alignments, NanoClass uses a Last Common Ancestor approach
@@ -465,7 +522,7 @@ The following minimap parameter settings can be changed by the user:
 mothur
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Mothur is one of the 10 classification tools implemented in NanoClass.
+Mothur is one of the 11 classification tools implemented in NanoClass.
 In NanoClass, Mother aligns the Nanofilt-filtered (and, if enabled, subsampled) reads against the reference database 
 using the align_seqs function with ksize=6 and align=needleman.
 
@@ -497,7 +554,7 @@ The following mothur parameter settings can be changed by the user:
 qiime
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-QIIME2 is one of the 10 classification tools implemented in NanoClass.
+QIIME2 is one of the 11 classification tools implemented in NanoClass.
 NanoClass uses the QIIME2 feature-classifier classify-consensus-vsearch utility to classify the Nanofilt-filtered (and, if enabled, subsampled) reads using the reference database.
 
 The following qiime parameter settings can be changed by the user:
@@ -536,7 +593,7 @@ The following qiime parameter settings can be changed by the user:
 rdp
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-RDP is one of the 10 classification tools implemented in NanoClass.
+RDP is one of the 11 classification tools implemented in NanoClass.
 NanoClass runs the assignTaxonomy utility of the DADA2 R package on the Nanofilt-filtered (and, if enabled, subsampled) reads using the reference database. 
 It implements the RDP classifier algorithm with kmer size 8 and 100 bootstrap replicates and assignes taxonomy based on he minimum bootstrap confidence.
 
@@ -567,7 +624,7 @@ The following rdp parameter settings can be changed by the user:
 spingo
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Spingo is one of the 10 classification tools implemented in NanoClass (https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-015-0747-1).
+Spingo is one of the 11 classification tools implemented in NanoClass (https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-015-0747-1).
 NanoClass runs Spingo on the Nanofilt-filtered (and, if enabled, subsampled) reads using the reference database.
 
 The following spingo parameter settings can be changed by the user:

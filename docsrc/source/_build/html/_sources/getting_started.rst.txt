@@ -13,7 +13,7 @@ Install Conda
 ----------------------
 
 Detailed installation instructions for Conda can be found `here <https://docs.conda.io/projects/conda/en/latest/user-guide/install/>`_.
-On a Linux, you can download and install miniconda3, like so:
+On Linux, you can download and install miniconda3, like so:
 
 .. code-block:: bash
 
@@ -38,7 +38,7 @@ and update conda:
 Install Snakemake
 ----------------------
 
-Snakemake can be installed via Conda (see also `this link <https://snakemake.readthedocs.io/en/stable/getting_started/installation.html>`_.
+Snakemake can be installed via Conda (see also `this link <https://snakemake.readthedocs.io/en/stable/getting_started/installation.html>`_).
 Because the default Conda solver is a bit slow, Mamba is recommended as a drop-in replacement, like so:
 
 .. code-block:: bash
