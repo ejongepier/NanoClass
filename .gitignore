@@ -7,11 +7,11 @@ cluster
 data
 db
 !/docs/
-!/docs/*
-!/docs/*/*
+!/docs/**
+!/docs/**/**
 !/docsrc/
-!/docsrc/*
-!/docsrc/*/*
+!/docsrc/**
+!/docsrc/**/**
 !/envs
 !/envs/*
 !/input

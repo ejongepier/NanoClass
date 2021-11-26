@@ -1,3 +1,0 @@
-run,sample,barcode,path
-demo,MockZymo,,input/barcode06.passed.fastq.gz
-demo,MockATCC,,input/barcode09.fastq.gz

@@ -10,7 +10,7 @@ BUILDDIR      = source/_build
 
 github:
 	@make html
-	@cp -a source/_build/html/. docs/
+	@cp -a source/_build/html/. ../docs/
 
 
 # Put it first so that "make" without argument is like "make help".

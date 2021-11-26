@@ -1,0 +1,140 @@
+#########################
+Databases
+#########################
+
+NanoClass was designed to classify 16S or 18S rRNA amplicon sequences based on the SILVA database.
+Most tools implemented in NanoClass will be able to classify sequences using alternative databases. 
+The use of custom databases has not been fully tested and comes with no warrenties, 
+but some advise on how to prepare your the UNITE database for ITS amplicon sequences, as well as custom database is provided below.
+
+.. important
+
+   To reduce runtime, NanoClass will only run those steps in the pipeline for which no output files are detected.
+   This means that if a database was downloaded and build during an earlier run of NanoClass, it will automatically use this database, in stead of downloading and building it again.
+   This saves a lot of time and computational resources, but also requires care by the user to make sure the intended database is used.
+
+   It is recommended to always use a fresh NanoClass application if a different database is used. 
+   Simply clone or download NanoClass again following the instructions in the quich start section of this documentation.
+
+
+16S or 18S rRNA SILVA database
+********************************
+
+To use these either of these databases, simply enter "16S" or "18S" under the common ssu object in the config.yaml, like so:
+
+.. code-block:: bash 
+
+   common:
+      ssu:                           "16S"
+
+Provided no database was already used during an earlier run, NanoClass will now automatically use the "16S" database for classification.
+
+In addition, make sure that the minlen and maxlen parameters specified in the config.yaml are appropriate for the marker gene of interest.
+Reads that are shorter than *minlen* or longer then *maxlen* will be discarded during length filtering by nanofilt.
+Users should carefully choose this value to prevent spurious sequences (if too low) or valid data loss (if too high).
+
+Appropriate values depend on the length range of the marker gene of interest (for most 16S rRNA-based projects a minlen of 1400 and maxlen of 1600 is reasonable).
+
+.. code-block:: bash
+
+    nanofilt:
+        minlen:                        1400
+        maxlen:                        1600
+
+
+ITS UNITE database
+********************************
+
+Although not automatically implemented in NanoClass, it is possible to manually download the ITS UNITE database to be used in NanoClass.
+Note though that this database has only been tested with a subset of the classification tools implemented in NanoClass, i.e. ["blastn","megablast","minimap","spingo"]
+
+First download the UNITE database from https://files.plutof.ut.ee/public/orig/98/AE/98AE96C6593FC9C52D1C46B96C2D9064291F4DBA625EF189FEC1CCAFCF4A1691.gz
+Unzip it and look for the reference sequences (sh_refs_qiime_ver8_99_04.02.2020.fasta) and the reference taxonomy (sh_taxonomy_qiime_ver8_99_04.02.2020.txt).
+
+Move these two files to the to a db/common/ directory and rename them to ref-seqs.fna and ref-taxonomy.txt, respectively.
+
+.. code-block:: bash
+
+   mkdir -p db/common/
+   mv sh_refs_qiime_ver8_99_04.02.2020.fasta db/common/ref-seqs.fna
+   mv sh_taxonomy_qiime_ver8_99_04.02.2020.txt db/common/ref-taxonomy.txt
+
+Lastly, you need to create a file called db/common/ref-seqs.aln, which can be empty.
+
+.. code-block:: bash
+
+   touch db/common/ref-seqs.aln
+
+This is a dummy file for the multiple sequence alignment needed by Mother. As this file is empty, Mother can not be used in combination with the UNITE database.
+Use with methods ["centrifuge","kraken"] is highly discouraged as these require specially formatted databases and compatibility with the UNITE database is not setup.
+
+To select UNITE-compatible tools to be run in NanoClass, simply change the methods object in the config.yaml, e.g.:
+
+.. code-block:: bash
+
+      methods:                           ["blastn","megablast","minimap","spingo"]
+ 
+This UNITE reference database will now automatically be used once you start the NanoClass workflow, like so:
+
+    .. code-block:: bash
+
+    snakemake --use-conda --cores <ncores>
+
+
+
+Custom databases
+********************************
+
+Most classification tools implemented in NanoClass can use alternative databases supplied by the user (but see exceptions below), provided they are formatted correctly.
+These databases will not be automatically downloaded as part of the NanoClass pipeline, as is the case for the SILVA 16S or 18S databases.
+Instead, users should provide the databases themselves and store them in the db/common/ subdirectory of the NanoClass directory.
+These will then be automatically detected once NanoClass is started and NanoClass will create / reformat all tools-specific databases based on this database.
+
+Two files are required:
+
+
+The reference sequences
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The reference nucleotide sequences should be in an unzipped, multi-fasta file called ref-seqs.fna.
+The fasta header should have the sequence identifier only.
+
+Here is an example of the first two entries in the ref-seqs.fna of the default 16S SILVA reference database:
+
+  .. code-block:: bash
+
+     >AB302407.1.2962
+     TCCGGTTGATCCTGCCGGACCCGACCGCTATCGGGGTAGGGCTAAGCCATGCGAGTCGCGCGCCCGGGGGCGCCCGGGAGCGGCGCACGGCTCAGTAACACGTGCCCAACCTACCCTCGGGAGGGGGACACCCCCGGGAAACTGGGGCCAATCCCCCATAGGGGAAGGGCGCTGGAAGGCCCCTTCCCCAAAAGGGGTTGCGGCCGATCCGCCGCAGCCCGCCCGAGGATGGGGGCACGGCCCATCAGGTAGTTGGCGGGTTAAAGGCCCGCCAAGCCGAAGACGGGTAGGGGCGGTGAGAGCCGCGAGCCCCGAGATCGGCACTGAGACAAGGGCCGAGGCCCTACGGGGTGCAGCAGGCGCGAATACTCCGCAAATGGGGAGAGGCCGGCCCCTCAGTTTTCTCATGAAGGACGCCCATCGGTTTGATTTAAGCGAAGTGGTATATTCGAAATTTGACAAAAAGCGTGGTATACGGATTCCGGAGGAGCCCTCGGAGCTCCTAGCAGAGGAGACGGCGATTCATCTAGGAGATGGGTATCTATTCTACGACGAAAAAGATCGGAGCTACAGGTTCGGCATAGGCCTCAATCCGAAGACGGAAATGAGCTACGCATACGCGGTGGCGGAGCTCATAGGACAGCTCTACGGCTACATGCCGCCGGTGAGAGGAGCGCGTATTGAAATAATGTCGCTAGCCATAGGGACGTTCAAGCATAAAGTCCTCGCCTTACCTATTGGCACCAGAACCGGAGGCGAGGATCTTCCGAGGATCGAGTGGGTTTTAACAGATGAGAGGTTTATTACGGCGTTTGTACGCGGGCTTGTCGATACGGAGGGCTCAGTAAAAAAGATCTCAAGGACGATAGGTGTCGTCGTAAAACAGAGGAATAGGAAAATAATCGAGTTCTATGCCCAATGCCTCGCGGCCTTGGGATTCCGGTCAAGGATATATGTATGGAACGAGAGAAACAAACCCATATATGTCTCGGCGTTGTTGGGCAAAGAAGTCGTGGAACAATTCATACAACTTATCAAGCCGAGAAACCCCTCAAAATATCCTCCTTTTTAGCTCCCACCCCTCGCCGGCCCTCCCCAGCGGAATGCGGGCAACCGCGACGGGGCTACCCCGAGTGCCGGGCGAAGAGCCCGGCTTTTGCCCGGTCTAAAACGCCGGGCGAATAAGCGGGGGGCAAGTCTGGTGTCAGCCGCCGCGGTAATACCAGCCCCGCGAGTGGTCGGGGTGTTTACTGGGCTTAAAGCGCCCGTAGCCGGCCCGGCAAGTCGCTCCTGAAATCCCCGGGCCCAACCCGGGGGCGGGGGGCGATACTGCCGGGCTAGGGGGCGGGAGAGGCCGCCGGTACTCCGGGGGTAGGGGCGAAATCCGTTAATCCCCGGAGGACCACCAGTGGCGAAAGCGGGCGGCCAGAACGCGCCCGACGGTGAGGGGCGAAAGCCGGGGGAGCAAACCGGGCCAAGGCCGGCAAAAATTTAAAAAAGCCCCAAGGTCTCGATATGGGGTGCGATCGTTATGAGGTGCTAAGAGTTGTGCCTTTCGTTCTATCGGACGGGGGAGTATACAATAACAGGGAGATCTATTTCACATCAACAGACGCCGCCTTGGTTAGCCACTTCAGAACTGTTGCAACGGTTGCGTTTGGCTACGGAGGCTACGTTGTGAAGCGGAGCAACGGGGCATATGTGGTGAAGATAAAGGGCTATGACTACTTCAAATGTCTAGCCGAGGTTATGCCAGACATATTATATAAGAACGATAAAGGCCGCGCCATTAGGTTGCCGGACGAGCTATACAGCGACAAGGATCTAGCCAAGTGGTTCATAAAGGTATATGTCTCATGCGACGGCGGTGTATCGGTCATGTTGGGTAGAAGAGGCAATATCACGTTTTACGTCAGAAGAGTATCCATAACATCCAAAAACCCATATCTACGGCGCCAGATCGGGGATTTGCTCAAAGCCTTAAGCTTTGCGCCGCGAGATGATGGCGATAAACACATCTACCTATCACGAAGAGAGGACATAGTTAGATACGCAGAAGAGATAAGATTTCTAGAGCAGGTAAAGGTAACGAAAAATTCCAAAAGATTCCGCGGAATGGAGAAAAACCAGCTCCTAGATTTAGTCGTGCGATCCTACGGAAATCCCCACCTGTTAGACCCCTTTTTTCCACCATCATCTTTCTCCCACAACGCCGGCCTAGCCCGGGCTCAAAGGGGATTAGATACCCCTGTAGTCCCGGCCGTAAACGATGCGGGCTAGCTGTCGGTCGGGCTTAGGGCCCGGCCGGTGGCGAAGGGAAACCGTTAAGCCCGCCGCCTGGGGAGTACGGCCGCAAGGCTGAAACTTAAAGGAATTGGCGGGGGGGCACCACAAGGGGTGAAGCTTGCGGCTTAATTGGAGTCAACGCCGGAAACCTCACCCGGGGCGACAGCAGGATGAAGGCCAGGCTAACGACCTTGCCGGACGAGCTGAGAGGAGGTGCATGGCCGTCGTCAGCTCGTGCCGTGAGGTGTCCGGTTAAGTCCGGCAACGAGCGAGACCCCCGCCCCTAGTTGCTACCCCGTCCTACGGGACGGGGGGCACACTAGGGGGACTGCCGGCGTAAGCCGGAGGAAGGAGGGGGCCACGGCAGGTCAGTATGCCCCGAAACCCCGGGGCTGCACGCGAGCTGCAATGGCGGGGACAGCGGGAACCGACCCCGAAAGGGGGAGGCAATCCCGTAAACCCCGCCCCAGTAGGGATCGAGGGCTGCAACTCGCCCTCGTGAACGTGGAATCCCTAGTAACCGCGTGTCACCAACGCGCGGTGAATACGTCCCTGCCCCTTGCACACACCGCCCGTCGCACCACCCGAGGGAGCTCCCTGCGAGGCCCCTTGCCGAAAGGTGGGGGGACGAGCAGGGGGCTCCCAAGGGGGGTGAAGTCGTAACAAGGTAACCGT
+     >KU725476.45629.48552
+     AGAGTTTGATCCTGGCTCAGGATGAACGCTGGCGGCATGCTTAACACATGCAAGTCGGACGTTGTCTTCAAATTAGAATAGAAGCAAAGTGGCGAACGGGTGCGTAACACGTAGGAATCTGCCAAACAGTTTGGGCCAAATCCTAAATAAAGAAAAGCTAAAAAGCGCTGTTTGATGAGCCCACGTAGTATTAGCTAGTTGGTGAGGCAATGGCTTACCAAGGCGACGATCAGTAGCTGGTCTGAGAGGATGATCAGCCACACTGGGACTGAGACACGGCCCAGACTCCTACGGGAGGCAGCAGTGGGGAATTTTCCGCAATGGGCGAAAGCCTGATCCAGCAATGCCGCGTGAGTGAAGAAGGGCAACGCAGCTTGTAAAGCTCTTTCATCGAATGTGCGATTATGACAAGCCTCGAATAATAAGCATCGGCTAACTCTGTGCCAGCAGCCGCGGTAAGACAGAGGATGCAAGCGTTATCCGGAATGATTGGGCGTAAAGGGCGCGTAGGCGGTAAATTTGGTCGAAAGTGAAAGTCGTCAGCTCAACTGGCGGAATGCTTTCAAAACCAATTTACTTGAGTAAGATAGAGGATAGTGGAATTTCGTGTGTAGAGATAAAATTCACAGATATACGAAGGAACACCAAAAGCGAAGGCGGCTACCTGGGTCTTTACTGACGCTGAGGCGCGAAAGCGTGGGGAGCAAACAGGATTAGATAGATCCGGCCGGGCTCTAAATAAAAGACGGCCAAAGGTGTCCTCTCCGATTGCGAGGTCAGAGTGTGTATTCAGCTATTTCGGGGAAACTTTGATGCAGATGTACCATTCAATATCAGACAATCCCGAGGGAAGTGCTTTGATGATATTCTATCAAGAGCACCCCGTAGAGACTATGCAAATAGGAAAATAGAAGATATTAAAAAAAATAGGCAGAGGCCAGCTAAGCTAACAGAGCCTCAAAGACGAAAAAGCAAGGCTTTTTTTTTAGGCAAAGCTCGAGCTCCTAACCTGCACTTAAAAAGACTCAAGCAAATATCTTTGTCGAATTCAATGAAATCAATTATCTCAAGATTACGGGAGATGGCTCACTGCAAATAGCTAAAAGCTACAAAAATGCAAGCTCCGTTCATCATAGCCAAATAGAGGAAGATTTCTTTCGATGGAAAGTAGGATCACTACATGAAATCTCGGCACCAAATTCCGTGCAAAAGCAAGCCGCCAATGGCGCCAAAACAAGAAGCTTTTGGTCTAAAGTTGAGCCCTCAAGGCACTTACAAGTATTTATGCCATCACGCATAAAGACAATTGCTTACTCATCTGACGGCGATAGTTAAACTATTTGATATCGCTAAGGATAGTGCTTTGGTAGTGTGATGATGGTTTGATTACTTTTAATGGCCGTGGGACTGTGCTATGCATTGATGGCTTTGACAAAAAATATGTTTAGCTTTTAGCTCAATACTTAGACACTTTTTGGAAGGTTTACGCTCATGTAGAACCTATCCAAATAAATTGCAAGTGCGGTAATCATAGCCAAGAGTGTTACTATTGCCTTCGTTTTGGTATTGAGGAATTTGAGAAAGTACAATAATCTTACCACACCTTGGCGAGCAGGAAAGCCTTATTAGTTTACAAAGATTCCGAAATTCAACAACGCTGGATTTCTGAGATGAAGGAAGCTCTGCCTCTTTTTTTTGAGTGCATCGACTAAGAGTTGTTAGCCAATAAAAAGAGAGCAACTGTAAAAGGTTTATTTCAGAAAATGATATAGTCCATTTTTGGAGATAGTTATCATGAAGTGATGGGATTTTTTATTTTCCATTATGACCTTGAAAAGCAGTTAAGCCACTGAAAAAAGGGCTCAATGCTGGCAAAAAAGCATCTTCAATATGACCCCGGTAGTCCATGCCGTAAACGATGAGTGTTCGTCCTTGGTTTGCGCTGTATGCAAAACGGCTGATCAGGGGCCCAGCTAACGCGTTAAGTATCCCGCCTGGGGAGTACGGTCGCAAGAATGAAACTCAAAGGAATTGACGGGGGCCCGCACAAGCGGTGGAGCATGTGGTTTAATTCGATGCAACGCGAAGAACCTTACCAGGGCTTGACATATAAATAAGTTTGCTTGTCCTTAACAGGATGGTACGAAAATTTATACAGGTGGTGCATGGCTGTCGTCAGCTCGTGCCGTAAGGTGTTGGGTTAAGTCCCGCAACGAGCGCAACCCTCGTGTTTAGTTGCTAAGACATGTGCTTTGGATTAAAAGGTCAATTATTAACTACTTAAGACTGACGAAGACCACGCCATTGAAAAAGGATACCATAACGCCGTGTGGCTACGATCATACACAGTTGTTCAAGGGTACTTCGACGAGCACAGTTCTCATAGCGCAGCACACATAACAATGTGGCACTCGGTCTTTGTAAAAGTGATTGACAATCTATACCATGTACTGCACTCATAAACAGACTGCCGGTGATAAGCCGGAGGAAGGTGAGGATGACGTCAAGTCAGCATGCCCCTTACGCCCTGGGCGACACACGTGCTACAATGGCGATTACAATAGGAAGCAAGGCTTTAAGGCAGAGCGAATCCAGAAAGATGGCCTCAGTTCGGATTGCAGGCTGCAACTCGCCTGCATGAAGCCGGAATCGCTAGTAATCGCCGGTCAGCCATACGGCGGTGAATCCGTTCCCGGGCCTTGTACACACCGCCCGTCACACTATGGGAGCTGGCTTCGCCCAAAACATCAGACCAAAGATCACCCATTACTTTAATGTTCCACGCTGTTATTGAGTGTGGTCTACTGGAGTAATTGGTGGTCTAATGTAGGATACTAAGGTGGGGCCTTTAACTGGGGTGAAGTCGTAACAAGGTAGCCGTACTGGAAGGTGCGGCTG
+
+
+The reference taxonomy
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The reference taxonomy should be in an unzipped tab-delimited file called ref-taxonomy.txt.
+The first column contains the sequence identifier corresponding to the identifiers used in the ref-seqs.fna.
+The second column contains a ";"-separated 7-level taxonomy string with domain;phylum;class;order;family;genus;species.
+
+Here is an example of the first two entries in ref-taxonomy.txt of the default 16S reference database. 
+
+.. code-block:: bash
+
+   KF494428.1.1396	D_0__Bacteria;D_1__Epsilonbacteraeota;D_2__Campylobacteria;D_3__Campylobacterales;D_4__Thiovulaceae;D_5__Sulfuricurvum;D_6__Sulfuricurvum sp. EW1
+   AF506248.1.1375	D_0__Bacteria;D_1__Cyanobacteria;D_2__Oxyphotobacteria;D_3__Nostocales;D_4__Nostocaceae;D_5__Nostoc PCC-73102;D_6__Nostoc sp. 'Nephroma expallidum cyanobiont 23'
+
+
+Exceptions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Mother* 
+  For mother an additional fasta file is required with the multiple sequence alignments of all reference sequences in the database.
+  The fasta header should be the same as the fasta header of the sequence file.
+
+  If you do not have an alignment for your custom database, you can simply skip mother in the NanoClass run by removing it from the methods list in the config.yaml
+
+*Kraken2*
+   Kraken2 cannot be used within NanoClass in combination with custom databases at this stage.
+
+*Centrifuge*
+   Centrifuge cannot be used within NanoClass in combination with custom databases at this stage.

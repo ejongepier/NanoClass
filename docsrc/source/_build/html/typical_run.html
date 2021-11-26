@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Two tools in one &mdash; NanoClass pre-release documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Databases" href="databases.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> NanoClass
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="objectives.html">NanoClass objectives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Two tools in one</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#stage-1-tool-selection">Stage 1 - Tool selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subset-the-number-of-reads">Subset the number of reads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#subset-the-number-of-samples">Subset the number of samples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-nanoclass-stage-1">Run NanoClass stage 1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#assess-tool-performance-nanoclass-stage-1">Assess tool performance NanoClass stage 1</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#stage-2-taxonomic-classification">Stage 2 - Taxonomic classification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#select-a-tool-s">Select a tool(s)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#include-all-reads-per-sample">Include all reads per sample</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#include-all-samples">Include all samples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-nanoclass-stage-2">Run NanoClass stage 2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#assess-classification-nanoclass-stage-2">Assess classification NanoClass stage 2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Assess classification NanoClass stage 2</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#abundance-table">Abundance table</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#taxonomy-table">Taxonomy table</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#taxonomy-list">Taxonomy list</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="databases.html">Databases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameter_ref.html">Parameter reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NanoClass</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Two tools in one</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/typical_run.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="two-tools-in-one">
+<h1>Two tools in one<a class="headerlink" href="#two-tools-in-one" title="Permalink to this headline"></a></h1>
+<p>Assuming you have no preference or prior knowledge of which tool performs best on your specific data, you may first want to assess tool performance.
+This can be quite time consuming if you would run all 10 tools on all of your data.
+Luckily tests on data sets of variable complexity has shown that a small subset of data is enough to assess tool performance.
+Once you have decided which tool or tools to use you can run these tools on your entire dataset.</p>
+<div class="section" id="stage-1-tool-selection">
+<h2>Stage 1 - Tool selection<a class="headerlink" href="#stage-1-tool-selection" title="Permalink to this headline"></a></h2>
+<p>To run all 10 tools on a small subset of your data, you can specify how many reads and samples to consider.
+Tests showed that 100 reads for 3 representative samples each works for most datasets.</p>
+<div class="section" id="subset-the-number-of-reads">
+<h3>Subset the number of reads<a class="headerlink" href="#subset-the-number-of-reads" title="Permalink to this headline"></a></h3>
+<p>In the <cite>config.yaml</cite> you can whether you like to subset the number of reads and how many reads per sample you like to include:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>subsample:
+   skip:                          <span class="nb">false</span>
+   samplesize:                    <span class="m">100</span>
+</pre></div>
+</div>
+<p>In above example subsample is enabled and 100 random reads per sample will be included in the analyses.
+Mind that no tabs are allowed in the <cite>config.yaml</cite>, only spaces.</p>
+</div>
+<div class="section" id="subset-the-number-of-samples">
+<h3>Subset the number of samples<a class="headerlink" href="#subset-the-number-of-samples" title="Permalink to this headline"></a></h3>
+<p>In the <cite>samples.csv</cite> you can enter the sample labels and the paths to the input files. If you only want to use a small subset of your samples in this initial stage, simply list only those samples.
+If you expect the community structure and composition to differ between treatments, it is recommended to include a sample from each of tese treatments at this stage.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>run,sample,barcode,path
+stage1,MockZymo,,input/barcode06.passed.fastq.gz
+stage1,MockATCC,,input/barcode09.fastq.gz
+</pre></div>
+</div>
+<p>In this example only two samples are used to test the performance of all 10 tools.
+The first line is an obligatory header.
+The next lines are a comma separated list of:</p>
+<ul class="simple">
+<li><p><cite>run</cite> - The run ID used as a label in NanoClass output and reports. It is recommended to list the same run ID for each of your samples. You can use any label as long as it consists of only letters and numbers.</p></li>
+<li><p><cite>sample</cite> - The sample IDs used as labels in NanoClass output and reports. Sample labels should be unique so if your have multiple files per sample you should first concatenate them, e.g. using the <cite>cat</cite> function. You can use any label independent of how your files are named, as long as you only use number and letters.</p></li>
+<li><p><cite>barcode</cite> - The barcode column should remain empty as NanoClass currently only accepts demultiplexed data.</p></li>
+<li><p><cite>path</cite> - The path to the MinION Nanopore sequences in fastq.gz format. In this example the files are stored in an <cite>input</cite> subdirectory within the NanoClass directory.</p></li>
+</ul>
+</div>
+<div class="section" id="run-nanoclass-stage-1">
+<h3>Run NanoClass stage 1<a class="headerlink" href="#run-nanoclass-stage-1" title="Permalink to this headline"></a></h3>
+<p>You are now all set to run nanoClass tool seletion on your subset of data. Make sure you are in the NanoClass directory and run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Snakemake --use-conda --cores &lt;ncores&gt;
+</pre></div>
+</div>
+<p>Where ncores is the number of cores available on your system.</p>
+</div>
+<div class="section" id="assess-tool-performance-nanoclass-stage-1">
+<h3>Assess tool performance NanoClass stage 1<a class="headerlink" href="#assess-tool-performance-nanoclass-stage-1" title="Permalink to this headline"></a></h3>
+<p>Once NanoClass finished, you can generate a report:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>snakemake --report report/NanoClass-stage1.zip
+</pre></div>
+</div>
+<p>Unzip it and view the NanoClass-stage1/report.html.
+Three results in particular can help decide on which tool te continue with in the next stage of the analysis:</p>
+<ul class="simple">
+<li><p>Classification - Set of taxonomic bar plots of the abundances at different taxonomic levels. May help to decide which tools best fit your expectations if you already have prior knowledge of the composition of your samples.</p></li>
+<li><p>Precision: Precision plot with information on how much the taxonomic classification of each tool deviates from the majority consensus classification at each taxonomic level. Note that precision is not the same as accuracy, because for accuracy you would need to know the exact composition of the subsample of your data, which is typically unknown.</p></li>
+<li><p>Runtime: Runtime plots showing how long it took for each of the 10 tools to run. This may be a decisive factor in your choice of tools if multiple tools show similar performace based on classification or precision, or if you are looking at a deadline.</p></li>
+</ul>
+<p>For detailed information on the content of the report see the report documentation.</p>
+</div>
+</div>
+<div class="section" id="stage-2-taxonomic-classification">
+<h2>Stage 2 - Taxonomic classification<a class="headerlink" href="#stage-2-taxonomic-classification" title="Permalink to this headline"></a></h2>
+<p>Once you decided on which tool or tools to continue with, you can run NanoClass using only that tool / those tools on your complete dataset.</p>
+<div class="section" id="select-a-tool-s">
+<h3>Select a tool(s)<a class="headerlink" href="#select-a-tool-s" title="Permalink to this headline"></a></h3>
+<p>At the top of the <cite>config.yaml</cite> file you can limit the number of tools. By default all 10 tools are listed, but you can remove those you sre not interested in:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>methods:                           <span class="o">[</span><span class="s2">&quot;megablast&quot;</span>,<span class="s2">&quot;minimap&quot;</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>In this example only minimap2 and megablast are used.</p>
+</div>
+<div class="section" id="include-all-reads-per-sample">
+<h3>Include all reads per sample<a class="headerlink" href="#include-all-reads-per-sample" title="Permalink to this headline"></a></h3>
+<p>In the <cite>config.yaml</cite> you can now disable subsampling using skip true.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>subsample:
+   skip:                          <span class="nb">true</span>
+   samplesize:                    <span class="m">100</span>
+</pre></div>
+</div>
+<p>In this example the sample size is ignored because subsampling is skipped.
+Mind that no tabs are allowed in the <cite>config.yaml</cite>, only spaces.</p>
+<p>Of course you can still opt to subsample your complete dataset, for instance when the number of reads vary between samples or when more data was generated then needed to characterize your community.
+In that case, set skip to false and just increase the sample size.</p>
+</div>
+<div class="section" id="include-all-samples">
+<h3>Include all samples<a class="headerlink" href="#include-all-samples" title="Permalink to this headline"></a></h3>
+<p>To run NanoClass on all of your samples simply complement the <cite>samples.csv</cite> with your remaining samples and change the run ID, e.g. to stage2.</p>
+</div>
+<div class="section" id="run-nanoclass-stage-2">
+<h3>Run NanoClass stage 2<a class="headerlink" href="#run-nanoclass-stage-2" title="Permalink to this headline"></a></h3>
+<p>You can run NanoClass stage 2 the same way as for stage 1.
+NanoClass will automatically use the new settings you provided in the <cite>config.yaml</cite> and all the samples in the <cite>sample.cvs</cite></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Snakemake --use-conda --cores &lt;ncores&gt;
+</pre></div>
+</div>
+<p>Where ncores is the number of cores available on your system.</p>
+</div>
+<div class="section" id="assess-classification-nanoclass-stage-2">
+<h3>Assess classification NanoClass stage 2<a class="headerlink" href="#assess-classification-nanoclass-stage-2" title="Permalink to this headline"></a></h3>
+<p>Once NanoClass finished, you can generate a report again:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>snakemake --report report/NanoClass-stage2.zip
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>Assess classification NanoClass stage 2<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
+<p>Unzip it and view the NanoClass-stage2/report.html.
+Which again contain the classification barplots and run time.
+Mind that precision is missing if you run fewer then 3 tools because the consensus taxonomy based on few tools is not particularly informative.</p>
+<p>For detailed information on the content of the report see the report documentation.</p>
+<p>In addition to the report, you can access the following raw data tables for downstream analyses.</p>
+<div class="section" id="abundance-table">
+<h4>Abundance table<a class="headerlink" href="#abundance-table" title="Permalink to this headline"></a></h4>
+<p>The abundance tables contain the absolute abundances for each taxonomic classification.
+A separate table is generated for each run, tool and sample: <cite>classification/&lt;run&gt;/&lt;tool&gt;/&lt;sample&gt;.&lt;tool&gt;.otumat</cite>
+To join the tables from different samples into one abundance table, you could try the R function merge.</p>
+</div>
+<div class="section" id="taxonomy-table">
+<h4>Taxonomy table<a class="headerlink" href="#taxonomy-table" title="Permalink to this headline"></a></h4>
+<p>The taxonomy table contains the classifications for 6 levels: Domain, Phylum, Class, Order, Family and Genus.
+A separate table is generated for each run, tool and sample: <cite>classification/&lt;run&gt;/&lt;tool&gt;/&lt;sample&gt;.&lt;tool&gt;.taxmat</cite></p>
+</div>
+<div class="section" id="taxonomy-list">
+<h4>Taxonomy list<a class="headerlink" href="#taxonomy-list" title="Permalink to this headline"></a></h4>
+<p>The taxonomy list gives the 6-level taxonomic classification for each of your reads.
+A separate table is generated for each run, tool and sample: <cite>classification/&lt;run&gt;/&lt;tool&gt;/&lt;sample&gt;.&lt;tool&gt;.taxlist</cite></p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="databases.html" class="btn btn-neutral float-right" title="Databases" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Evelien Jongepier.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
