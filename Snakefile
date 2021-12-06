@@ -77,7 +77,7 @@ onsuccess:
 
 onerror:
     print("Note the path to the log file for debugging.")
-    print("Documentation is available at: https://nanoclass.readthedocs.io")
+    print("Documentation is available at: https://ejongepier.github.io/NanoClass/")
     print("Issues can be raised at: https://github.com/ejongepier/NanoClass/issues")
 
 
