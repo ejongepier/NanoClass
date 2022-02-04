@@ -28,7 +28,8 @@ rule spingo_classify:
         db = "db/spingo/ref-seqs.fna",
         fasta = rules.prep_fasta_query.output
     output:
-        "classifications/{run}/spingo/{sample}.spingo.taxlist"
+        out = "classifications/{run}/spingo/{sample}.spingo.taxlist",
+        tmp = temp("classifications/{run}/spingo/{sample}.spingo.tmp")
     threads:
         config["spingo"]["threads"]
     resources:
@@ -43,14 +44,14 @@ rule spingo_classify:
         """
         spingo -d {input.db} -k 8 -a \
           -p {threads} -i {input.fasta} \
-          > tmp.out 2> {log}
-        sed 's/ /\\t/' tmp.out | \
+          > {output.tmp} 2> {log}
+        sed 's/ /\\t/' {output.tmp} | \
         awk -F '\\t' -v OFS='\\t' '{{
             if (NR == 1)
                 print "#readid","Domain","Phylum","Class","Order","Family","Genus";
             else
                 print $1, $4, $6, $8, $10, $12, $14
-        }}' > {output} 2> {log} && rm tmp.out
+        }}' > {output.out} 2> {log}
         """
 
 
