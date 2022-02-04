@@ -23,6 +23,7 @@ sam <- data.frame(run = rep(NA, length(file)), sample = rep(NA, length(file)), m
 for (i in 1:length(file)){
   otumatje <- read.table(file[i], header = T, sep = '\t', comment = "")
   names(otumatje)[1] <- "taxid"
+  names(otumatje)[2] <- paste0(strsplit(file[i], "/")[[1]][2],"_",names(otumatje)[2])
   ifelse (i == 1, otumat <- otumatje, otumat <- merge(otumat, otumatje, all=TRUE))
 
   lab = strsplit(file[i], "/")[[1]][4]
