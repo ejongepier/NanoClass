@@ -132,6 +132,7 @@ rule common_plot_runtime:
     shell:
         """
         mkdir -p ./plots
+        mkdir -p ./tables
         Rscript scripts/timeplot.R {input} 2> {log}
         """
 
